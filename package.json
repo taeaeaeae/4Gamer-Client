@@ -19,6 +19,8 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@mantine/core": "^7.11.2",
     "@mantine/hooks": "^7.11.2",
     "@mantine/notifications": "^7.11.2",
@@ -35,9 +37,10 @@
     "@tiptap/pm": "^2.5.7",
     "@tiptap/react": "^2.5.7",
     "@tiptap/starter-kit": "^2.5.7",
+    "axios": "^1.7.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.25.1"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.1.10",
@@ -47,7 +50,7 @@
     "@storybook/react": "^8.1.10",
     "@storybook/react-vite": "^8.1.10",
     "@storybook/testing-library": "^0.2.2",
-    "@testing-library/dom": "^10.1.0",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
