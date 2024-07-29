@@ -1,16 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
-import App from './App';
-import GameReviewList from './pages/game-review/GameReviewList';
+import GameReviewList from './pages/game-review/GameReviewListPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <Outlet />,
+    errorElement: <NotFoundPage />,
     children: [
       {
-        path: '/game-review',
+        path: '/game-reviews',
         element: <GameReviewList />,
       },
     ],
