@@ -12,25 +12,11 @@ const ChannelList = ({ Channels, removeChannel, toggleChannel, getChannelDetail 
                             <Text fw={500}>
                                 {Channel.id} : {Channel.title}
                             </Text>
-                            <Text size="sm" c="dimmed">
-                                {Channel.completed ? "완료" : "미완료"}
-                            </Text>
                         </Group>
 
                         <Button.Group>
                             <Button variant="light" onClick={() => getChannelDetail(Channel.id)}>
                                 상세보기
-                            </Button>
-                            <Button
-                                variant="filled"
-                                onClick={() =>
-                                    toggleChannel({
-                                        ...Channel,
-                                        completed: !Channel.completed,
-                                    })
-                                }
-                            >
-                                완료
                             </Button>
                             <Button
                                 variant="outline"

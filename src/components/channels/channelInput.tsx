@@ -8,7 +8,7 @@ const ChannelInput = ({ channel: Channel }) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    await channel({
+    await channel: Channel({
       title: String,
       gameTitle: String,
       introduction: String,

@@ -27,7 +27,7 @@ const ChannelContainer = () => {
     alert("Channel 추가 완료!");
   };
 
-  const removeChannel = async (id: BigInt) => {
+  const removeChannel = async (id: number) => {
     await deleteChannel(id);
 
     await fetchChannels();
@@ -55,13 +55,13 @@ const ChannelContainer = () => {
 
   return (
     <div>
-      <ChannelInput addChannel={addChannel} />
+      {/* <ChannelInput addChannel={addChannel} />
       <ChannelList
         Channels={Channels}
         removeChannel={removeChannel}
         toggleChannel={toggleChannel}
         getChannelDetail={getChannelDetail}
-      />
+      /> */}
     </div>
   );
 };
