@@ -1,5 +1,4 @@
-import fullStar from '../../assets/full-star.svg';
-import halfStar from '../../assets/half-star.svg';
+import { starFill, halfStar } from '@/assets/index';
 
 function GameReviewScore(score: GameReviewScore) {
   const count = [...Array(~~(score.score / 2))];
@@ -11,8 +10,8 @@ function GameReviewScore(score: GameReviewScore) {
         <img
           key={index}
           className="review-score"
-          src={fullStar}
-          alt="full-star"
+          src={starFill}
+          alt="star"
           style={{ width: '25px' }}
         />
       ))}
