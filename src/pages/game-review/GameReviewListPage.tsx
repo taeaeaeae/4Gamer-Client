@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { getGameReviewList } from '../../api/gameReviewApi';
+import { getGameReviewList } from '../../api/GameReviewApi';
 import GameReviewItem from '@/components/game-review/GameReviewItem';
 
 const GameReviewList = () => {
-  const [gameReviewList, setGameReviewList] = useState<GameReviewListInfo[]>([]);
+  const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
   const [page, setPage] = useState(0);
   const size = 10; // 한 번에 가져올 데이터 개수
   const totalCount = useRef(1);
@@ -28,7 +28,7 @@ const GameReviewList = () => {
 
   return (
     <div>
-      {gameReviewList?.map((value: GameReviewListInfo) => (
+      {gameReviewList?.map((value: GameReviewList) => (
         <div key={value.id}>
           <GameReviewItem
             id={value.id}
@@ -39,6 +39,7 @@ const GameReviewList = () => {
             downvotes={value.downvotes}
             createdAt={value.createdAt}
             updatedAt={value.updatedAt}
+            memberId={value.memberId}
           />
         </div>
       ))}
@@ -49,7 +50,7 @@ const GameReviewList = () => {
 
 export default GameReviewList;
 
-interface GameReviewListInfo {
+interface GameReviewList {
   id: number;
   gameTitle: string;
   point: number;
@@ -58,4 +59,5 @@ interface GameReviewListInfo {
   downvotes: number;
   createdAt: string;
   updatedAt: string;
+  memberId: string;
 }
