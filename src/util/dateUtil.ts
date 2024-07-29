@@ -1,4 +1,4 @@
-export const dateFormat = (date: string) => {
+export const dateFormat = (date: string = '0000-00-00 00:00') => {
   const dateTime = new Date(date);
 
   return `${dateTime.getFullYear()}-${
