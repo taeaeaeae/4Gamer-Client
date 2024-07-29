@@ -1,40 +1,52 @@
-.game-review-container {
+.game-review-item-container {
   width: 800px;
-  height: 250px;
+  height: 100%;
   border: 2px solid lightgray;
   border-radius: 10px;
-  display: flex;
   padding: 20px;
   margin: 20px auto;
-  gap: 20px;
-  position: relative;
+  /* position: relative; */
 }
-.game-review-container .game-review-img {
-  height: 100%;
-  border-radius: 10px;
+.game-review-item-container .top-info {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.game-review-container .game-title {
-  width: 100%;
-  display: -webkit-box;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  word-wrap: break-word;
-}
-.game-review-container .description {
-  width: 100%;
-  display: -webkit-box;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  -webkit-line-clamp: 6;
-  line-clamp: 6;
-  -webkit-box-orient: vertical;
-  word-wrap: break-word;
-}
-.game-review-container .align-right {
+.game-review-item-container .width-125px {
   width: 125px;
-  position: absolute;
-  right: 20px;
+}
+.game-review-item-container .description {
+  height: 100%;
+}
+.game-review-item-container .votes {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+.game-review-item-container .votes div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto 10px;
+  cursor: pointer;
+}
+.game-review-item-container .votes span {
+  height: 100%;
+  display: inline-block;
+  font-size: 20px;
+  margin: auto 5px;
+}
+.game-review-item-container .button-menu {
+  display: inline-block;
+  margin-left: 10px;
+}
+.game-review-item-container .button-menu button {
+  border: 0;
+  background-color: white;
+  cursor: pointer;
+}
+.game-review-item-container .thumbs-icon {
+  width: 30px;
+  height: 30px;
 }
