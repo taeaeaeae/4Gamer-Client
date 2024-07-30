@@ -1,5 +1,4 @@
 import { channelClient } from "./channelClient";
-import { Channel } from "../components/channels/Channelitem";
 
 export const getChannels = async () => {
     const response = await channelClient.get("/api/v1/channels");
@@ -19,8 +18,8 @@ export const createChannel = async (channel: Channel) => {
     return response.data;
 };
 
-export const updateChannel = async (channel: Channel) => {
-    const response = await channelClient.put(`/api/v1/channels/${channel.id}`, channel);
+export const updateChannel = async (id: number, channel: Channel) => {
+    const response = await channelClient.put(`/api/v1/channels/${id}`, channel);
 
     return response.data;
 };
@@ -30,3 +29,10 @@ export const deleteChannel = async (id: number) => {
 
     return response.data;
 };
+
+export interface Channel {
+    title: String;
+    gameTitle: String;
+    introduction: String;
+    alias: String;
+}

@@ -1,7 +1,9 @@
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { getChannels } from '../../api/channelApi';
 
-function ChannelItem(item: Channel) {
+function ChannelItem(item: Channel) { //(item: Channel) {
 
     const navigate = useNavigate();
 
@@ -32,32 +34,47 @@ function ChannelItem(item: Channel) {
     );
 }
 
+const ChannelList = ({ fetchChannels }: ChannelListProps) => {
+    const [channelList, setChannelList] = useState<Channel[]>([]);
+    const ref = useRef<HTMLDivElement | null>(null);
 
-function ChannelItems(item: Channel) {
+    const navigate = useNavigate();
+
+    const handleCreateClick = () => {
+        navigate(`/channels`);
+    };
+
+    const fetchChannelList = async () => {
+        const data = await getChannels();
+        setChannelList(data.content);
+    };
+
+    useEffect(() => {
+        fetchChannelList();
+    }, []); // 빈 배열을 의존성 배열로 전달하여 컴포넌트가 마운트될 때만 실행되도록 함
+
     return (
-        <>
-            <div className="game-review-container">
-                <div>
-                    <img
-                        alt={`${item.gameTitle} 이미지`}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+            <button onClick={handleCreateClick}>CREATE</button>
+            {channelList.map((value: Channel) => (
+                <div key={value.id}>
+                    <ChannelItem
+                        id={value.id}
+                        title={value.title}
+                        gameTitle={value.gameTitle}
+                        introduction={value.introduction}
+                        alias={value.alias}
+                        createdAt={value.createdAt}
+                        updatedAt={value.updatedAt}
                     />
                 </div>
-                <div>
-                    <h2 className="game-title">{item.gameTitle}</h2>
-                    <div className="align-right">
-                    </div>
-                    <p>{(item.createdAt)}</p>
-                    <p className="description">{item.introduction}</p>
-                </div>
-            </div>
-        </>
+            ))}
+            <div ref={ref}></div>
+        </div>
     );
-}
+};
 
-
-
-
-export default ChannelItem;
+export default ChannelList;
 
 export interface Channel {
     id: number;
@@ -68,3 +85,10 @@ export interface Channel {
     createdAt: string;
     updatedAt: string;
 }
+
+interface ChannelListProps {
+    // channels: Channel[];
+    // removeChannel: (id: number) => Promise<void>;
+    fetchChannels: () => Promise<void>;
+}
+
