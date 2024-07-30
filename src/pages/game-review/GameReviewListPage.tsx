@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { getGameReviewList } from '../../api/GameReviewApi';
 import GameReviewItem from '@/components/game-review/GameReviewItem';
+import { getGameReviewReactionList } from '@/api/VoteApi';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
@@ -10,6 +11,13 @@ const GameReviewList = () => {
   const size = 10; // 한 번에 가져올 데이터 개수
   const totalCount = useRef(1);
   const { ref, inView } = useInView();
+  const [voteList, setVoteList] = useState<[VoteList]>();
+
+  const fetchGameReviewReactionList = async () => {
+    const data = await getGameReviewReactionList();
+
+    setVoteList(data);
+  };
 
   const fetchGameReviewList = async () => {
     if (inView && gameReviewList.length < totalCount.current) {
@@ -24,6 +32,7 @@ const GameReviewList = () => {
 
   useEffect(() => {
     fetchGameReviewList();
+    fetchGameReviewReactionList();
   }, [inView]);
 
   return (
@@ -40,6 +49,7 @@ const GameReviewList = () => {
             createdAt={value.createdAt}
             updatedAt={value.updatedAt}
             memberId={value.memberId}
+            isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
           />
         </div>
       ))}
@@ -60,4 +70,9 @@ interface GameReviewList {
   createdAt: string;
   updatedAt: string;
   memberId: string;
+}
+
+interface VoteList {
+  gameReviewId: number;
+  isUpvoting: boolean;
 }
