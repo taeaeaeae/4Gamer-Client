@@ -1,13 +1,21 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { HomePage } from './pages/Home.page';
+import ChannelsPage from '@/pages/channels/ChannelsPage';
+import ChannelDetailPage from '@/pages/channels/ChannelDetailPage';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <HomePage />,
+    path: '/channels',
+    children: [
+      {
+        path: '',
+        element: <ChannelsPage />,
+      },
+      {
+        path: ':id',
+        element: <ChannelDetailPage />,
+      },
+    ],
   },
 ]);
 
-export function Router() {
-  return <RouterProvider router={router} />;
-}
+export default router;

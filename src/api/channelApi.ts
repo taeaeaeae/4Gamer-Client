@@ -1,14 +1,14 @@
 import { channelClient } from "./channelClient";
-import { Channel } from "@/components/channels/channelitem";
+import { Channel } from "../components/channels/Channelitem";
 
 export const getChannels = async () => {
-    const response = await channelClient.get("/api/v1/chennels");
+    const response = await channelClient.get("/api/v1/channels");
 
     return response.data;
 };
 
 export const getChannelItem = async (id: number) => {
-    const response = await channelClient.get(`/api/v1/chennels/${id}`);
+    const response = await channelClient.get(`/api/v1/channels/${id}`);
 
     return response.data;
 };
