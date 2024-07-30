@@ -1,3 +1,4 @@
+import { Title } from '@mantine/core';
 import { fourGamerClient } from './FourGamerClient';
 
 export const getGameReviewList = async (page: number, size: number) => {
@@ -12,8 +13,8 @@ export const getGameReview = async (gameReviewId: string = '') => {
   return response.data;
 };
 
-export const updateGameReview = async (gameReviewId: string) => {
-  const response = await fourGamerClient.put(`/api/v1/game-reviews/${gameReviewId}`);
+export const updateGameReview = async (gameReviewId: string, gameReview: GameReview) => {
+  const response = await fourGamerClient.put(`/api/v1/game-reviews/${gameReviewId}`, gameReview);
 
   return response.data;
 };
@@ -23,3 +24,15 @@ export const deleteGameReview = async (gameReviewId: string) => {
 
   return response.data;
 };
+
+export const createGameReview = async (gameReview: GameReview) => {
+  const response = await fourGamerClient.post('/api/v1/game-reviews', gameReview);
+
+  return response.data;
+};
+
+interface GameReview {
+  gameTitle: string;
+  point: string;
+  description: string;
+}

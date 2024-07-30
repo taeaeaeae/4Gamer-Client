@@ -4,6 +4,8 @@ import { useInView } from 'react-intersection-observer';
 import { getGameReviewList } from '../../api/GameReviewApi';
 import GameReviewItem from '@/components/game-review/GameReviewItem';
 import { getGameReviewReactionList } from '@/api/VoteApi';
+import GameReviewInput from '@/components/game-review/GameReviewInput';
+import './GameReviewListPage.css';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
@@ -32,11 +34,14 @@ const GameReviewList = () => {
 
   useEffect(() => {
     fetchGameReviewList();
-    fetchGameReviewReactionList();
   }, [inView]);
+  useEffect(() => {
+    fetchGameReviewReactionList();
+  }, []);
 
   return (
-    <div>
+    <div className="game-review-list-container">
+      <GameReviewInput />
       {gameReviewList?.map((value: GameReviewList) => (
         <div key={value.id}>
           <GameReviewItem
