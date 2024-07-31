@@ -13,12 +13,18 @@ const GameReviewList = () => {
   const size = 10; // 한 번에 가져올 데이터 개수
   const totalCount = useRef(1);
   const { ref, inView } = useInView();
-  const [voteList, setVoteList] = useState<[VoteList]>();
+  const [voteList, setVoteList] = useState<VoteList[]>([]);
+  let callVoteList = 0;
 
   const fetchGameReviewReactionList = async () => {
-    const data = await getGameReviewReactionList();
+    if (callVoteList < 1) {
+      callVoteList += 1;
 
-    setVoteList(data);
+      const data = await getGameReviewReactionList();
+
+      setVoteList(data);
+      fetchGameReviewList();
+    }
   };
 
   const fetchGameReviewList = async () => {
@@ -40,26 +46,28 @@ const GameReviewList = () => {
   }, []);
 
   return (
-    <div className="game-review-list-container">
-      <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
+    <>
+      <div className="game-review-list-container">
+        <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
 
-      {gameReviewList?.map((value: GameReviewList) => (
-        <GameReviewItem
-          key={value.id}
-          id={value.id}
-          gameTitle={value.gameTitle}
-          point={value.point}
-          description={value.description}
-          upvotes={value.upvotes}
-          downvotes={value.downvotes}
-          createdAt={value.createdAt}
-          updatedAt={value.updatedAt}
-          memberId={value.memberId}
-          isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
-        />
-      ))}
+        {gameReviewList?.map((value: GameReviewList) => (
+          <GameReviewItem
+            key={value.id}
+            id={value.id}
+            gameTitle={value.gameTitle}
+            point={value.point}
+            description={value.description}
+            upvotes={value.upvotes}
+            downvotes={value.downvotes}
+            createdAt={value.createdAt}
+            updatedAt={value.updatedAt}
+            memberId={value.memberId}
+            isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
+          />
+        ))}
+      </div>
       <div ref={ref}></div>
-    </div>
+    </>
   );
 };
 

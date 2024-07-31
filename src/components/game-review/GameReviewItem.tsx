@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
 import GameReviewScore from './GameReviewScore';
@@ -10,7 +9,6 @@ import { deleteGameReviewReaction, updateGameReviewReaction } from '@/api/VoteAp
 import GameReviewInput from './GameReviewInput';
 
 function GameReviewItem(item: GameReviewItem) {
-  const navigate = useNavigate();
   const memberId = localStorage.getItem('4gamer_member_id');
   const [isThumbsUpOn, setIsThumbsUpOn] = useState(item.isUpvoting === true);
   const [isThumbsDownOn, setIsThumbsDownOn] = useState(item.isUpvoting === false);
@@ -123,9 +121,7 @@ function GameReviewItem(item: GameReviewItem) {
                   onClick={() => {
                     if (window.confirm('정말 삭제하시겠습니까?')) {
                       deleteGameReview(String(item.id));
-                      setTimeout(() => {
-                        navigate('/game-reviews');
-                      }, 500);
+                      window.location.reload();
                     }
                   }}
                 >
@@ -179,16 +175,10 @@ function GameReviewItem(item: GameReviewItem) {
 
   return (
     <GameReviewInput
-      id={item.id}
+      id={String(item.id)}
       gameTitle={gameTitle}
       point={String(point)}
       description={description}
-      upvotes={0}
-      downvotes={0}
-      createdAt=""
-      updatedAt=""
-      memberId=""
-      isUpvoting={false}
       handleFunction={handleIsEditing}
     />
   );
