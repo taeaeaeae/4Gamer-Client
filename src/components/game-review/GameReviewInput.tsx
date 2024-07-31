@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { createGameReview, updateGameReview } from '@/api/GameReviewApi';
 import './GameReviewInput.css';
@@ -12,22 +13,28 @@ const GameReviewInput = (item: GameReviewInput) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    if (item.id.length === 0) {
-      await createGameReview({
-        gameTitle,
-        point,
-        description,
-      });
+    try {
+      if (item.id.length === 0) {
+        await createGameReview({
+          gameTitle,
+          point,
+          description,
+        });
 
-      window.location.reload();
-    } else {
-      await updateGameReview(String(item.id), {
-        gameTitle,
-        point,
-        description,
-      });
+        window.location.reload();
+      } else {
+        await updateGameReview(String(item.id), {
+          gameTitle,
+          point,
+          description,
+        });
 
-      item.handleFunction(false, { gameTitle, point, description });
+        item.handleFunction(false, { gameTitle, point, description });
+      }
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        window.alert(e.response?.data.message);
+      }
     }
   };
 
