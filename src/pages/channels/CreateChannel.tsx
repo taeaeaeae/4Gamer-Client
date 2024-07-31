@@ -1,95 +1,72 @@
-import { Button, TextInput } from "@mantine/core";
-import { useState, FormEvent } from "react";
-import { createChannel } from "@/api/channelApi";
+import { Button, TextInput, Textarea } from '@mantine/core';
+import { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createChannel, request } from '@/api/channelApi';
 
-const ChannelInput: React.FC = () => {
-    const [channelData, setChannelData] = useState<ChannelData>({
-        title: "ㅁㄴㅇㄹ",
-        gameTitle: "ㅁㄴㅇㄹ",
-        introduction: "ㄴㅁㅇㄹ",
-        alias: "ㅁㄴㅇㄹ",
-    });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setChannelData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+// Channel 인터페이스 정의
+// export interface Channel {
+//     title: string;
+//     gameTitle: string;
+//     introduction: string;
+//     alias: string;
+// }
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+const ChannelCreate = () => {
+    const [title, setTitle] = useState('');
+    const [gameTitle, setGameTitle] = useState('');
+    const [introduction, setIntroduction] = useState('');
+    const [alias, setAlias] = useState('');
+
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         try {
-            await createChannel(channelData);
-            alert("채널이 성공적으로 생성되었습니다!");
-            // 입력 필드 초기화
-            setChannelData({
-                title: "",
-                gameTitle: "",
-                introduction: "",
-                alias: "",
-            });
+            // API를 통해 데이터를 포스트
+            const newChannel: request = {
+                title,
+                gameTitle,
+                introduction,
+                alias,
+            };
+
+            await createChannel(newChannel);
+
+            // 성공적으로 포스트된 후 채널 목록 화면으로 이동
+            navigate('/channels');
         } catch (error) {
-            console.error("채널 생성 오류:", error);
-            alert("채널 생성에 실패했습니다. 다시 시도해주세요.");
+            // 에러 처리
+            alert('Error creating channel');
         }
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            style={{
-                width: 480,
-                margin: "auto",
-            }}
-        >
+        <form onSubmit={handleSubmit}>
             <TextInput
                 label="Title"
-                name="title"
-                placeholder="Enter channel title"
-                value={channelData.title}
-                onChange={handleChange}
-                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
             />
             <TextInput
                 label="Game Title"
-                name="gameTitle"
-                placeholder="Enter game title"
-                value={channelData.gameTitle}
-                onChange={handleChange}
-                required
+                value={gameTitle}
+                onChange={(e) => setGameTitle(e.target.value)}
             />
-            <TextInput
+            <Textarea
                 label="Introduction"
-                name="introduction"
-                placeholder="Enter channel introduction"
-                value={channelData.introduction}
-                onChange={handleChange}
-                required
+                value={introduction}
+                onChange={(e) => setIntroduction(e.target.value)}
             />
             <TextInput
                 label="Alias"
-                name="alias"
-                placeholder="Enter channel alias"
-                value={channelData.alias}
-                onChange={handleChange}
-                required
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
             />
-
-            <Button variant="filled" type="submit" fullWidth>
-                Submit
-            </Button>
+            <Button type="submit">Submit</Button>
         </form>
     );
 };
 
-export default ChannelInput;
-
-interface ChannelData {
-    title: string;
-    gameTitle: string;
-    introduction: string;
-    alias: string;
-}
+export default ChannelCreate;

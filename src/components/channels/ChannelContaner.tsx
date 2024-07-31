@@ -6,7 +6,8 @@ import {
     deleteChannel
 } from "../../api/channelApi";
 import ChannelList from "./Channelitem";
-import ChannelInput from "./ChannerInput";
+// import ChannelInput from "./ChannerInput";
+import { Channel } from "./Channelitem"
 
 // Todo 인터페이스 정의
 interface ChannelData {
@@ -18,7 +19,7 @@ interface ChannelData {
 }
 
 const ChannelContainer = () => {
-    const [channels, setChannels] = useState<ChannelData[]>([]); // 상태 변수에 대한 타입 명시
+    const [channels, setChannels] = useState<Channel[]>([]); // 상태 변수에 대한 타입 명시
 
     // Channels를 가져오는 함수
     const fetchChannels = async () => {
@@ -63,6 +64,7 @@ const ChannelContainer = () => {
             {/* <ChannelInput addChannel /> */}
             <ChannelList
                 fetchChannels={fetchChannels}
+                channels={channels}
             // removeChannel={removeChannel}
             // updateChannel={updateChannel} // 사용되지 않는 부분 주석 처리
             // getChannelDetail={getChannelDetail} // 사용되지 않는 부분 주석 처리

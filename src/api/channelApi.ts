@@ -12,14 +12,14 @@ export const getChannelItem = async (id: number) => {
     return response.data;
 };
 
-export const createChannel = async (channel: Channel) => {
-    const response = await channelClient.post("/api/v1/channels", channel);
+export const createChannel = async (request: request) => {
+    const response = await channelClient.post("/api/v1/channels", request);
 
     return response.data;
 };
 
-export const updateChannel = async (id: number, channel: Channel) => {
-    const response = await channelClient.put(`/api/v1/channels/${id}`, channel);
+export const updateChannel = async (id: number, request: request) => {
+    const response = await channelClient.put(`/api/v1/channels/${id}`, request);
 
     return response.data;
 };
@@ -30,7 +30,7 @@ export const deleteChannel = async (id: number) => {
     return response.data;
 };
 
-export interface Channel {
+export interface request {
     title: String;
     gameTitle: String;
     introduction: String;

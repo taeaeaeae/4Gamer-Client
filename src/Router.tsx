@@ -17,10 +17,12 @@ const router = createBrowserRouter([
       },
       {
         path: 'new',
-        element: <ChannelDetailPage />,
+        element: <ChannerCreate />,
       },
     ],
   },
 ]);
 
-export default router;
+export function Router() {
+  return <RouterProvider router={router} />;
+}
