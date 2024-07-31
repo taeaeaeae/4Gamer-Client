@@ -1,4 +1,3 @@
-import { Title } from '@mantine/core';
 import { fourGamerClient } from './FourGamerClient';
 
 export const getGameReviewList = async (page: number, size: number) => {
