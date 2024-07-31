@@ -13,13 +13,13 @@ const GameReviewInput = (item: GameReviewItem) => {
     event.preventDefault();
 
     if (item.id === 0) {
-      const data = await createGameReview({
+      await createGameReview({
         gameTitle,
         point,
         description,
       });
 
-      item.handleFunction(data);
+      window.location.reload();
     } else {
       await updateGameReview(String(item.id), {
         gameTitle,
@@ -94,6 +94,9 @@ const GameReviewInput = (item: GameReviewItem) => {
             id="description"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
+            placeholder="최소 10자에서 최대 1024자까지 입력 가능합니다"
+            minLength={10}
+            maxLength={1024}
           />
         </div>
         <button type="submit">{item.id === 0 ? '등록' : '수정'}</button>

@@ -14,7 +14,6 @@ const GameReviewList = () => {
   const totalCount = useRef(1);
   const { ref, inView } = useInView();
   const [voteList, setVoteList] = useState<[VoteList]>();
-  const [createdData, setCreatedData] = useState<GameReviewList[]>([]);
 
   const fetchGameReviewReactionList = async () => {
     const data = await getGameReviewReactionList();
@@ -31,10 +30,6 @@ const GameReviewList = () => {
 
       totalCount.current = data.totalElements;
     }
-  };
-
-  const handleCreateData = (item: GameReviewItem) => {
-    setCreatedData([item, ...createdData]);
   };
 
   useEffect(() => {
@@ -57,23 +52,8 @@ const GameReviewList = () => {
         updatedAt=""
         memberId=""
         isUpvoting={false}
-        handleFunction={handleCreateData}
+        handleFunction={() => {}}
       />
-      {createdData?.map((value: GameReviewList) => (
-        <GameReviewItem
-          key={value.id}
-          id={value.id}
-          gameTitle={value.gameTitle}
-          point={value.point}
-          description={value.description}
-          upvotes={value.upvotes}
-          downvotes={value.downvotes}
-          createdAt={value.createdAt}
-          updatedAt={value.updatedAt}
-          memberId={value.memberId}
-          isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
-        />
-      ))}
 
       {gameReviewList?.map((value: GameReviewList) => (
         <GameReviewItem
