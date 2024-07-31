@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { getGameReviewList } from '../../api/GameReviewApi';
-import GameReviewItem from '@/components/game-review/GameReviewItem';
 import { getGameReviewReactionList } from '@/api/VoteApi';
+import GameReviewItem from '@/components/game-review/GameReviewItem';
 import GameReviewInput from '@/components/game-review/GameReviewInput';
 import './GameReviewListPage.css';
 
@@ -14,6 +14,7 @@ const GameReviewList = () => {
   const totalCount = useRef(1);
   const { ref, inView } = useInView();
   const [voteList, setVoteList] = useState<[VoteList]>();
+  const [createdData, setCreatedData] = useState<GameReviewList[]>([]);
 
   const fetchGameReviewReactionList = async () => {
     const data = await getGameReviewReactionList();
@@ -32,6 +33,10 @@ const GameReviewList = () => {
     }
   };
 
+  const handleCreateData = (item: GameReviewItem) => {
+    setCreatedData([item, ...createdData]);
+  };
+
   useEffect(() => {
     fetchGameReviewList();
   }, [inView]);
@@ -41,22 +46,49 @@ const GameReviewList = () => {
 
   return (
     <div className="game-review-list-container">
-      <GameReviewInput />
+      <GameReviewInput
+        id={0}
+        gameTitle=""
+        point=""
+        description=""
+        upvotes={0}
+        downvotes={0}
+        createdAt=""
+        updatedAt=""
+        memberId=""
+        isUpvoting={false}
+        handleFunction={handleCreateData}
+      />
+      {createdData?.map((value: GameReviewList) => (
+        <GameReviewItem
+          key={value.id}
+          id={value.id}
+          gameTitle={value.gameTitle}
+          point={value.point}
+          description={value.description}
+          upvotes={value.upvotes}
+          downvotes={value.downvotes}
+          createdAt={value.createdAt}
+          updatedAt={value.updatedAt}
+          memberId={value.memberId}
+          isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
+        />
+      ))}
+
       {gameReviewList?.map((value: GameReviewList) => (
-        <div key={value.id}>
-          <GameReviewItem
-            id={value.id}
-            gameTitle={value.gameTitle}
-            point={value.point}
-            description={value.description}
-            upvotes={value.upvotes}
-            downvotes={value.downvotes}
-            createdAt={value.createdAt}
-            updatedAt={value.updatedAt}
-            memberId={value.memberId}
-            isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
-          />
-        </div>
+        <GameReviewItem
+          key={value.id}
+          id={value.id}
+          gameTitle={value.gameTitle}
+          point={value.point}
+          description={value.description}
+          upvotes={value.upvotes}
+          downvotes={value.downvotes}
+          createdAt={value.createdAt}
+          updatedAt={value.updatedAt}
+          memberId={value.memberId}
+          isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
+        />
       ))}
       <div ref={ref}></div>
     </div>

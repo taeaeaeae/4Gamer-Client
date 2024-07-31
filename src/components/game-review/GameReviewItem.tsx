@@ -82,7 +82,7 @@ function GameReviewItem(item: GameReviewItem) {
     }
   };
 
-  const handleIsEditing = (isEditingState: boolean, info: GameReviewInput) => {
+  const handleIsEditing = (isEditingState: boolean, info: GameReviewItem) => {
     setIsEditing(isEditingState);
     setGameTitle(info.gameTitle);
     setPoint(~~info.point);
@@ -179,11 +179,17 @@ function GameReviewItem(item: GameReviewItem) {
 
   return (
     <GameReviewInput
-      id={String(item.id)}
+      id={item.id}
       gameTitle={gameTitle}
       point={String(point)}
       description={description}
-      isEditingState={handleIsEditing}
+      upvotes={0}
+      downvotes={0}
+      createdAt=""
+      updatedAt=""
+      memberId=""
+      isUpvoting={false}
+      handleFunction={handleIsEditing}
     />
   );
 }

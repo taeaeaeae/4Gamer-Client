@@ -3,29 +3,31 @@ import { createGameReview, updateGameReview } from '@/api/GameReviewApi';
 import './GameReviewInput.css';
 import { searchGameTitle } from '@/api/IgdbApi';
 
-const GameReviewInput = (item: GameReviewInput) => {
+const GameReviewInput = (item: GameReviewItem) => {
   const [gameTitle, setGameTitle] = useState(item.gameTitle === undefined ? '' : item.gameTitle);
-  const [point, setPoint] = useState(item.point);
+  const [point, setPoint] = useState(item.point === '' ? '1' : item.point);
   const [description, setDescription] = useState(item.description);
   const [gameTitleList, setGameTitleList] = useState([]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    if (Object.keys(item).length === 0) {
-      await createGameReview({
-        gameTitle,
-        point,
-        description,
-      });
-    } else {
-      await updateGameReview(item.id, {
+    if (item.id === 0) {
+      const data = await createGameReview({
         gameTitle,
         point,
         description,
       });
 
-      item.isEditingState(false, { gameTitle, point, description });
+      item.handleFunction(data);
+    } else {
+      await updateGameReview(String(item.id), {
+        gameTitle,
+        point,
+        description,
+      });
+
+      item.handleFunction(false, { gameTitle, point, description });
     }
   };
 
@@ -94,7 +96,7 @@ const GameReviewInput = (item: GameReviewInput) => {
             value={description}
           />
         </div>
-        <button type="submit">{Object.keys(item).length === 0 ? '등록' : '수정'}</button>
+        <button type="submit">{item.id === 0 ? '등록' : '수정'}</button>
       </form>
     </div>
   );
@@ -102,15 +104,28 @@ const GameReviewInput = (item: GameReviewInput) => {
 
 export default GameReviewInput;
 
-interface GameReviewInput {
-  id: string;
-  gameTitle: string;
-  point: string;
-  description: string;
-  isEditingState: Function;
-}
+// interface GameReviewInput {
+//   id: string;
+//   gameTitle: string;
+//   point: string;
+//   description: string;
+// }
 
 interface SearchGameTitle {
   id: number;
   name: string;
+}
+
+interface GameReviewItem {
+  id: number;
+  gameTitle: string;
+  point: string;
+  description: string;
+  upvotes: number;
+  downvotes: number;
+  createdAt: string;
+  updatedAt: string;
+  memberId: string;
+  isUpvoting: boolean | undefined;
+  handleFunction: Function;
 }
