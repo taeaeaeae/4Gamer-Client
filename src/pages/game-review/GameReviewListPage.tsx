@@ -41,19 +41,7 @@ const GameReviewList = () => {
 
   return (
     <div className="game-review-list-container">
-      <GameReviewInput
-        id={0}
-        gameTitle=""
-        point=""
-        description=""
-        upvotes={0}
-        downvotes={0}
-        createdAt=""
-        updatedAt=""
-        memberId=""
-        isUpvoting={false}
-        handleFunction={() => {}}
-      />
+      <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
 
       {gameReviewList?.map((value: GameReviewList) => (
         <GameReviewItem

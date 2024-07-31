@@ -3,7 +3,7 @@ import { createGameReview, updateGameReview } from '@/api/GameReviewApi';
 import './GameReviewInput.css';
 import { searchGameTitle } from '@/api/IgdbApi';
 
-const GameReviewInput = (item: GameReviewItem) => {
+const GameReviewInput = (item: GameReviewInput) => {
   const [gameTitle, setGameTitle] = useState(item.gameTitle === undefined ? '' : item.gameTitle);
   const [point, setPoint] = useState(item.point === '' ? '1' : item.point);
   const [description, setDescription] = useState(item.description);
@@ -12,7 +12,7 @@ const GameReviewInput = (item: GameReviewItem) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    if (item.id === 0) {
+    if (item.id.length === 0) {
       await createGameReview({
         gameTitle,
         point,
@@ -99,7 +99,7 @@ const GameReviewInput = (item: GameReviewItem) => {
             maxLength={1024}
           />
         </div>
-        <button type="submit">{item.id === 0 ? '등록' : '수정'}</button>
+        <button type="submit">{item.id.length === 0 ? '등록' : '수정'}</button>
       </form>
     </div>
   );
@@ -107,28 +107,15 @@ const GameReviewInput = (item: GameReviewItem) => {
 
 export default GameReviewInput;
 
-// interface GameReviewInput {
-//   id: string;
-//   gameTitle: string;
-//   point: string;
-//   description: string;
-// }
+interface GameReviewInput {
+  id: string;
+  gameTitle: string;
+  point: string;
+  description: string;
+  handleFunction: Function;
+}
 
 interface SearchGameTitle {
   id: number;
   name: string;
-}
-
-interface GameReviewItem {
-  id: number;
-  gameTitle: string;
-  point: string;
-  description: string;
-  upvotes: number;
-  downvotes: number;
-  createdAt: string;
-  updatedAt: string;
-  memberId: string;
-  isUpvoting: boolean | undefined;
-  handleFunction: Function;
 }
