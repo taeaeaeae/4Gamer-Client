@@ -24,9 +24,9 @@ const GameReviewInput = (item: GameReviewInput) => {
         point,
         description,
       });
-    }
 
-    item.isEditingState(false, { gameTitle, point, description });
+      item.isEditingState(false, { gameTitle, point, description });
+    }
   };
 
   const checkGameTitle = async () => {
