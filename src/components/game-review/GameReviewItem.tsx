@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import GameReviewScore from './GameReviewScore';
 import { dateFormat } from '../../util/dateUtil';
@@ -18,6 +18,11 @@ function GameReviewItem(item: GameReviewItem) {
   const [downvoteCount, setDownvoteCount] = useState(item.downvotes);
   const [isRenderingComplete, setIsRenderingComplete] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [gameTitle, setGameTitle] = useState(item.gameTitle);
+  const [point, setPoint] = useState(item.point);
+  const [description, setDescription] = useState(item.description);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [textAreaHeight, setTextAreaHeight] = useState(textAreaRef.current?.scrollHeight);
 
   const toggleHandler = (value: string) => {
     setIsRenderingComplete(true);
@@ -77,6 +82,13 @@ function GameReviewItem(item: GameReviewItem) {
     }
   };
 
+  const handleIsEditing = (isEditingState: boolean, info: GameReviewInput) => {
+    setIsEditing(isEditingState);
+    setGameTitle(info.gameTitle);
+    setPoint(~~info.point);
+    setDescription(info.description);
+  };
+
   localStorage.setItem(
     // TEST용
     'accessToken',
@@ -90,12 +102,14 @@ function GameReviewItem(item: GameReviewItem) {
     }
   }, [upvoteCount, downvoteCount]);
 
-  useEffect(() => {}, [isEditing]);
+  useEffect(() => {
+    setTextAreaHeight(textAreaRef.current?.scrollHeight);
+  }, [isEditing, gameTitle, point, description]);
 
   if (!isEditing) {
     return (
       <div className="game-review-item-container">
-        <h2>{item.gameTitle}</h2>
+        <h2>{gameTitle}</h2>
         <div className="top-info">
           <div>
             <span>{dateFormat(item.createdAt)}</span>
@@ -121,10 +135,16 @@ function GameReviewItem(item: GameReviewItem) {
             )}
           </div>
           <div className="width-125px">
-            <GameReviewScore score={Number(item.point)} />
+            <GameReviewScore score={Number(point)} />
           </div>
         </div>
-        <p className="description">{item.description}</p>
+        <textarea
+          className="description"
+          ref={textAreaRef}
+          style={{ height: textAreaHeight }}
+          defaultValue={description}
+          readOnly
+        />
         <div className="votes">
           <div
             role="button"
@@ -160,9 +180,10 @@ function GameReviewItem(item: GameReviewItem) {
   return (
     <GameReviewInput
       id={String(item.id)}
-      gameTitle={item.gameTitle}
-      point={String(item.point)}
-      description={item.description}
+      gameTitle={gameTitle}
+      point={String(point)}
+      description={description}
+      isEditingState={handleIsEditing}
     />
   );
 }

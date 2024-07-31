@@ -1,13 +1,13 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { createGameReview, updateGameReview } from '@/api/GameReviewApi';
 import './GameReviewInput.css';
+import { searchGameTitle } from '@/api/IgdbApi';
 
 const GameReviewInput = (item: GameReviewInput) => {
-  const [gameTitle, setGameTitle] = useState(item.gameTitle);
+  const [gameTitle, setGameTitle] = useState(item.gameTitle === undefined ? '' : item.gameTitle);
   const [point, setPoint] = useState(item.point);
   const [description, setDescription] = useState(item.description);
-  const navigate = useNavigate();
+  const [gameTitleList, setGameTitleList] = useState([]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -24,14 +24,26 @@ const GameReviewInput = (item: GameReviewInput) => {
         point,
         description,
       });
-
-      navigate('/game-reviews', { replace: true });
     }
+
+    item.isEditingState(false, { gameTitle, point, description });
+  };
+
+  const checkGameTitle = async () => {
+    const data = await searchGameTitle(gameTitle);
+    const newGameTitleList = JSON.parse(data.body).map((it: SearchGameTitle) => it.name);
+
+    setGameTitleList(newGameTitleList);
   };
 
   useEffect(() => {}, [gameTitle, point, description]);
+  useEffect(() => {
+    if (gameTitleList.length !== 0) {
+      window.alert(`등록 가능한 게임 제목 \n ${gameTitleList.join('\n ')}`);
+    }
+  }, [gameTitleList]);
+
   return (
-    // 등록 가능한 게임 타이틀 조회: http://localhost:8080/api/v1/igdb/get-name?gameTitle=el - POST
     <div className="game-review-input-container">
       <form onSubmit={handleSubmit}>
         <div>
@@ -43,15 +55,19 @@ const GameReviewInput = (item: GameReviewInput) => {
               name="title"
               onChange={(e) => setGameTitle(e.target.value)}
               value={gameTitle}
+              placeholder="제목 일부를 입력 후 검색 시 등록 가능한 제목을 확인할 수 있습니다."
             />
           </label>
+          <button type="button" onClick={() => checkGameTitle()}>
+            검색
+          </button>
           <label>
             평점:
             <select
               className="point"
               name="point"
               onChange={(e) => setPoint(e.target.value)}
-              value={~~point}
+              value={~~point === 0 ? 1 : ~~point}
             >
               <option value="1">1</option>
               <option value="2">2</option>
@@ -91,4 +107,10 @@ interface GameReviewInput {
   gameTitle: string;
   point: string;
   description: string;
+  isEditingState: Function;
+}
+
+interface SearchGameTitle {
+  id: number;
+  name: string;
 }

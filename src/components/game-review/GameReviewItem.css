@@ -16,7 +16,13 @@
   width: 125px;
 }
 .game-review-item-container .description {
-  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  resize: none;
+  margin: 10px auto;
+  font-size: 14px;
 }
 .game-review-item-container .votes {
   display: flex;
