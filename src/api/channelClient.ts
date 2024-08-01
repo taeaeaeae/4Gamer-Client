@@ -18,17 +18,17 @@ channelClient.interceptors.response.use((response) => {
 });
 
 
-// export function getAuthHeaders(): { headers: { Authorization: string } } | undefined {
-//     const token = localStorage.getItem('jwtToken');
-//     if (token) {
-//         return {
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//             },
-//         };
-//     }
-//     return undefined;
-// }
+export function getAuthHeaders(): { headers: { Authorization: string } } | undefined {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+        return {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+    }
+    return undefined;
+}
 
 // export async function fetchProtectedData(): Promise<any> {
 //     try {

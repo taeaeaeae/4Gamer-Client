@@ -1,9 +1,9 @@
-import { Card, Text, Badge, Button, Group, Grid, Container } from '@mantine/core';
+import { Card, Text, Badge, Button, Group, Grid, Container, Space, Flex } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { getChannels } from '../../api/channelApi';
 
-function ChannelItem(item: Channel) { //(item: Channel) {
+function ChannelItem(item: Channel) {
 
     const navigate = useNavigate();
 
@@ -12,17 +12,15 @@ function ChannelItem(item: Channel) { //(item: Channel) {
     };
 
     return (
-        <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
-            <Card.Section>
-            </Card.Section>
-            <Group justify="space-between" mt="md" mb="xs">
+        <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder w={280} h={300} m={10}>
+            <Group justify="space-between" mt="md" mb="xs" h={70}>
                 <Text fw={500}>{item.gameTitle}</Text>
                 <Badge color="pink">{item.alias}</Badge>
             </Group>
-            <Text size="sm" c="dimmed">
+            <Text size="sm" c="dimmed" h={120}>
                 {item.introduction}
             </Text>
-            <Button color="blue" fullWidth mt="md" radius="md" onClick={handleDetailClick}>
+            <Button color="blue" h={30} fullWidth mt="md" radius="md" onClick={handleDetailClick}>
                 {item.title}
             </Button>
         </Card>
@@ -43,25 +41,21 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
         const data = await getChannels();
         setChannelList(data.content);
     };
-
     useEffect(() => {
         fetchChannelList();
-    }, []); // 빈 배열을 의존성 배열로 전달하여 컴포넌트가 마운트될 때만 실행되도록 함
-    const demoProps = {
-        bg: 'var(--mantine-color-blue-light)',
-        h: 50,
-        mt: 'md',
-    };
+    }, []);
 
     return (
         <>
-            <Container {...demoProps}>
-                <Text>asdf?</Text>
-                <Button onClick={handleCreateClick} >CREATE</Button>
+            <Container fluid bg="var(--mantine-color-blue-light)" >
+                <Group justify='space-between'>
+                    <Text>채널목록</Text>
+                    <Button onClick={handleCreateClick} >CREATE</Button>
+                </Group>
                 <hr />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }} >
                     {channelList.map((value: Channel) => (
-                        <Grid key={value.id}>
+                        <Grid key={value.id} display={Flex} >
                             <ChannelItem
                                 id={value.id}
                                 title={value.title}

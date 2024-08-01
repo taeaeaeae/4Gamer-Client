@@ -1,16 +1,7 @@
-import { Button, TextInput, Textarea } from '@mantine/core';
+import { Button, Container, Group, TextInput, Textarea } from '@mantine/core';
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createChannel, request } from '@/api/channelApi';
-
-
-// Channel 인터페이스 정의
-// export interface Channel {
-//     title: string;
-//     gameTitle: string;
-//     introduction: string;
-//     alias: string;
-// }
 
 const ChannelCreate = () => {
     const [title, setTitle] = useState('');
@@ -43,29 +34,35 @@ const ChannelCreate = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <TextInput
-                label="Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <TextInput
-                label="Game Title"
-                value={gameTitle}
-                onChange={(e) => setGameTitle(e.target.value)}
-            />
-            <Textarea
-                label="Introduction"
-                value={introduction}
-                onChange={(e) => setIntroduction(e.target.value)}
-            />
-            <TextInput
-                label="Alias"
-                value={alias}
-                onChange={(e) => setAlias(e.target.value)}
-            />
-            <Button type="submit">Submit</Button>
-        </form>
+        <Container size={'lg'}>
+            <form onSubmit={handleSubmit}>
+                <TextInput
+                    label="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <TextInput
+                    label="Game Title"
+                    value={gameTitle}
+                    onChange={(e) => setGameTitle(e.target.value)}
+                />
+                <Textarea
+                    label="Introduction"
+                    value={introduction}
+                    onChange={(e) => setIntroduction(e.target.value)}
+                />
+                <TextInput
+                    label="Alias"
+                    value={alias}
+                    onChange={(e) => setAlias(e.target.value)}
+                />
+                <br />
+                <Group justify='flex-end' >
+                    <Button mr={30} type="submit">Submit</Button>
+                </Group>
+            </form>
+
+        </Container>
     );
 };
 

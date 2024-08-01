@@ -26,7 +26,6 @@ const ChannelDetailPage = () => {
         <div>
             <h1>{channel.title}</h1>
             <p>{channel.introduction}</p>
-            {/* 추가적으로 필요한 채널 상세 정보 렌더링 */}
         </div>
     );
 };
