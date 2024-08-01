@@ -41,17 +41,6 @@ const ChannelCreate = () => {
             alert('Error creating channel');
         }
     };
-    const checkGameTitle = async () => {
-        const data = await searchGameTitle(gameTitle);
-        const newGameTitleList: [] = JSON.parse(data.body).map((it: SearchGameTitle) => it.name);
-
-        if (newGameTitleList.length === 0) {
-            setGameTitleSearchResult(['일치하는 게임 제목이 없습니다.']);
-        } else {
-            setGameTitleSearchResult(newGameTitleList);
-        }
-    };
-
 
     const handleChange = async (val: string) => {
         setGameTitle(val);
@@ -68,10 +57,15 @@ const ChannelCreate = () => {
         timeoutRef.current = window.setTimeout(async () => {
             try {
                 const response = await searchGameTitle(val);
-                const datas = JSON.parse(response.body);
-                const newGameTitleList = datas.map((it: SearchGameTitle) => it.name);
 
-                setGameTitleSearchResult(newGameTitleList);
+                // 데이터 타입 단언
+                const datas: SearchGameTitle[] = JSON.parse(response.body);
+
+                // 검색 결과에서 중복된 항목 제거
+                const newGameTitleList = datas.map((it: SearchGameTitle) => it.name);
+                const uniqueGameTitleList = Array.from(new Set(newGameTitleList));
+
+                setGameTitleSearchResult(uniqueGameTitleList);
             } catch (error) {
                 console.error('Error fetching game titles:', error);
                 setGameTitleSearchResult([]);
@@ -81,24 +75,6 @@ const ChannelCreate = () => {
         }, 300); // 디바운싱을 위해 300ms 대기
     };
 
-    // 항목 클릭 시 자동완성 목록에서 선택된 값을 입력 필드에 설정
-    const handleItemSelect = (item: string) => {
-        setGameTitle(item);
-        setGameTitleSearchResult([]);
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (!(event.target as HTMLElement).classList.contains('mantine-autocomplete-item')) {
-                setGameTitleSearchResult([]);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
 
     return (
