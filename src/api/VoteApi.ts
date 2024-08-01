@@ -1,7 +1,7 @@
 import { fourGamerClient } from './FourGamerClient';
 
 export const getGameReviewReactionList = async () => {
-  const response = await fourGamerClient.get('/api/v1/game-reviews/reactions');
+  const response = await fourGamerClient.get('/api/v1/member/reactions');
 
   return response.data;
 };
