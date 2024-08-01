@@ -1,8 +1,8 @@
 import { useGoogleReCaptcha } from "react-google-recaptcha-hook";
-import { channelClient } from "./channelClient";
+import { client } from "./client";
 
 export const useIsRobot = () => {
-    const { executeGoogleReCaptcha } = useGoogleReCaptcha("6Ld-kxUqAAAAAPLYxnzZgI9Ox0swMKCQz8GkzpHA");
+    const { executeGoogleReCaptcha } = useGoogleReCaptcha("6Ld-kxUqAAAAAPLYxnzZgI9Ox0swMKCQz8GkzpHA", { hide: true });
 
     const checkIsRobot = async () => {
         if (!executeGoogleReCaptcha) {
@@ -12,7 +12,7 @@ export const useIsRobot = () => {
 
         try {
             const token = await executeGoogleReCaptcha("submit");
-            const response = await channelClient.post(`/api/v1/recaptcha?token=${token}`);
+            const response = await client.post(`/api/v1/recaptcha?token=${token}`);
             return response.data;
         } catch (error) {
             console.error("Error checking reCAPTCHA:", error);

@@ -6,7 +6,6 @@ import {
     deleteChannel
 } from "../../api/channelApi";
 import ChannelList from "./Channelitem";
-// import ChannelInput from "./ChannerInput";
 import { Channel } from "./Channelitem"
 
 // Todo 인터페이스 정의
@@ -41,18 +40,11 @@ const ChannelContainer = () => {
         alert("Channel 삭제 완료!");
     };
 
-    // Channel을 수정하는 함수 (사용되지 않는 부분 주석 처리)
-    //   const updateChannel = async (channel: ChannelData) => {
-    //     await updateChannel(channel);
-    //     await fetchChannels();
-    //     alert("Channel 수정 완료!");
-    //   };
-
-    // Channel의 상세 정보를 가져오는 함수 (사용되지 않는 부분 주석 처리)
-    //   const getChannelDetail = async (id: number) => {
-    //     const data = await getChannelItem(id);
-    //     alert(`Channel 상세 정보: ${JSON.stringify(data)}`);
-    //   };
+    const updateChannel = async (channel: ChannelData) => {
+        await updateChannel(channel);
+        await fetchChannels();
+        alert("Channel 수정 완료!");
+    };
 
     // 컴포넌트가 마운트될 때 Channels를 가져오는 함수 호출
     useEffect(() => {
@@ -65,8 +57,8 @@ const ChannelContainer = () => {
             <ChannelList
                 fetchChannels={fetchChannels}
                 channels={channels}
-            // removeChannel={removeChannel}
-            // updateChannel={updateChannel} // 사용되지 않는 부분 주석 처리
+                removeChannel={removeChannel}
+            //   updateChannel={updateChannel} // 사용되지 않는 부분 주석 처리
             // getChannelDetail={getChannelDetail} // 사용되지 않는 부분 주석 처리
             />
         </div>
