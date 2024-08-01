@@ -31,6 +31,37 @@
   font-size: 16px;
   font-weight: bold;
 }
+.game-review-input-container .game-title-search-bar {
+  position: relative;
+}
+.game-review-input-container .game-title-search-result {
+  width: 500px;
+  box-sizing: border-box;
+  position: absolute;
+  right: 0;
+  margin: 0;
+  list-style: none;
+  background-color: white;
+  border: 1px solid black;
+  border-top: 0;
+  border-end-start-radius: 10px;
+  border-end-end-radius: 10px;
+}
+.game-review-input-container .game-title-search-result .game-title-search-result-item {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  background-color: white;
+  border: 0;
+  padding: 10px 5px;
+}
+.game-review-input-container .game-title-search-result > .game-title-search-result-item:last-child {
+  border-end-start-radius: 10px;
+  border-end-end-radius: 10px;
+}
+.game-review-input-container .game-title-search-result > button:hover {
+  background-color: lightblue;
+}
 .game-review-input-container .game-title {
   width: 500px;
   height: 100%;

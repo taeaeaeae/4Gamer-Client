@@ -8,7 +8,7 @@ const GameReviewInput = (item: GameReviewInput) => {
   const [gameTitle, setGameTitle] = useState(item.gameTitle === undefined ? '' : item.gameTitle);
   const [point, setPoint] = useState(item.point === '' ? '1' : item.point);
   const [description, setDescription] = useState(item.description);
-  const [gameTitleList, setGameTitleList] = useState([]);
+  const [gameTitleSearchResult, setGameTitleSearchResult] = useState<string[]>([]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -40,23 +40,30 @@ const GameReviewInput = (item: GameReviewInput) => {
 
   const checkGameTitle = async () => {
     const data = await searchGameTitle(gameTitle);
-    const newGameTitleList = JSON.parse(data.body).map((it: SearchGameTitle) => it.name);
+    const newGameTitleList: [] = JSON.parse(data.body).map((it: SearchGameTitle) => it.name);
 
-    setGameTitleList(newGameTitleList);
+    if (newGameTitleList.length === 0) {
+      setGameTitleSearchResult(['일치하는 게임 제목이 없습니다.']);
+    } else {
+      setGameTitleSearchResult(newGameTitleList);
+    }
   };
 
-  useEffect(() => {}, [gameTitle, point, description]);
   useEffect(() => {
-    if (gameTitleList.length !== 0) {
-      window.alert(`등록 가능한 게임 제목 \n ${gameTitleList.join('\n ')}`);
-    }
-  }, [gameTitleList]);
+    const handleClickOutSide = (event) => {
+      if (event.target.className !== 'game-title-search-result-item') {
+        setGameTitleSearchResult([]);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutSide);
+  }, [gameTitle, point, description]);
 
   return (
     <div className="game-review-input-container">
       <form onSubmit={handleSubmit}>
         <div>
-          <label>
+          <label className="game-title-search-bar">
             제목:
             <input
               className="game-title"
@@ -66,6 +73,24 @@ const GameReviewInput = (item: GameReviewInput) => {
               value={gameTitle}
               placeholder="제목 일부를 입력 후 검색 시 등록 가능한 제목을 확인할 수 있습니다."
             />
+            {gameTitleSearchResult.length !== 0 && (
+              <div
+                className="game-title-search-result"
+                role="button"
+                onClick={(e) => {
+                  setGameTitle(e.target.innerText);
+                  setGameTitleSearchResult([]);
+                }}
+                onKeyDown={() => {}}
+                tabIndex={0}
+              >
+                {gameTitleSearchResult.map((value, index) => (
+                  <button type="button" key={index} className="game-title-search-result-item">
+                    {value}
+                  </button>
+                ))}
+              </div>
+            )}
           </label>
           <button type="button" onClick={() => checkGameTitle()}>
             검색
