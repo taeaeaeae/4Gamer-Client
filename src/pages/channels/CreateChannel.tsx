@@ -11,8 +11,11 @@ const ChannelCreate = () => {
 
     const navigate = useNavigate();
 
+
     const handleSubmit = async (e: FormEvent) => {
+
         e.preventDefault();
+
 
         try {
             // API를 통해 데이터를 포스트

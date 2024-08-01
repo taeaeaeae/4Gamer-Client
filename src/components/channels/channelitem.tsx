@@ -2,6 +2,7 @@ import { Card, Text, Badge, Button, Group, Grid, Container, Space, Flex } from '
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { getChannels } from '../../api/channelApi';
+import { useIsRobot } from '@/api/captchaApi';
 
 function ChannelItem(item: Channel) {
 
@@ -31,16 +32,26 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
     const [channelList, setChannelList] = useState<Channel[]>([]);
     const ref = useRef<HTMLDivElement | null>(null);
 
+    const { checkIsRobot } = useIsRobot();
     const navigate = useNavigate();
 
-    const handleCreateClick = () => {
-        navigate(`/channels/new`);
+    const handleCreateClick = async () => {
+        try {
+            const result = await checkIsRobot();
+            if (result.score < 0.7) {
+                throw new Error('사람이 아님')
+            }
+            navigate(`/channels/new`);
+        } catch (error) {
+            console.error("Failed to check robot status:", error);
+        }
     };
 
     const fetchChannelList = async () => {
         const data = await getChannels();
         setChannelList(data.content);
     };
+
     useEffect(() => {
         fetchChannelList();
     }, []);
