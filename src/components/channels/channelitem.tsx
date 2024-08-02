@@ -61,14 +61,13 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
     const filteredChannelList = channelList.filter((channel) =>
         channel.title.toLowerCase().includes(search.toLowerCase()) ||
         channel.gameTitle.toLowerCase().includes(search.toLowerCase()) ||
-        channel.introduction.toLowerCase().includes(search.toLowerCase()) ||
         channel.alias.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
         <>
             <Container fluid bg="var(--mantine-color-blue-light)">
-                <Group justify='space-between'>
+                <Group justify='space-between' m={10}>
                     <Text>채널목록</Text>
                     <Button onClick={handleCreateClick}>CREATE</Button>
                 </Group>

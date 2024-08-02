@@ -102,7 +102,9 @@ export function ChannelAdminPage() {
 
     const handleCreateClick = () => navigate(`/channels/${channelId}/boards/new`);
 
-    const handleUpdateteClick = (id: string) => () => navigate(`/Boards/${id}`);
+    const handleUpdateteClick = (id: string) => () => navigate(`/boards/${id}`);
+
+    const handleUpdateteChannelClick = (id: any) => () => navigate(`/channels/${id}/edit`);
 
     const handleDeleteClick = (id: string) => async () => {
         await removeBoards(channelId, id);
@@ -121,9 +123,12 @@ export function ChannelAdminPage() {
 
     return (
         <Container fluid bg="var(--mantine-color-blue-light)">
-            <Group justify='space-between'>
+            <Group justify='space-between' m={10}>
                 <Text>게시판목록</Text>
-                <Button onClick={handleCreateClick}>CREATE</Button>
+                <Group>
+                    <Button onClick={handleUpdateteChannelClick(channelId)} color="green" m={10}>채널수정</Button>
+                    <Button onClick={handleCreateClick}>CREATE</Button>
+                </Group>
             </Group>
             <ScrollArea>
                 <TextInput

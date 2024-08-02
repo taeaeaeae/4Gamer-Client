@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ChannelsPage from '@/pages/channels/ChannelsPage';
 import ChannelDetailPage from '@/pages/channels/ChannelDetailPage';
 import ChannerCreate from "@/pages/channels/CreateChannel"
+import ChannelModify from "@/pages/channels/ModifyChannel"
 import ChannelAdminPage from "@/pages/channels/ChannelAdminPage"
 import BoardCreate from "@/pages/channels/CreateBoard"
 
@@ -14,8 +15,12 @@ const router = createBrowserRouter([
         element: <ChannelsPage />,
       },
       {
-        path: ':id',
+        path: ':channelId',
         element: <ChannelDetailPage />
+      },
+      {
+        path: ':channelId/edit',
+        element: <ChannelModify />
       },
       {
         path: 'new',
