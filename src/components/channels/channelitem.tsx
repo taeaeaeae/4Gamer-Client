@@ -1,11 +1,11 @@
-import { Card, Text, Badge, Button, Group, Grid, Container, Space, Flex } from '@mantine/core';
+import { Card, Text, Badge, Button, Group, Grid, Container, Space, Flex, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { getChannels } from '../../api/channelApi';
 import { useIsRobot } from '@/api/captchaApi';
+import { IconSearch } from '@tabler/icons-react';
 
 function ChannelItem(item: Channel) {
-
     const navigate = useNavigate();
 
     const handleDetailClick = () => {
@@ -30,17 +30,17 @@ function ChannelItem(item: Channel) {
 
 const ChannelList = ({ fetchChannels }: ChannelListProps) => {
     const [channelList, setChannelList] = useState<Channel[]>([]);
+    const [search, setSearch] = useState('');
     const ref = useRef<HTMLDivElement | null>(null);
-
     const { checkIsRobot } = useIsRobot();
     const navigate = useNavigate();
 
     const handleCreateClick = async () => {
         try {
-            // 로봇여부체크
+            // 로봇 여부 체크
             const result = await checkIsRobot();
             if (result.score < 0.8) {
-                throw new Error('사람이 아님')
+                throw new Error('사람이 아님');
             }
             // 검증됐을 때 할 행동
             navigate(`/channels/new`);
@@ -58,17 +58,29 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
         fetchChannelList();
     }, []);
 
+    const filteredChannelList = channelList.filter((channel) =>
+        channel.title.toLowerCase().includes(search.toLowerCase()) ||
+        channel.gameTitle.toLowerCase().includes(search.toLowerCase()) ||
+        channel.introduction.toLowerCase().includes(search.toLowerCase()) ||
+        channel.alias.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <>
-            <Container fluid bg="var(--mantine-color-blue-light)" >
+            <Container fluid bg="var(--mantine-color-blue-light)">
                 <Group justify='space-between'>
                     <Text>채널목록</Text>
-                    <Button onClick={handleCreateClick} >CREATE</Button>
+                    <Button onClick={handleCreateClick}>CREATE</Button>
                 </Group>
-                <hr />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }} >
-                    {channelList.map((value: Channel) => (
-                        <Grid key={value.id} display={Flex} >
+                <TextInput
+                    placeholder="찾고싶은 채널을 입력하세요"
+                    mb="md"
+                    value={search}
+                    onChange={(event) => setSearch(event.currentTarget.value)}
+                />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+                    {filteredChannelList.map((value) => (
+                        <Grid key={value.id} display={Flex}>
                             <ChannelItem
                                 id={value.id}
                                 title={value.title}
@@ -91,10 +103,10 @@ export default ChannelList;
 
 export interface Channel {
     id: number;
-    title: String;
-    gameTitle: String;
-    introduction: String;
-    alias: String;
+    title: string;
+    gameTitle: string;
+    introduction: string;
+    alias: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -104,4 +116,3 @@ interface ChannelListProps {
     removeChannel: (id: number) => Promise<void>;
     fetchChannels: () => Promise<void>;
 }
-

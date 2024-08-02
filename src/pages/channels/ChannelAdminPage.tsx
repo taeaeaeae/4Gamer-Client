@@ -93,7 +93,6 @@ export function ChannelAdminPage() {
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        // 검색어가 변경될 때 정렬을 유지하기 위해 useEffect에서 sortedData를 업데이트함
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
