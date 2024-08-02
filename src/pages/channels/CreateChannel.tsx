@@ -1,7 +1,8 @@
 import { Button, Container, Group, TextInput, Textarea, Autocomplete, Loader } from '@mantine/core';
-import { useEffect, useState, FormEvent, useRef } from 'react';
+import { useState, FormEvent, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createChannel, request, searchGameTitle } from '@/api/channelApi';
+import { useIsRobot } from '@/api/captchaApi';
 
 
 const ChannelCreate = () => {
@@ -9,38 +10,50 @@ const ChannelCreate = () => {
     const [gameTitle, setGameTitle] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [alias, setAlias] = useState('');
-    const [value, setValue] = useState('');
-    const [data, setData] = useState<string[]>([]);
     const [gameTitleSearchResult, setGameTitleSearchResult] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const timeoutRef = useRef<number | undefined>();
 
+    const { checkIsRobot } = useIsRobot();
     const navigate = useNavigate();
 
-
+    // 검증됐을 때 할 행동
     const handleSubmit = async (e: FormEvent) => {
 
         e.preventDefault();
-
-
         try {
-            // API를 통해 데이터를 포스트
-            const newChannel: request = {
-                title,
-                gameTitle,
-                introduction,
-                alias,
-            };
+            // 로봇여부체크
+            const result = await checkIsRobot();
+            if (result.score < 0.8) {
+                throw new Error('사람이 아님')
+            }
 
-            await createChannel(newChannel);
 
-            // 성공적으로 포스트된 후 채널 목록 화면으로 이동
-            navigate('/channels');
+            try {
+                // API를 통해 데이터를 포스트
+                const newChannel: request = {
+                    title,
+                    gameTitle,
+                    introduction,
+                    alias,
+                };
+
+                await createChannel(newChannel);
+
+                // 성공적으로 포스트된 후 채널 목록 화면으로 이동
+                navigate('/channels');
+            } catch (error) {
+                // 에러 처리
+                alert('Error creating channel');
+            }
+
         } catch (error) {
-            // 에러 처리
-            alert('Error creating channel');
+            console.error("Failed to check robot status:", error);
         }
+
+
     };
+
 
     const handleChange = async (val: string) => {
         setGameTitle(val);
