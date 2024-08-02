@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Table,
     ScrollArea,
@@ -8,21 +8,12 @@ import {
     Center,
     TextInput,
     rem,
-    keys,
+    Container,
+    Button,
 } from '@mantine/core';
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
-import classes from './TableSort.module.css';
-import { getBoards } from '@/api/boardApi';
-
-interface RowData {
-    name: string;
-    email: string;
-    company: string;
-}
-interface Board {
-    id: number;
-    title: string;
-}
+import { useNavigate, useParams } from 'react-router-dom';
+import { getBoards, removeBoards } from '../../api/boardApi';
 
 interface ThProps {
     children: React.ReactNode;
@@ -34,13 +25,13 @@ interface ThProps {
 function Th({ children, reversed, sorted, onSort }: ThProps) {
     const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
     return (
-        <Table.Th className={classes.th}>
-            <UnstyledButton onClick={onSort} className={classes.control}>
+        <Table.Th>
+            <UnstyledButton onClick={onSort}>
                 <Group justify="space-between">
                     <Text fw={500} fz="sm">
                         {children}
                     </Text>
-                    <Center className={classes.icon}>
+                    <Center>
                         <Icon style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
                     </Center>
                 </Group>
@@ -49,116 +40,149 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
     );
 }
 
-function filterData(data: RowData[], search: string) {
+function filterData(data: Board[], search: string) {
     const query = search.toLowerCase().trim();
     return data.filter((item) =>
-        keys(data[0]).some((key) => item[key].toLowerCase().includes(query))
+        Object.keys(item).some((key) =>
+            typeof item[key as keyof Board] === 'string' &&
+            item[key as keyof Board].toString().toLowerCase().includes(query)
+        )
     );
 }
 
 function sortData(
-    data: RowData[],
-    payload: { sortBy: keyof RowData | null; reversed: boolean; search: string }
+    data: Board[],
+    payload: { sortBy: keyof Board | null; reversed: boolean; search: string }
 ) {
-    const { sortBy } = payload;
+    const { sortBy, reversed, search } = payload;
 
     if (!sortBy) {
-        return filterData(data, payload.search);
+        return filterData(data, search);
     }
 
     return filterData(
         [...data].sort((a, b) => {
-            if (payload.reversed) {
-                return b[sortBy].localeCompare(a[sortBy]);
+            const aValue = a[sortBy] as string;
+            const bValue = b[sortBy] as string;
+            if (reversed) {
+                return bValue.localeCompare(aValue);
             }
-
-            return a[sortBy].localeCompare(b[sortBy]);
+            return aValue.localeCompare(bValue);
         }),
-        payload.search
+        search
     );
 }
 
-const data = [
-];
-
 export function ChannelAdminPage() {
+    const navigate = useNavigate();
+    const { channelId } = useParams();
+
+    const [sortedData, setSortedData] = useState<Board[]>([]);
     const [search, setSearch] = useState('');
-    const [sortedData, setSortedData] = useState(data);
-    const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
+    const [sortBy, setSortBy] = useState<keyof Board | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-    const setSorting = (field: keyof RowData) => {
+    useEffect(() => {
+        (async () => {
+            const data = await getBoards(channelId);
+            setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search }));
+        })();
+    }, [channelId, sortBy, reverseSortDirection, search]);
+
+    const setSorting = (field: keyof Board) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        setSortedData(sortData(data, { sortBy: field, reversed, search }));
+        // 검색어가 변경될 때 정렬을 유지하기 위해 useEffect에서 sortedData를 업데이트함
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget;
         setSearch(value);
-        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
+    };
+
+    const handleCreateClick = () => navigate(`/channels/${channelId}/boards/new`);
+
+    const handleUpdateteClick = (id: string) => () => navigate(`/Boards/${id}`);
+
+    const handleDeleteClick = (id: string) => async () => {
+        await removeBoards(channelId, id);
+        setSortedData((prev) => prev.filter((board) => board.id !== id));
     };
 
     const rows = sortedData.map((row) => (
-        <Table.Tr key={row.name}>
-            <Table.Td>{row.name}</Table.Td>
-            <Table.Td>{row.email}</Table.Td>
-            <Table.Td>{row.company}</Table.Td>
+        <Table.Tr key={row.id}>
+            <Table.Td>{row.id}</Table.Td>
+            <Table.Td>{row.title}</Table.Td>
+            <Table.Td>{row.updatedAt}</Table.Td>
+            <Button onClick={handleUpdateteClick(row.id)} color="green" m={10}>수정하기</Button>
+            <Button onClick={handleDeleteClick(row.id)} color="red">DELETE</Button>
         </Table.Tr>
     ));
 
     return (
-        <ScrollArea>
-            <TextInput
-                placeholder="Search by any field"
-                mb="md"
-                leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                value={search}
-                onChange={handleSearchChange}
-            />
-            <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
-                <Table.Tbody>
-                    <Table.Tr>
-                        <Th
-                            sorted={sortBy === 'name'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('name')}
-                        >
-                            Name
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'email'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('email')}
-                        >
-                            Email
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'company'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('company')}
-                        >
-                            Company
-                        </Th>
-                    </Table.Tr>
-                </Table.Tbody>
-                <Table.Tbody>
-                    {rows.length > 0 ? (
-                        rows
-                    ) : (
+        <Container fluid bg="var(--mantine-color-blue-light)">
+            <Group justify='space-between'>
+                <Text>게시판목록</Text>
+                <Button onClick={handleCreateClick}>CREATE</Button>
+            </Group>
+            <ScrollArea>
+                <TextInput
+                    placeholder="Search by any field"
+                    mb="md"
+                    leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                    value={search}
+                    onChange={handleSearchChange}
+                />
+                <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
+                    <Table.Thead>
                         <Table.Tr>
-                            <Table.Td colSpan={Object.keys(data[0]).length}>
-                                <Text fw={500} ta="center">
-                                    Nothing found
-                                </Text>
-                            </Table.Td>
+                            <Th
+                                sorted={sortBy === 'id'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('id')}
+                            >
+                                ID
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'title'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('title')}
+                            >
+                                Title
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'updatedAt'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('updatedAt')}
+                            >
+                                Updated At
+                            </Th>
                         </Table.Tr>
-                    )}
-                </Table.Tbody>
-            </Table>
-        </ScrollArea>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {rows.length > 0 ? (
+                            rows
+                        ) : (
+                            <Table.Tr>
+                                <Table.Td colSpan={4}>
+                                    <Text fw={500} ta="center">
+                                        Nothing found
+                                    </Text>
+                                </Table.Td>
+                            </Table.Tr>
+                        )}
+                    </Table.Tbody>
+                </Table>
+            </ScrollArea>
+        </Container>
     );
 }
 
 export default ChannelAdminPage;
+
+export interface Board {
+    id: string;
+    title: string;
+    updatedAt: string;
+}

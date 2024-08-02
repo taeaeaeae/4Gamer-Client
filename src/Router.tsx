@@ -3,6 +3,7 @@ import ChannelsPage from '@/pages/channels/ChannelsPage';
 import ChannelDetailPage from '@/pages/channels/ChannelDetailPage';
 import ChannerCreate from "@/pages/channels/CreateChannel"
 import ChannelAdminPage from "@/pages/channels/ChannelAdminPage"
+import BoardCreate from "@/pages/channels/CreateBoard"
 
 const router = createBrowserRouter([
   {
@@ -14,15 +15,19 @@ const router = createBrowserRouter([
       },
       {
         path: ':id',
-        element: <ChannelDetailPage />,
+        element: <ChannelDetailPage />
       },
       {
         path: 'new',
         element: <ChannerCreate />,
       },
       {
-        path: 'admin',
+        path: ':channelId/admin',
         element: <ChannelAdminPage />,
+      },
+      {
+        path: ':channelId/boards/new',
+        element: <BoardCreate />,
       },
     ],
   },
