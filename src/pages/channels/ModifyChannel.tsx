@@ -48,7 +48,7 @@ const ModifyChannel = () => {
             try {
                 const updatedChannel = { title, introduction };
                 await updateChannel(channelId, updatedChannel);
-                navigate('/channels');
+                navigate(`/channels/${channelId}/admin`);
             } catch (error) {
                 alert('Error updating channel');
             }

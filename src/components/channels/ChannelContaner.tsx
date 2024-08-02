@@ -18,22 +18,12 @@ interface ChannelData {
 }
 
 const ChannelContainer = () => {
-    const [channels, setChannels] = useState<Channel[]>([]); // 상태 변수에 대한 타입 명시
-
-    // Channels를 가져오는 함수
+    const [channels, setChannels] = useState<Channel[]>([]);
     const fetchChannels = async () => {
         const data = await getChannels();
         setChannels(data);
     };
 
-    // 새로운 Channel을 추가하는 함수
-    const addChannel = async (channel: ChannelData) => {
-        await createChannel(channel);
-        await fetchChannels();
-        alert("Channel 추가 완료!");
-    };
-
-    // Channel을 삭제하는 함수
     const removeChannel = async (id: number) => {
         await deleteChannel(id);
         await fetchChannels();
@@ -46,7 +36,6 @@ const ChannelContainer = () => {
         alert("Channel 수정 완료!");
     };
 
-    // 컴포넌트가 마운트될 때 Channels를 가져오는 함수 호출
     useEffect(() => {
         fetchChannels();
     }, []);

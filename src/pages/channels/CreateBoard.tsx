@@ -1,4 +1,4 @@
-import { Button, Container, Group, TextInput, Textarea, Autocomplete, Loader } from '@mantine/core';
+import { Button, Container, Group, TextInput, Textarea } from '@mantine/core';
 import { useState, FormEvent, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createboard, request } from '@/api/boardApi';
@@ -12,12 +12,10 @@ const BoardCreate = () => {
     const { channelId } = useParams();
     const navigate = useNavigate();
 
-    // 검증됐을 때 할 행동
     const handleSubmit = async (e: FormEvent) => {
 
         e.preventDefault();
         try {
-            // 로봇여부체크
             const result = await checkIsRobot();
             if (result.score < 0.8) {
                 throw new Error('사람이 아님')
@@ -25,7 +23,6 @@ const BoardCreate = () => {
 
 
             try {
-                // API를 통해 데이터를 포스트
                 const newboard: request = {
                     title,
                     introduction,
@@ -33,10 +30,8 @@ const BoardCreate = () => {
 
                 await createboard(channelId, newboard);
 
-                // 성공적으로 포스트된 후 채널 목록 화면으로 이동
                 navigate(`/channels/${channelId}/admin`);
             } catch (error) {
-                // 에러 처리
                 alert('Error creating board');
             }
 

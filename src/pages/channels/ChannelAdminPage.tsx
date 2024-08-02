@@ -14,6 +14,7 @@ import {
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBoards, removeBoards } from '../../api/boardApi';
+import { useIsRobot } from '@/api/captchaApi';
 
 interface ThProps {
     children: React.ReactNode;
@@ -76,6 +77,7 @@ function sortData(
 export function ChannelAdminPage() {
     const navigate = useNavigate();
     const { channelId } = useParams();
+    const { checkIsRobot } = useIsRobot();
 
     const [sortedData, setSortedData] = useState<Board[]>([]);
     const [search, setSearch] = useState('');
@@ -107,8 +109,20 @@ export function ChannelAdminPage() {
     const handleUpdateteChannelClick = (id: any) => () => navigate(`/channels/${id}/edit`);
 
     const handleDeleteClick = (id: string) => async () => {
-        await removeBoards(channelId, id);
-        setSortedData((prev) => prev.filter((board) => board.id !== id));
+
+        try {
+            const result = await checkIsRobot();
+            if (result.score < 0.8) {
+                throw new Error('사람이 아님')
+            }
+
+            await removeBoards(channelId, id);
+            setSortedData((prev) => prev.filter((board) => board.id !== id));
+
+
+        } catch (error) {
+            console.error("Failed to check robot status:", error);
+        }
     };
 
     const rows = sortedData.map((row) => (
