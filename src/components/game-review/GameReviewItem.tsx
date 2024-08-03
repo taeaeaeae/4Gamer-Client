@@ -87,13 +87,6 @@ function GameReviewItem(item: GameReviewItem) {
     setDescription(info.description);
   };
 
-  localStorage.setItem(
-    // TEST용
-    'accessToken',
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiM2E3NzY5Ny1jMGY2LTQxNjMtOTRlNC0zYTk4NWM1NTE5ODkiLCJpc3MiOiI0Z2FtZXIuY29tIiwiaWF0IjoxNzIyMzM4NzI5LCJleHAiOjE3MjI5NDM1MjksImVtYWlsIjoiaGVsbG91ODM2M0BuYXZlci5jb20iLCJyb2xlIjoiQ0hBTk5FTF9BRE1JTiJ9.yMtSU4E85jpmGEK-pCwQh8Z07VYEHYrcOMNnwYWG1dE'
-  );
-  localStorage.setItem('4gamer_member_id', 'b3a77697-c0f6-4163-94e4-3a985c551989'); // TEST용
-
   useEffect(() => {
     if (isRenderingComplete) {
       updateVote();

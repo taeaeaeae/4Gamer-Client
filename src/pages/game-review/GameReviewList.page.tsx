@@ -5,12 +5,13 @@ import { getGameReviewList } from '../../api/GameReviewApi';
 import { getGameReviewReactionList } from '@/api/VoteApi';
 import GameReviewItem from '@/components/game-review/GameReviewItem';
 import GameReviewInput from '@/components/game-review/GameReviewInput';
-import './GameReviewListPage.css';
+import './GameReviewList.page.css';
+import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
   const [page, setPage] = useState(0);
-  const size = 10; // 한 번에 가져올 데이터 개수
+  const size = 10;
   const totalCount = useRef(1);
   const { ref, inView } = useInView();
   const [voteList, setVoteList] = useState<VoteList[]>([]);
@@ -45,7 +46,7 @@ const GameReviewList = () => {
     fetchGameReviewReactionList();
   }, []);
 
-  return (
+  const bodyContent = (
     <>
       <div className="game-review-list-container">
         <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
@@ -68,6 +69,16 @@ const GameReviewList = () => {
       </div>
       <div ref={ref}></div>
     </>
+  );
+
+  return (
+    <PageFrame
+      headerContent={undefined}
+      bodyContent={bodyContent}
+      navbarContent={undefined}
+      asideContent={undefined}
+      footerContent={undefined}
+    />
   );
 };
 
