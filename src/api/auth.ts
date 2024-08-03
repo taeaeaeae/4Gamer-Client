@@ -11,10 +11,17 @@ export const signup = async (email: string, password: string, nickname: string) 
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await client.post(`/api/v1/auth/signin`, { 
+  const response = await client.post(`/api/v1/auth/signin`, {
     email,
     password,
   });
+
+  return response.data;
+};
+
+
+export const googleLogin = async () => {
+  const response = await client.post(`/api/v1/auth/signin/google`);
 
   return response.data;
 };

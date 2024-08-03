@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 import { useToggle, upperFirst } from '@mantine/hooks';
 import { GoogleButton } from './css/GoogleButton';
 import { useNavigate } from "react-router-dom";
-import { 
-  login, 
-  signup } from '../api/auth';
+import {
+  login,
+  googleLogin,
+  signup
+} from '../api/auth';
 import {
   TextInput,
   PasswordInput,
@@ -23,8 +25,18 @@ export function LoginContainer() {
   const navigate = useNavigate();
   const [type, toggle] = useToggle(['login', 'signup']);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     window.location.href = `http://127.0.0.1:8080/oauth2/authorization/google`;
+
+    navigate("/google");
+
+    const data = await googleLogin();
+    console.log("data :>> ", data);
+
+
+    localStorage.setItem("accessToken", data.accessToken);
+    alert('환영합니다.');
+    // navigate("/google");
   };
 
   useEffect(() => {
@@ -36,11 +48,11 @@ export function LoginContainer() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     try {
       const formData = new FormData(event.currentTarget);
       const emailRegex = /^\S+@\S+$/;
-      
+
       if (type === 'signup') {
         const nickname = formData.get("nickname");
         const email = formData.get("email");
@@ -48,13 +60,13 @@ export function LoginContainer() {
 
         if (typeof nickname !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
           throw new Error('폼 데이터가 올바르지 않습니다.');
-        }  
+        }
         if (!emailRegex.test(email) || email.length < 8 || email.length > 64) {
           throw new Error('Invalid email: Email should be between 8 and 64 characters and follow email format.');
-        } 
+        }
         if (nickname.length < 2 || nickname.length > 16) {
           throw new Error('Invalid nickname: Nickname should be between 2 and 16 characters.');
-        } 
+        }
 
         const data = await signup(email, password, nickname);
         console.log("data :>> ", data);
@@ -65,15 +77,15 @@ export function LoginContainer() {
 
         if (typeof email !== 'string' || typeof password !== 'string') {
           throw new Error('폼 데이터가 올바르지 않습니다.');
-        }  
+        }
         if (!emailRegex.test(email) || email.length < 8 || email.length > 64) {
           throw new Error('Invalid email: Email should be between 8 and 64 characters and follow email format.');
         }
-  
+
         const data = await login(email, password);
-  
+
         console.log("data :>> ", data);
-  
+
         localStorage.setItem("accessToken", data.accessToken);
         alert('환영합니다.');
         navigate("/main");
@@ -85,22 +97,22 @@ export function LoginContainer() {
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh' 
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh'
     }}>
-      <Paper 
-        radius="md" 
-        p="xl" 
-        withBorder 
-        style={{ 
-          width: '100%', 
-          maxWidth: 500, 
-          maxHeight: 800, 
-          padding: '2rem', 
-          overflowY: 'auto' 
+      <Paper
+        radius="md"
+        p="xl"
+        withBorder
+        style={{
+          width: '100%',
+          maxWidth: 500,
+          maxHeight: 800,
+          padding: '2rem',
+          overflowY: 'auto'
         }}
       >
         <Text size="lg" fw={500}>

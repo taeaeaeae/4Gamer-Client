@@ -44,6 +44,10 @@ const router = createBrowserRouter([
     path: "/blacklist",
     element: <BlackListPage />,
   },
+  {
+    path: "/google",
+    element: <BlackListPage />,
+  },
 
   {
     path: "/message",
