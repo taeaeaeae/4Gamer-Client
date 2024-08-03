@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { getGameReviewList } from '../../api/GameReviewApi';
-import { getGameReviewReactionList } from '@/api/VoteApi';
-import GameReviewItem from '@/components/game-review/GameReviewItem';
-import GameReviewInput from '@/components/game-review/GameReviewInput';
+import { getGameReviewReactionList } from '../../api/VoteApi';
+import GameReviewItem from '../../components/game-review/GameReviewItem';
+import GameReviewInput from '../../components/game-review/GameReviewInput';
 import './GameReviewList.page.css';
-import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
+import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);

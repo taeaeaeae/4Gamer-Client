@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import GameReviewScore from './GameReviewScore';
 import { dateFormat } from '../../util/dateUtil';
-import { thumbsUpFill, thumbsUpBlank, thumbsDownFill, thumbsDownBlank } from '@/assets/index';
+import { thumbsUpFill, thumbsUpBlank, thumbsDownFill, thumbsDownBlank } from '../../assets/index';
 import './GameReviewItem.css';
-import { deleteGameReview } from '@/api/GameReviewApi';
-import { deleteGameReviewReaction, updateGameReviewReaction } from '@/api/VoteApi';
+import { deleteGameReview } from '../../api/GameReviewApi';
+import { deleteGameReviewReaction, updateGameReviewReaction } from '../../api/VoteApi';
 import GameReviewInput from './GameReviewInput';
 
 function GameReviewItem(item: GameReviewItem) {

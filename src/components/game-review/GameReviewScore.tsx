@@ -1,4 +1,4 @@
-import { starFill, halfStar } from '@/assets/index';
+import { starFill, halfStar } from '../../assets/index';
 
 function GameReviewScore(score: GameReviewScore) {
   const count = [...Array(~~(score.score / 2))];
