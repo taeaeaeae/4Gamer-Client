@@ -7,42 +7,40 @@ import BlackListPage from './pages/BlackList.page';
 import MessagePage from './pages/Message.page';
 import PostPage from './pages/Post.page';
 import GameReviewList from './pages/game-review/GameReviewList.page';
-import NotFoundPage from './pages/NotFound.page';
-
 
 const router = createBrowserRouter([
   {
-    path: "",
+    path: '',
     element: <Header />,
   },
 
   {
-    path: "/main",
+    path: '/main',
     element: <HomePage />,
   },
 
   {
-    path: "/login",
+    path: '/login',
     element: <LoginPage />,
   },
 
   {
-    path: "/member",
+    path: '/member',
     element: <MemberPage />,
   },
 
   {
-    path: "/post",
+    path: '/post',
     element: <PostPage />,
   },
 
   {
-    path: "/blacklist",
+    path: '/blacklist',
     element: <BlackListPage />,
   },
 
   {
-    path: "/message",
+    path: '/message',
     element: <MessagePage />,
   },
 
