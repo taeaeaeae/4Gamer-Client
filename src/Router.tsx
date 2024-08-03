@@ -10,7 +10,7 @@ import PostPage from './pages/Post.page';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     element: <Header />,
   },
 

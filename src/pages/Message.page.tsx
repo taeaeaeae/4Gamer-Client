@@ -1,12 +1,15 @@
 import  { MessageContainer } from "../components/MessageContainer";
-
+import { PageFrame } from "../components/Common/PageFrame/PageFrame";
 
 const MessagePage = () => {
 
   return (
-    <section className="message-section">
-      <MessageContainer />
-    </section>
+    <>
+      <PageFrame
+        bodyContent={<section className="message-section">
+          <MessageContainer />
+        </section>} navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}      />
+    </>
   );
 };
 

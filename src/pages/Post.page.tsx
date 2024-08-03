@@ -1,11 +1,15 @@
+import { PageFrame } from "../components/Common/PageFrame/PageFrame";
 import { PostContainer } from "../components/PostContainer";
 
 const PostPage = () => {
 
   return (
-    <section className="post-section">
-      <PostContainer />
-    </section>
+    <>
+      <PageFrame
+        bodyContent={<section className="post-section">
+          <PostContainer />
+        </section>} navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}      />
+    </>
   );
 };
 

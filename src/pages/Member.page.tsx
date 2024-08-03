@@ -1,11 +1,15 @@
+import { PageFrame } from "../components/Common/PageFrame/PageFrame";
 import { MemberContainer } from "../components/MemberContainer";
 
 const MemberPage = () => {
 
   return (
-    <section className="member-section">
-      <MemberContainer />
-    </section>
+    <>
+      <PageFrame
+        bodyContent={<section className="member-section">
+          <MemberContainer />
+        </section>} navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}      />
+    </>
   );
 };
 

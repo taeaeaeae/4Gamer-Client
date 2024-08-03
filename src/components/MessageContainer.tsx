@@ -25,7 +25,7 @@ export function MessageContainer () {
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [client, setClient] = useState<Client | null>(null);
-    const [messages, setMessages] = useState<any[]>([]); // 새로운 상태 추가
+    const [messages, setMessages] = useState<any[]>([]);
     const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -115,24 +115,26 @@ export function MessageContainer () {
                     ))
                 )}
                 <br/>
-                <Card withBorder padding="xl" radius="md" className={classes.card}>
+                <Card withBorder padding="xl" radius="md" className={classes.card} style={{minHeight: '300px'}}>
                     <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <Input
-                                placeholder="Enter Target ID"
-                                value={targetId}
-                                onChange={(e) => setTargetId(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <Textarea 
-                                placeholder="Enter your message"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                required
-                            />
-                        </div>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <Input
+                            placeholder="Enter Target ID"
+                            value={targetId}
+                            onChange={(e) => setTargetId(e.target.value)}
+                            required
+                            style={{ width: '100%' }}
+                        />
+                    </div>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <Textarea 
+                            placeholder="Enter your message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            required
+                            rows={6}
+                        />
+                    </div>
                         <Group justify="right">
                             <Button type="submit">전송</Button>
                         </Group>
