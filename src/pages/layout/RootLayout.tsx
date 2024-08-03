@@ -9,7 +9,7 @@ const RootLayout = () => {
   }
   return (
     <main>
-      <Header /> 
+      <Header />
       <Outlet />
     </main>
   );
