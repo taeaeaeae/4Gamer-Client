@@ -1,9 +1,9 @@
 import { Button, Container, Group, TextInput, Textarea } from '@mantine/core';
 import { useState, FormEvent, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createboard, request } from '@/api/boardApi';
-import { useIsRobot } from '@/api/captchaApi';
-import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
+import { createboard, request } from '../../api/boardApi';
+import { useIsRobot } from '../../api/captchaApi';
+import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 
 
 const BoardCreate = () => {

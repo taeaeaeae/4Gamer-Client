@@ -1,9 +1,9 @@
 import { Button, Container, Group, TextInput, Textarea, Autocomplete, Loader } from '@mantine/core';
 import { useState, FormEvent, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createChannel, request, searchGameTitle } from '@/api/channelApi';
-import { useIsRobot } from '@/api/captchaApi';
-import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
+import { createChannel, request, searchGameTitle } from '../../api/channelApi';
+import { useIsRobot } from '../../api/captchaApi';
+import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 
 
 const ChannelCreate = () => {

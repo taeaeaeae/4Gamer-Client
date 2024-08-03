@@ -2,7 +2,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getChannelItem } from '../../api/channelApi'; // 채널 데이터를 가져오는 API 함수
-import { Channel } from '../../components/channels/Channelitem';
+import { Channel } from '../../components/channels/channelitem';
 
 const ChannelDetailPage = () => {
     const { id } = useParams<{ id: string }>();

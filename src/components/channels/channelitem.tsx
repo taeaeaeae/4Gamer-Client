@@ -2,7 +2,7 @@ import { Card, Text, Badge, Button, Group, Grid, Container, Space, Flex, TextInp
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { getChannels } from '../../api/channelApi';
-import { useIsRobot } from '@/api/captchaApi';
+import { useIsRobot } from '../../api/captchaApi';
 import { IconSearch } from '@tabler/icons-react';
 import { PageFrame } from '../Common/PageFrame/PageFrame';
 

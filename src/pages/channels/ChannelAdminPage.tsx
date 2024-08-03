@@ -14,8 +14,8 @@ import {
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBoards, removeBoards } from '../../api/boardApi';
-import { useIsRobot } from '@/api/captchaApi';
-import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
+import { useIsRobot } from '../../api/captchaApi';
+import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 
 interface ThProps {
     children: React.ReactNode;
