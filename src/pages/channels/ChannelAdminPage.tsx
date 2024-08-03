@@ -15,6 +15,7 @@ import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@table
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBoards, removeBoards } from '../../api/boardApi';
 import { useIsRobot } from '@/api/captchaApi';
+import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
 
 interface ThProps {
     children: React.ReactNode;
@@ -136,64 +137,73 @@ export function ChannelAdminPage() {
     ));
 
     return (
-        <Container fluid bg="var(--mantine-color-blue-light)">
-            <Group justify='space-between' m={10}>
-                <Text>게시판목록</Text>
-                <Group>
-                    <Button onClick={handleUpdateteChannelClick(channelId)} color="green" m={10}>채널수정</Button>
-                    <Button onClick={handleCreateClick}>CREATE</Button>
-                </Group>
-            </Group>
-            <ScrollArea>
-                <TextInput
-                    placeholder="Search by any field"
-                    mb="md"
-                    leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                    value={search}
-                    onChange={handleSearchChange}
-                />
-                <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
-                    <Table.Thead>
-                        <Table.Tr>
-                            <Th
-                                sorted={sortBy === 'id'}
-                                reversed={reverseSortDirection}
-                                onSort={() => setSorting('id')}
-                            >
-                                ID
-                            </Th>
-                            <Th
-                                sorted={sortBy === 'title'}
-                                reversed={reverseSortDirection}
-                                onSort={() => setSorting('title')}
-                            >
-                                Title
-                            </Th>
-                            <Th
-                                sorted={sortBy === 'updatedAt'}
-                                reversed={reverseSortDirection}
-                                onSort={() => setSorting('updatedAt')}
-                            >
-                                Updated At
-                            </Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                        {rows.length > 0 ? (
-                            rows
-                        ) : (
-                            <Table.Tr>
-                                <Table.Td colSpan={4}>
-                                    <Text fw={500} ta="center">
-                                        Nothing found
-                                    </Text>
-                                </Table.Td>
-                            </Table.Tr>
-                        )}
-                    </Table.Tbody>
-                </Table>
-            </ScrollArea>
-        </Container>
+        <>
+            <PageFrame bodyContent={
+
+                <Container fluid bg="var(--mantine-color-blue-light)">
+                    <Group justify='space-between' m={10}>
+                        <Text>게시판목록</Text>
+                        <Group>
+                            <Button onClick={handleUpdateteChannelClick(channelId)} color="green" m={10}>채널수정</Button>
+                            <Button onClick={handleCreateClick}>CREATE</Button>
+                        </Group>
+                    </Group>
+                    <ScrollArea>
+                        <TextInput
+                            placeholder="Search by any field"
+                            mb="md"
+                            leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                            value={search}
+                            onChange={handleSearchChange}
+                        />
+                        <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
+                            <Table.Thead>
+                                <Table.Tr>
+                                    <Th
+                                        sorted={sortBy === 'id'}
+                                        reversed={reverseSortDirection}
+                                        onSort={() => setSorting('id')}
+                                    >
+                                        ID
+                                    </Th>
+                                    <Th
+                                        sorted={sortBy === 'title'}
+                                        reversed={reverseSortDirection}
+                                        onSort={() => setSorting('title')}
+                                    >
+                                        Title
+                                    </Th>
+                                    <Th
+                                        sorted={sortBy === 'updatedAt'}
+                                        reversed={reverseSortDirection}
+                                        onSort={() => setSorting('updatedAt')}
+                                    >
+                                        Updated At
+                                    </Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>
+                                {rows.length > 0 ? (
+                                    rows
+                                ) : (
+                                    <Table.Tr>
+                                        <Table.Td colSpan={4}>
+                                            <Text fw={500} ta="center">
+                                                Nothing found
+                                            </Text>
+                                        </Table.Td>
+                                    </Table.Tr>
+                                )}
+                            </Table.Tbody>
+                        </Table>
+                    </ScrollArea>
+                </Container>
+
+
+            } navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}>
+
+            </PageFrame>
+        </>
     );
 }
 

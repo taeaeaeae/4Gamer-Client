@@ -3,6 +3,7 @@ import { useState, FormEvent, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createChannel, request, searchGameTitle } from '@/api/channelApi';
 import { useIsRobot } from '@/api/captchaApi';
+import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
 
 
 const ChannelCreate = () => {
@@ -92,39 +93,44 @@ const ChannelCreate = () => {
 
     return (
         <>
-            <Container size={'lg'}>
-                <form onSubmit={handleSubmit}>
-                    <TextInput
-                        label="Title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <Autocomplete
-                        value={gameTitle}
-                        data={gameTitleSearchResult.map(name => ({ value: name, label: name }))}
-                        onChange={(val) => handleChange(val)}
-                        rightSection={loading ? <Loader size="1rem" /> : null}
-                        label="Game Title"
-                        placeholder="게임 제목을 입력하세요"
-                    />
+            <PageFrame bodyContent={
 
-                    <Textarea
-                        label="Introduction"
-                        value={introduction}
-                        onChange={(e) => setIntroduction(e.target.value)}
-                    />
-                    <TextInput
-                        label="Alias"
-                        value={alias}
-                        onChange={(e) => setAlias(e.target.value)}
-                    />
-                    <br />
-                    <Group justify='flex-end' >
-                        <Button mr={30} type="submit">Submit</Button>
-                    </Group>
-                </form>
+                <Container size={'lg'}>
+                    <form onSubmit={handleSubmit}>
+                        <TextInput
+                            label="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <Autocomplete
+                            value={gameTitle}
+                            data={gameTitleSearchResult.map(name => ({ value: name, label: name }))}
+                            onChange={(val) => handleChange(val)}
+                            rightSection={loading ? <Loader size="1rem" /> : null}
+                            label="Game Title"
+                            placeholder="게임 제목을 입력하세요"
+                        />
 
-            </Container>
+                        <Textarea
+                            label="Introduction"
+                            value={introduction}
+                            onChange={(e) => setIntroduction(e.target.value)}
+                        />
+                        <TextInput
+                            label="Alias"
+                            value={alias}
+                            onChange={(e) => setAlias(e.target.value)}
+                        />
+                        <br />
+                        <Group justify='flex-end' >
+                            <Button mr={30} type="submit">Submit</Button>
+                        </Group>
+                    </form>
+
+                </Container>
+            } navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}>
+
+            </PageFrame>
         </>
     );
 };

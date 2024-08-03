@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getChannels } from '../../api/channelApi';
 import { useIsRobot } from '@/api/captchaApi';
 import { IconSearch } from '@tabler/icons-react';
+import { PageFrame } from '../Common/PageFrame/PageFrame';
 
 function ChannelItem(item: Channel) {
     const navigate = useNavigate();
@@ -43,6 +44,7 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
                 throw new Error('사람이 아님');
             }
             // 검증됐을 때 할 행동
+            navigate("/channels/new")
         } catch (error) {
             console.error("Failed to check robot status:", error);
         }
@@ -65,34 +67,45 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
 
     return (
         <>
-            <Container fluid bg="var(--mantine-color-blue-light)">
-                <Group justify='space-between' m={10}>
-                    <Text>채널목록</Text>
-                    <Button onClick={handleCreateClick}>CREATE</Button>
-                </Group>
-                <TextInput
-                    placeholder="찾고싶은 채널을 입력하세요"
-                    mb="md"
-                    value={search}
-                    onChange={(event) => setSearch(event.currentTarget.value)}
-                />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
-                    {filteredChannelList.map((value) => (
-                        <Grid key={value.id} display={Flex}>
-                            <ChannelItem
-                                id={value.id}
-                                title={value.title}
-                                gameTitle={value.gameTitle}
-                                introduction={value.introduction}
-                                alias={value.alias}
-                                createdAt={value.createdAt}
-                                updatedAt={value.updatedAt}
-                            />
-                        </Grid>
-                    ))}
-                    <div ref={ref}></div>
-                </div>
-            </Container>
+            <PageFrame
+                bodyContent={
+
+                    <Container fluid bg="var(--mantine-color-blue-light)">
+                        <Group justify='space-between' m={10}>
+                            <Text>채널목록</Text>
+                            <Button onClick={handleCreateClick}>CREATE</Button>
+                        </Group>
+                        <TextInput
+                            placeholder="찾고싶은 채널을 입력하세요"
+                            mb="md"
+                            value={search}
+                            onChange={(event) => setSearch(event.currentTarget.value)}
+                        />
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+                            {filteredChannelList.map((value) => (
+                                <Grid key={value.id} display={Flex}>
+                                    <ChannelItem
+                                        id={value.id}
+                                        title={value.title}
+                                        gameTitle={value.gameTitle}
+                                        introduction={value.introduction}
+                                        alias={value.alias}
+                                        createdAt={value.createdAt}
+                                        updatedAt={value.updatedAt}
+                                    />
+                                </Grid>
+                            ))}
+                            <div ref={ref}></div>
+                        </div>
+                    </Container>
+                }
+                navbarContent={undefined}
+                asideContent={undefined}
+                headerContent={undefined}
+                footerContent={undefined}>
+
+
+            </PageFrame>
         </>
     );
 };

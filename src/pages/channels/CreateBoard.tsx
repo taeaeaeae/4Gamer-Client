@@ -3,6 +3,7 @@ import { useState, FormEvent, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createboard, request } from '@/api/boardApi';
 import { useIsRobot } from '@/api/captchaApi';
+import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
 
 
 const BoardCreate = () => {
@@ -45,25 +46,30 @@ const BoardCreate = () => {
 
     return (
         <>
-            <Container size={'lg'}>
-                <form onSubmit={handleSubmit}>
-                    <TextInput
-                        label="Title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <Textarea
-                        label="Introduction"
-                        value={introduction}
-                        onChange={(e) => setIntroduction(e.target.value)}
-                    />
-                    <br />
-                    <Group justify='flex-end' >
-                        <Button mr={30} type="submit">Submit</Button>
-                    </Group>
-                </form>
+            <PageFrame bodyContent={
 
-            </Container>
+                <Container size={'lg'}>
+                    <form onSubmit={handleSubmit}>
+                        <TextInput
+                            label="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <Textarea
+                            label="Introduction"
+                            value={introduction}
+                            onChange={(e) => setIntroduction(e.target.value)}
+                        />
+                        <br />
+                        <Group justify='flex-end' >
+                            <Button mr={30} type="submit">Submit</Button>
+                        </Group>
+                    </form>
+
+                </Container>
+            } navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}>
+
+            </PageFrame>
         </>
     );
 };
