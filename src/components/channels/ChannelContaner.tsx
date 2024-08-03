@@ -5,8 +5,8 @@ import {
     updateChannel,
     deleteChannel
 } from "../../api/channelApi";
-import ChannelList from "./Channelitem";
-import { Channel } from "./Channelitem"
+import ChannelList from "./channelitem";
+import { Channel } from "./channelitem"
 
 // Todo 인터페이스 정의
 interface ChannelData {
@@ -30,11 +30,11 @@ const ChannelContainer = () => {
         alert("Channel 삭제 완료!");
     };
 
-    const updateChannel = async (channel: ChannelData) => {
-        await updateChannel(channel);
-        await fetchChannels();
-        alert("Channel 수정 완료!");
-    };
+    // const updateChannel = async (channel: ChannelData) => {
+    //     await updateChannel(channel);
+    //     await fetchChannels();
+    //     alert("Channel 수정 완료!");
+    // };
 
     useEffect(() => {
         fetchChannels();

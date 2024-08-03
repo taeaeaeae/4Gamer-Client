@@ -43,7 +43,6 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
                 throw new Error('사람이 아님');
             }
             // 검증됐을 때 할 행동
-            navigate(`/channels/new`);
         } catch (error) {
             console.error("Failed to check robot status:", error);
         }
