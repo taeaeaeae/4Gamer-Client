@@ -51,13 +51,20 @@ const GameReviewList = () => {
     }
   };
 
+  const clearMemberId = () => localStorage.removeItem('4gamer_member_id');
+
   useEffect(() => {
     fetchGameReviewList();
   }, [inView]);
   useEffect(() => {
     fetchGameReviewReactionList();
 
-    return () => localStorage.removeItem('4gamer_member_id');
+    window.addEventListener('beforeunload', clearMemberId);
+
+    return () => {
+      clearMemberId();
+      window.removeEventListener('beforeunload', clearMemberId);
+    };
   }, []);
 
   const bodyContent = (
