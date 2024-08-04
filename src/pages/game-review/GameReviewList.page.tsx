@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { getGameReviewList } from '../../api/gameReviewApi';
@@ -6,7 +7,7 @@ import GameReviewItem from '../../components/game-review/GameReviewItem';
 import GameReviewInput from '../../components/game-review/GameReviewInput';
 import './GameReviewList.page.css';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
-import { useNavigate } from 'react-router-dom';
+import { getMemberInfo } from '../../api/member';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
@@ -18,13 +19,22 @@ const GameReviewList = () => {
   let callVoteList = 0;
   const hasAccessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem('accessToken');
+
+  const getMemberId = async () => {
+    if (accessToken !== null) {
+      const data = await getMemberInfo(accessToken);
+      localStorage.setItem('4gamer_member_id', data.id);
+    }
+  };
 
   const fetchGameReviewReactionList = async () => {
-    if (callVoteList < 1) {
+    if (callVoteList < 1 && accessToken !== null) {
       callVoteList += 1;
 
       const data = await getGameReviewReactionList();
 
+      getMemberId();
       setVoteList(data);
       fetchGameReviewList();
     }
