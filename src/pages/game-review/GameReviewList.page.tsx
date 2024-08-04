@@ -56,6 +56,8 @@ const GameReviewList = () => {
   }, [inView]);
   useEffect(() => {
     fetchGameReviewReactionList();
+
+    return () => localStorage.removeItem('4gamer_member_id');
   }, []);
 
   const bodyContent = (
