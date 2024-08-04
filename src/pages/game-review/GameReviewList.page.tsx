@@ -6,6 +6,7 @@ import GameReviewItem from '../../components/game-review/GameReviewItem';
 import GameReviewInput from '../../components/game-review/GameReviewInput';
 import './GameReviewList.page.css';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
+import { useNavigate } from 'react-router-dom';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
@@ -15,6 +16,8 @@ const GameReviewList = () => {
   const { ref, inView } = useInView();
   const [voteList, setVoteList] = useState<VoteList[]>([]);
   let callVoteList = 0;
+  const hasAccessToken = localStorage.getItem('accessToken');
+  const navigate = useNavigate();
 
   const fetchGameReviewReactionList = async () => {
     if (callVoteList < 1) {
@@ -48,7 +51,16 @@ const GameReviewList = () => {
   const bodyContent = (
     <>
       <div className="game-review-list-container">
-        <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
+        {hasAccessToken ? (
+          <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
+        ) : (
+          <div className="login">
+            <p>로그인 후 리뷰 작성이 가능합니다.</p>
+            <button type="button" onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          </div>
+        )}
 
         {gameReviewList?.map((value: GameReviewList) => (
           <GameReviewItem
