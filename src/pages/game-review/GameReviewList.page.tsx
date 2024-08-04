@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-
-import { getGameReviewList } from '../../api/GameReviewApi';
+import { getGameReviewList } from '../../api/gameReviewApi';
 import { getGameReviewReactionList } from '../../api/VoteApi';
 import GameReviewItem from '../../components/game-review/GameReviewItem';
 import GameReviewInput from '../../components/game-review/GameReviewInput';
