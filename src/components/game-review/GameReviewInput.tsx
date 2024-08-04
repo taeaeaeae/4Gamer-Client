@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { createGameReview, updateGameReview } from '../../api/GameReviewApi';
+import { createGameReview, updateGameReview } from '../../api/gameReviewApi';
 import './GameReviewInput.css';
 import { searchGameTitle } from '../../api/IgdbApi';
 
