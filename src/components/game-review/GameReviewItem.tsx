@@ -4,7 +4,7 @@ import GameReviewScore from './GameReviewScore';
 import { dateFormat } from '../../util/dateUtil';
 import { thumbsUpFill, thumbsUpBlank, thumbsDownFill, thumbsDownBlank } from '../../assets/index';
 import './GameReviewItem.css';
-import { deleteGameReview } from '../../api/GameReviewApi';
+import { deleteGameReview } from '../../api/gameReviewApi';
 import { deleteGameReviewReaction, updateGameReviewReaction } from '../../api/VoteApi';
 import GameReviewInput from './GameReviewInput';
 

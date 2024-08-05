@@ -1,12 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-
-import { getGameReviewList } from '../../api/GameReviewApi';
+import { getGameReviewList } from '../../api/gameReviewApi';
 import { getGameReviewReactionList } from '../../api/VoteApi';
 import GameReviewItem from '../../components/game-review/GameReviewItem';
 import GameReviewInput from '../../components/game-review/GameReviewInput';
 import './GameReviewList.page.css';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
+import { getMemberInfo } from '../../api/member';
 
 const GameReviewList = () => {
   const [gameReviewList, setGameReviewList] = useState<GameReviewList[]>([]);
@@ -16,13 +17,24 @@ const GameReviewList = () => {
   const { ref, inView } = useInView();
   const [voteList, setVoteList] = useState<VoteList[]>([]);
   let callVoteList = 0;
+  const hasAccessToken = localStorage.getItem('accessToken');
+  const navigate = useNavigate();
+  const accessToken = localStorage.getItem('accessToken');
+
+  const getMemberId = async () => {
+    if (accessToken !== null) {
+      const data = await getMemberInfo(accessToken);
+      localStorage.setItem('4gamer_member_id', data.id);
+    }
+  };
 
   const fetchGameReviewReactionList = async () => {
-    if (callVoteList < 1) {
+    if (callVoteList < 1 && accessToken !== null) {
       callVoteList += 1;
 
       const data = await getGameReviewReactionList();
 
+      getMemberId();
       setVoteList(data);
       fetchGameReviewList();
     }
@@ -39,17 +51,35 @@ const GameReviewList = () => {
     }
   };
 
+  const clearMemberId = () => localStorage.removeItem('4gamer_member_id');
+
   useEffect(() => {
     fetchGameReviewList();
   }, [inView]);
   useEffect(() => {
     fetchGameReviewReactionList();
+
+    window.addEventListener('beforeunload', clearMemberId);
+
+    return () => {
+      clearMemberId();
+      window.removeEventListener('beforeunload', clearMemberId);
+    };
   }, []);
 
   const bodyContent = (
     <>
       <div className="game-review-list-container">
-        <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
+        {hasAccessToken ? (
+          <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
+        ) : (
+          <div className="login">
+            <p>로그인 후 리뷰 작성이 가능합니다.</p>
+            <button type="button" onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          </div>
+        )}
 
         {gameReviewList?.map((value: GameReviewList) => (
           <GameReviewItem
