@@ -4,7 +4,6 @@ import { GoogleButton } from './css/GoogleButton';
 import { useNavigate } from "react-router-dom";
 import {
   login,
-  googleLogin,
   signup
 } from '../api/auth';
 import {
@@ -27,16 +26,6 @@ export function LoginContainer() {
 
   const handleClick = async () => {
     window.location.href = `http://127.0.0.1:8080/oauth2/authorization/google`;
-
-    navigate("/google");
-
-    const data = await googleLogin();
-    console.log("data :>> ", data);
-
-
-    localStorage.setItem("accessToken", data.accessToken);
-    alert('환영합니다.');
-    // navigate("/google");
   };
 
   useEffect(() => {

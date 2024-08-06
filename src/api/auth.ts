@@ -18,10 +18,3 @@ export const login = async (email: string, password: string) => {
 
   return response.data;
 };
-
-
-export const googleLogin = async () => {
-  const response = await client.post(`/api/v1/auth/signin/google`);
-
-  return response.data;
-};

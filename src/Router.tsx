@@ -9,9 +9,10 @@ import PostPage from './pages/Post.page';
 import ChannelsPage from './pages/channels/ChannelsPage';
 import ChannelDetailPage from './pages/channels/ChannelDetailPage';
 import ChannerCreate from "./pages/channels/CreateChannel"
-import ChannelModify from "./pages/channels/ModifyChannel"
+import ChannelModify from "./pages/channels/ModifyChannel"
 import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
 import BoardCreate from "./pages/channels/CreateBoard"
+import { GoogleLogin } from './pages/GoogleLogin.page';
 
 
 const router = createBrowserRouter([
@@ -45,8 +46,8 @@ const router = createBrowserRouter([
     element: <BlackListPage />,
   },
   {
-    path: "/google",
-    element: <BlackListPage />,
+    path: "/login/google",
+    element: <GoogleLogin />,
   },
 
   {
