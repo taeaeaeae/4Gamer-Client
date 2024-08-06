@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useToggle, upperFirst } from '@mantine/hooks';
 import { GoogleButton } from './css/GoogleButton';
 import { useNavigate } from "react-router-dom";
+import { useIsRobot } from '../api/captchaApi';
 import {
   login,
   signup
@@ -22,6 +23,7 @@ import {
 export function LoginContainer() {
 
   const navigate = useNavigate();
+  const { checkIsRobot } = useIsRobot();
   const [type, toggle] = useToggle(['login', 'signup']);
 
   const handleClick = async () => {
@@ -56,10 +58,18 @@ export function LoginContainer() {
         if (nickname.length < 2 || nickname.length > 16) {
           throw new Error('Invalid nickname: Nickname should be between 2 and 16 characters.');
         }
+        try {
+          const result = await checkIsRobot();
+          if (result.score < 0.8) {
+            throw new Error('사람이 아님');
+          }
+          const data = await signup(email, password, nickname);
+          console.log("data :>> ", data);
+          alert('회원 가입이 완료되었습니다. 로그인을 진행해주세요.');
+        } catch (error) {
+          console.error("Failed to check robot status:", error);
+        }
 
-        const data = await signup(email, password, nickname);
-        console.log("data :>> ", data);
-        alert('회원 가입이 완료되었습니다. 로그인을 진행해주세요.');
       } else {
         const email = formData.get("email");
         const password = formData.get("password");
@@ -71,13 +81,21 @@ export function LoginContainer() {
           throw new Error('Invalid email: Email should be between 8 and 64 characters and follow email format.');
         }
 
-        const data = await login(email, password);
+        try {
+          const result = await checkIsRobot();
+          if (result.score < 0.8) {
+            throw new Error('사람이 아님');
+          }
+          const data = await login(email, password);
 
-        console.log("data :>> ", data);
+          console.log("data :>> ", data);
 
-        localStorage.setItem("accessToken", data.accessToken);
-        alert('환영합니다.');
-        navigate("/main");
+          localStorage.setItem("accessToken", data.accessToken);
+          alert('환영합니다.');
+          navigate("/main");
+        } catch (error) {
+          console.error("Failed to check robot status:", error);
+        }
       }
     } catch (error) {
       console.error('인증 중 오류 발생:', error);
