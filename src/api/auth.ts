@@ -11,7 +11,7 @@ export const signup = async (email: string, password: string, nickname: string) 
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await client.post(`/api/v1/auth/signin`, { 
+  const response = await client.post(`/api/v1/auth/signin`, {
     email,
     password,
   });

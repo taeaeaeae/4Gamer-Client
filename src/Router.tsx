@@ -13,6 +13,7 @@ import ChannerCreate from "./pages/channels/CreateChannel"
 import ChannelModify from "./pages/channels/ModifyChannel"
 import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
 import BoardCreate from "./pages/channels/CreateBoard"
+import { GoogleLogin } from './pages/GoogleLogin.page';
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: '/blacklist',
     element: <BlackListPage />,
+  },
+  {
+    path: "/login/google",
+    element: <GoogleLogin />,
   },
 
   {
