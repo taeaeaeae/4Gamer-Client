@@ -93,7 +93,7 @@ const GameReviewList = () => {
             createdAt={value.createdAt}
             updatedAt={value.updatedAt}
             memberId={value.memberId}
-            isUpvoting={voteList?.filter((v) => v.gameReviewId === value.id)[0]?.isUpvoting}
+            isUpvoting={voteList?.filter((v) => v.id === value.id)[0]?.isUpvoting}
           />
         ))}
       </div>
@@ -127,6 +127,6 @@ interface GameReviewList {
 }
 
 interface VoteList {
-  gameReviewId: number;
+  id: number;
   isUpvoting: boolean;
 }

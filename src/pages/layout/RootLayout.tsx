@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import Header from "@/components/layout/Header";
+import WebsocketConnection from "@/components/layout/WebsocketConnection";
 
 const RootLayout = () => {
   const token = localStorage.getItem("accessToken");
@@ -9,7 +9,7 @@ const RootLayout = () => {
   }
   return (
     <main>
-      <Header />
+      <WebsocketConnection />
       <Outlet />
     </main>
   );

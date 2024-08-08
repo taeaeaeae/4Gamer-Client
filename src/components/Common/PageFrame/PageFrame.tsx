@@ -3,6 +3,7 @@ import { AppShell, Burger, Group, Title, Button, UnstyledButton } from '@mantine
 import { useDisclosure } from '@mantine/hooks';
 
 import { ColorSchemeToggleButton } from '../ColorSchemeToggleButton/ColorSchemeToggleButton';
+import WebsocketConnection from '../../layout/WebsocketConnection';
 
 export function PageFrame(
   { bodyContent, navbarContent, asideContent, headerContent, footerContent }
@@ -34,7 +35,7 @@ export function PageFrame(
               <Title order={1}>4Gamer</Title>
             </UnstyledButton>
           </Group>
-          {headerContent}
+          <WebsocketConnection />
           <Group>
             <Button variant="filled">Button</Button>
             <Button variant="filled">Button</Button>
