@@ -1,7 +1,7 @@
 import { client } from './client';
 
 export const getGameReviewReactionList = async () => {
-  const response = await client.get('/api/v1/member/reactions');
+  const response = await client.get('/api/v1/member/reactions/gameReview');
 
   return response.data;
 };
