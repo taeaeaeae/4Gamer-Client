@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Header from './components/layout/Header';
+import Header from './components/layout/WebsocketConnection';
 import { HomePage } from './pages/Home.page';
 import LoginPage from './pages/Login.page';
 import MemberPage from './pages/Member.page';
