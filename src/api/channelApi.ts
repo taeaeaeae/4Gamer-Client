@@ -36,6 +36,31 @@ export const searchGameTitle = async (gameTitle: string) => {
     return response.data;
 };
 
+export const addBlackList = async (channelId: string, memberId: string) => {
+    try {
+      const response = await client.post(`/api/v1/channel-admin/channels/${channelId}/blacklist?memberId=${memberId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to add to blacklist:', error);
+      throw error;
+    }
+  };
+  
+  export const removeBlackList = async (channelId: string, memberId: string) => {
+    try {
+      const response = await client.delete(`/api/v1/channel-admin/channels/${channelId}/blacklist?memberId=${memberId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to remove from blacklist:', error);
+      throw error;
+    }
+  };
+  
+  export const getBlacklist = async (channelId: string) => {
+   const response = await client.get(`/api/v1/channel-admin/channels/${channelId}/blacklists`);
+   return response.data;
+  };
+
 export interface request {
     title: String;
     gameTitle: String;
@@ -52,5 +77,3 @@ export interface SearchGameTitle {
     id: number;
     name: string;
 }
-
-
