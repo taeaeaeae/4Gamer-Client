@@ -10,8 +10,6 @@ const ModifyChannel = () => {
     const [gameTitle, setGameTitle] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [alias, setAlias] = useState('');
-    const [gameTitleSearchResult, setGameTitleSearchResult] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const { checkIsRobot } = useIsRobot();

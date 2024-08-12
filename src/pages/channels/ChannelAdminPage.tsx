@@ -15,6 +15,7 @@ import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@table
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBoards, removeBoards } from '../../api/boardApi';
 import { useIsRobot } from '../../api/captchaApi';
+import { deleteChannel } from '../../api/channelApi';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 
 interface ThProps {
@@ -109,6 +110,20 @@ export function ChannelAdminPage() {
 
     const handleUpdateteChannelClick = (id: any) => () => navigate(`/channels/${id}/edit`);
 
+    const handleDeleteChannelClick = (channelId: any) => async () => {
+        try {
+            const result = await checkIsRobot();
+            if (result.score < 0.8) {
+                throw new Error('사람이 아님')
+            }
+
+            await deleteChannel(channelId);
+            navigate(`/channels`);
+
+        } catch (error) {
+            console.error("Failed to check robot status:", error);
+        }
+    }
     const handleDeleteClick = (id: string) => async () => {
 
         try {
@@ -145,6 +160,7 @@ export function ChannelAdminPage() {
                         <Text>게시판목록</Text>
                         <Group>
                             <Button onClick={handleUpdateteChannelClick(channelId)} color="green" m={10}>채널수정</Button>
+                            <Button onClick={handleDeleteChannelClick(channelId)} color="red" m={10}>채널삭제</Button>
                             <Button onClick={handleCreateClick}>CREATE</Button>
                         </Group>
                     </Group>

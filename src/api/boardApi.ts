@@ -6,6 +6,13 @@ export const getBoards = async (channelId: any) => {
     return response.data;
 };
 
+export const getBoard = async (channelId: any, boardId: any) => {
+    const response = await client.get(`/api/v1/channels/${channelId}/boards/${boardId}`);
+
+    return response.data;
+};
+
+
 export const createboard = async (channelId: any, request: request) => {
     const response = await client.post(`/api/v1/channel-admin/channels/${channelId}/boards`, request);
 
@@ -18,8 +25,8 @@ export const removeBoards = async (channelId: any, id: any) => {
     return response.data;
 };
 
-export const updateBoards = async (channelId: any, id: any) => {
-    const response = await client.put(`/api/v1/channel-admin/channels/${channelId}/boards/${id}`);
+export const updateBoards = async (channelId: any, boardId: any, request: request) => {
+    const response = await client.put(`/api/v1/channel-admin/channels/${channelId}/boards/${boardId}`);
 
     return response.data;
 };

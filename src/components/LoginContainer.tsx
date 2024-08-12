@@ -27,7 +27,7 @@ export function LoginContainer() {
   const [type, toggle] = useToggle(['login', 'signup']);
 
   const handleClick = async () => {
-    window.location.href = `http://127.0.0.1:8080/oauth2/authorization/google`;
+    window.location.href = `https://4-gamer.store/oauth2/authorization/google`;
   };
 
   useEffect(() => {

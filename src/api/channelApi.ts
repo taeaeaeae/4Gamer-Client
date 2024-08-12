@@ -24,7 +24,7 @@ export const updateChannel = async (channelId: any, request: update) => {
     return response.data;
 };
 
-export const deleteChannel = async (channelId: number) => {
+export const deleteChannel = async (channelId: any) => {
     const response = await client.delete(`/api/v1/channel-admin/channels/${channelId}`);
 
     return response.data;
