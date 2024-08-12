@@ -1,4 +1,4 @@
-import { starFill, halfStar } from '../../assets/index';
+import { IconStarFilled, IconStarHalfFilled } from '@tabler/icons-react';
 
 function GameReviewScore(score: GameReviewScore) {
   const count = [...Array(~~(score.score / 2))];
@@ -6,18 +6,10 @@ function GameReviewScore(score: GameReviewScore) {
 
   return (
     <div>
-      {count.map((_, index) => (
-        <img
-          key={index}
-          className="review-score"
-          src={starFill}
-          alt="star"
-          style={{ width: '25px' }}
-        />
+      {count.map(() => (
+        <IconStarFilled />
       ))}
-      {isAdd && (
-        <img className="review-score" src={halfStar} alt="half-star" style={{ width: '25px' }} />
-      )}
+      {isAdd && <IconStarHalfFilled />}
     </div>
   );
 }
