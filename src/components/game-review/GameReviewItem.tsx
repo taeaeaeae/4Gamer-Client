@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-
+import {
+  IconThumbUp,
+  IconThumbUpFilled,
+  IconThumbDown,
+  IconThumbDownFilled,
+} from '@tabler/icons-react';
 import GameReviewScore from './GameReviewScore';
 import { dateFormat } from '../../util/dateUtil';
-import { thumbsUpFill, thumbsUpBlank, thumbsDownFill, thumbsDownBlank } from '../../assets/index';
 import './GameReviewItem.css';
 import { deleteGameReview } from '../../api/gameReviewApi';
 import { deleteGameReviewReaction, updateGameReviewReaction } from '../../api/VoteApi';
@@ -141,11 +145,7 @@ function GameReviewItem(item: GameReviewItem) {
             onKeyDown={() => toggleHandler('thumbsUp')}
             tabIndex={0}
           >
-            <img
-              className="thumbs-icon"
-              src={isThumbsUpOn ? thumbsUpFill : thumbsUpBlank}
-              alt="추천"
-            />
+            {isThumbsUpOn ? <IconThumbUpFilled /> : <IconThumbUp />}
             <span>{upvoteCount}</span>
           </div>
           <div
@@ -154,11 +154,7 @@ function GameReviewItem(item: GameReviewItem) {
             onKeyDown={() => toggleHandler('thumbsDown')}
             tabIndex={0}
           >
-            <img
-              className="thumbs-icon"
-              src={isThumbsDownOn ? thumbsDownFill : thumbsDownBlank}
-              alt="비추천"
-            />
+            {isThumbsDownOn ? <IconThumbDownFilled /> : <IconThumbDown />}
             <span>{downvoteCount}</span>
           </div>
         </div>
