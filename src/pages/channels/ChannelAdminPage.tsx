@@ -106,6 +106,8 @@ export function ChannelAdminPage() {
 
     const handleCreateClick = () => navigate(`/channels/${channelId}/boards/new`);
 
+    const handleblackClick = () => navigate(`/blacklist/${channelId}`);
+
     const handleUpdateteClick = (boardId: string) => () => navigate(`/channels/${channelId}/boards/${boardId}/edit`);
 
     const handleUpdateteChannelClick = (id: any) => () => navigate(`/channels/${id}/edit`);
@@ -159,6 +161,7 @@ export function ChannelAdminPage() {
                     <Group justify='space-between' m={10}>
                         <Text>게시판목록</Text>
                         <Group>
+                            <Button onClick={handleblackClick} color="black" m={10}>블랙리스트</Button>
                             <Button onClick={handleUpdateteChannelClick(channelId)} color="green" m={10}>채널수정</Button>
                             <Button onClick={handleDeleteChannelClick(channelId)} color="red" m={10}>채널삭제</Button>
                             <Button onClick={handleCreateClick}>CREATE</Button>
