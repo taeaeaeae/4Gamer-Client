@@ -14,7 +14,6 @@ import ChannelModify from "./pages/channels/ModifyChannel"
 import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
 import BoardCreate from "./pages/channels/CreateBoard"
 import { GoogleLogin } from './pages/GoogleLogin.page';
-import UserProfile from './components/UserProfile';
 
 const router = createBrowserRouter([
   {
