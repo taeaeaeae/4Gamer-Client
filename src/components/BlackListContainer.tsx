@@ -10,7 +10,7 @@ import {
   Notification,
   Card
 } from '@mantine/core';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   useState,
   useEffect
@@ -45,6 +45,7 @@ export function BlackListContainer() {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { channelId } = useParams<{ channelId: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -144,9 +145,11 @@ export function BlackListContainer() {
 
     try {
       const data = await getBlacklist(channelId);
+
       if (Array.isArray(data)) {
         if (data.length > 0) {
           setBlacklistData(prevData => [...prevData, ...data]);
+
         } else {
           setHasMore(false);
         }
@@ -164,12 +167,17 @@ export function BlackListContainer() {
     }
   };
 
+  const handleClick = () => navigate(`/channels/${channelId}/admin`);
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
       <Paper shadow="md" radius="lg" style={{ width: 1100, maxWidth: '100%', padding: '1rem' }}>
-        <Text fz="xl" fw={700} mb="md">
-          블랙리스트
-        </Text>
+        <Group justify='space-between' m={10}>
+          <Text fz="xl" fw={700} mb="md">
+            블랙리스트
+          </Text>
+          <Button onClick={handleClick} m={10}>채널관리</Button>
+        </Group>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '1rem' }}>
           <Card withBorder padding="xl" radius="md" className={classes.card} style={{ width: 1300, marginRight: '1rem' }}>
             <Card.Section h={140} style={{ backgroundImage: '' }} />
