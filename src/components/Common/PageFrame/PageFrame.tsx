@@ -35,8 +35,8 @@ export function PageFrame(
               <Title order={1}>4Gamer</Title>
             </UnstyledButton>
           </Group>
-          <WebsocketConnection />
           <Group>
+          <WebsocketConnection />
             <Button variant="filled">Button</Button>
             <Button variant="filled">Button</Button>
             <ColorSchemeToggleButton />

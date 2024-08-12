@@ -1,13 +1,25 @@
-import { useEffect, useRef } from 'react';
-import { getMemberInfo } from '../../api/member';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IconBell, IconBellFilled } from '@tabler/icons-react';
+import { Box, Card, Divider, Indicator, Notification, Paper, Text } from '@mantine/core';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { getMemberInfo } from '../../api/member';
+import Chat from '../chat/Chat';
 
 const WebsocketConnection = () => {
   const clientRef = useRef<Client>();
   const tokenRef = useRef(localStorage.getItem('accessToken') || '');
   const subscriptionRef = useRef<StompSubscription>();
   const subjectId = useRef<string>();
+  const [notificationList, setNotificationList] = useState<Notification[]>([]);
+  const [isClicked, setIsClicked] = useState(false);
+  const navigate = useNavigate();
+  const [openChatWindow, setOpenChatWindow] = useState(false);
+
+  const handleChatWindow = (value: boolean) => {
+    setOpenChatWindow(value);
+  };
 
   const webSocketConnection = (userId: string) => {
     const stompClient = new Client({
@@ -15,15 +27,17 @@ const WebsocketConnection = () => {
       connectHeaders: {
         token: tokenRef.current,
       },
-      debug: (msg) => console.log(msg),
-      reconnectDelay: 500000,
+      // debug: (msg) => console.log(msg),
+      reconnectDelay: 50000,
       onConnect: () => {
         console.log('Connected');
 
         subscriptionRef.current = stompClient.subscribe(
           `/sub/notification/${userId}`,
-          (notification) => {
-            console.log('notification: ', notification.body);
+          (response) => {
+            console.log('notification: ', response.body);
+            const notification = JSON.parse(response.body);
+            setNotificationList((prev) => [...prev, notification]);
           }
         );
       },
@@ -68,7 +82,43 @@ const WebsocketConnection = () => {
     };
   }, [tokenRef]);
 
-  return <></>;
+  useEffect(() => {}, [notificationList]);
+
+  return (
+    <Box pos="relative">
+      {(tokenRef.current && notificationList.length !== 0 && (
+        <Indicator inline processing color="red" size={10} onClick={() => setIsClicked(true)}>
+          <IconBellFilled />
+        </Indicator>
+      )) || <IconBell />}
+      {isClicked && (
+        <Paper pos="absolute" right={0} w={380} bg="white" bd="1px solid dark.9">
+          {notificationList.map((value, index) => (
+            <Card
+              key={index}
+              onClick={() => {
+                value.type === 'NOTIFICATION' ? navigate('/message') : <Chat handler={handleChatWindow} />;
+              }}
+            >
+              {index !== 0 && <Divider my="md" mt={0} mb={30} />}
+              <Text>{value.targetId}님께서 메시지를 보냈습니다.</Text>
+              <br />
+              <Text>{value.message}</Text>
+            </Card>
+          ))}
+        </Paper>
+      )}
+    </Box>
+  );
 };
 
 export default WebsocketConnection;
+
+interface Notification {
+  type: string;
+  subjectId: string;
+  targetId: string;
+  roomId: string;
+  message: string;
+  createdAt: string;
+}
