@@ -11,7 +11,7 @@ const WebsocketConnection = () => {
 
   const webSocketConnection = (userId: string) => {
     const stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      webSocketFactory: () => new SockJS(import.meta.env.VITE_WEBSOCKET_BASE_URL),
       connectHeaders: {
         token: tokenRef.current,
       },
@@ -40,7 +40,6 @@ const WebsocketConnection = () => {
     subjectId.current = userInfo.id;
   };
 
-  // 웹소켓 연결 끊기 & 채팅창 닫기
   const webSocketDisConnection = () => {
     clientRef.current?.publish({
       destination: '/pub/notification',
@@ -53,8 +52,8 @@ const WebsocketConnection = () => {
       }),
     });
 
-      subscriptionRef.current?.unsubscribe();
-      clientRef.current?.deactivate();
+    subscriptionRef.current?.unsubscribe();
+    clientRef.current?.deactivate();
   };
 
   useEffect(() => {
