@@ -82,4 +82,5 @@ export interface update {
 export interface SearchGameTitle {
     id: number;
     name: string;
+  
 }
