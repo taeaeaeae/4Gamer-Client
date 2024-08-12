@@ -6,8 +6,8 @@ function GameReviewScore(score: GameReviewScore) {
 
   return (
     <div>
-      {count.map(() => (
-        <IconStarFilled />
+      {count.map((_, key) => (
+        <IconStarFilled key={key} />
       ))}
       {isAdd && <IconStarHalfFilled />}
     </div>
