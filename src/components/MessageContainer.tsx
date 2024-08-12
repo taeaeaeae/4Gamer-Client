@@ -71,11 +71,12 @@ export function MessageContainer () {
     const fetchMessages = async () => {
         try {
             const allMessages = await getMessage();
-            console.log("Fetched messages:", allMessages);
+            console.log("Fetched messages:", allMessages); // Debugging line
 
             if (user?.id) {
+                // Filter messages where the targetId matches the user's ID
                 const userMessages = allMessages.filter((msg: any) => msg.targetId === user.id);
-                console.log("User messages:", userMessages);
+                console.log("User messages:", userMessages); // Debugging line
                 setMessages(userMessages);
             } else {
                 setMessages([]);
