@@ -44,7 +44,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/blacklist',
+    path: '/blacklist/:channelId',
     element: <BlackListPage />,
   },
   {
@@ -92,7 +92,7 @@ const router = createBrowserRouter([
     path: '/game-reviews',
     element: <GameReviewList />,
   },
-  
+
   {
     path: '/user/:memberId',
     element: <UserProfile />,

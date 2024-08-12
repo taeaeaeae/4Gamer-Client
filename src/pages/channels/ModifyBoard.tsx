@@ -1,7 +1,6 @@
 import { Button, Container, Group, TextInput, Textarea, Autocomplete, Loader } from '@mantine/core';
-import { useState, useEffect, useRef, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getChannelItem, updateChannel } from '../../api/channelApi';
 import { getBoard, updateBoards } from '../../api/boardApi';
 import { useIsRobot } from '../../api/captchaApi';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
