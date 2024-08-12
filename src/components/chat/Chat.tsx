@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { IconX } from '@tabler/icons-react';
 import './Chat.css';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -138,7 +139,7 @@ const Chat = ({ handler }: Chat) => {
     <div className="chat-container">
       <div className="chat-header">
         <span>{targetMemberName}</span>
-        <button type="button" onClick={() => webSocketDisConnection()}></button>
+        <IconX stroke={2} onClick={() => webSocketDisConnection()} />
       </div>
       <div className="content">
         {content?.map((value, index) => (
