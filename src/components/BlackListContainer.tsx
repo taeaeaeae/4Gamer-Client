@@ -1,25 +1,49 @@
 import classes from '../components/css/Member.module.css';
 import { 
-  Card, 
-  Avatar, 
   Paper, 
   Text, 
   Button, 
   Group, 
-  Stack, 
-  TextInput } from '@mantine/core';
+  TextInput, 
+  ScrollArea, 
+  Loader, 
+  Notification, 
+  Card
+} from '@mantine/core';
 import { 
   useState, 
-  useEffect } from 'react';
+  useEffect 
+} from 'react';
 import { 
-  addBlackList,
-   removeBlackList, 
-   getMemberInfo } from '../api/member';
+  getMemberInfo 
+} from '../api/member';
+import { 
+  addBlackList, 
+  removeBlackList, 
+  getBlacklist 
+} from '../api/channelApi';
+
+interface User {
+  id: string;
+  email: string;
+  nickname: string;
+  avatarUrl: string;
+  role: string;
+}
+
+interface BlacklistItem {
+  memberId: string;
+}
 
 export function BlackListContainer() {
-  const [blacklistData, setBlacklistData] = useState<any[]>([]);
-  const [userData, setUserData] = useState<any>({});
+  const [blacklistData, setBlacklistData] = useState<BlacklistItem[]>([]);
+  const [userData, setUserData] = useState<User | null>(null);
   const [blacklistTarget, setBlacklistTarget] = useState<string>('');
+  const [channelId, setChannelId] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -35,39 +59,108 @@ export function BlackListContainer() {
         setUserData({
           id: userInfo.id,
           email: userInfo.email,
-          name: userInfo.nickname,
+          nickname: userInfo.nickname,
           avatarUrl: '',
+          role: userInfo.role
         });
 
       } catch (error) {
         console.error("데이터를 가져오는 중 오류 발생:", error);
+        setError('사용자 정보를 가져오는 중 오류 발생');
       }
     };
 
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const fetchBlacklistData = async () => {
+      if (!channelId) return;
+
+      try {
+        setLoading(true);
+        const data = await getBlacklist(channelId);
+        if (Array.isArray(data)) {
+          setBlacklistData(data);
+          setHasMore(data.length > 0);
+        } else {
+          console.error("블랙리스트 데이터 형식이 잘못되었습니다.");
+          setError('블랙리스트 데이터를 가져오는 중 오류 발생');
+        }
+      } catch (error) {
+        console.error("블랙리스트 데이터를 가져오는 중 오류 발생:", error);
+        setError('블랙리스트를 가져오는 중 오류 발생');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlacklistData();
+  }, [channelId]);
+
   const handleAddBlacklist = async () => {
-      try {
-        await addBlackList(blacklistTarget);
-        setBlacklistData([...blacklistData, { id: blacklistTarget }]);
-        setBlacklistTarget(''); 
-        alert('차단에 성공하였습니다.');
-      } catch (error) {
-        console.error('Error adding to blacklist:', error);
-        alert('차단에 실패하였습니다.');
-      }
+    if (!channelId || !blacklistTarget) {
+      alert('채널 ID와 블랙리스트 ID를 입력해 주세요.');
+      return;
+    }
+
+    const isAlreadyBlacklisted = blacklistData.some(item => item.memberId === blacklistTarget);
+    if (isAlreadyBlacklisted) {
+      alert('이 ID는 이미 블랙리스트에 있습니다.');
+      return;
+    }
+
+    try {
+      await addBlackList(channelId, blacklistTarget);
+      setBlacklistData(prev => [...prev, { memberId: blacklistTarget }]);
+      setBlacklistTarget('');
+      alert('차단에 성공하였습니다.');
+    } catch (error) {
+      console.error('차단 추가 중 오류 발생:', error);
+      alert('차단에 실패하였습니다.');
+    }
   };
-  
+
   const handleRemoveBlacklist = async (targetId: string) => {
-      try {
-        await removeBlackList(targetId);
-        setBlacklistData(blacklistData.filter(item => item.id !== targetId));
-        alert('차단 해체에 성공하였습니다.');
-      } catch (error) {
-        console.error('Error removing from blacklist:', error);
-        alert('차단 해제에 실패하였습니다.');
+    if (!channelId) {
+      alert('채널 ID가 설정되지 않았습니다.');
+      return;
+    }
+
+    try {
+      await removeBlackList(channelId, targetId);
+      setBlacklistData(prev => prev.filter(item => item.memberId !== targetId));
+      alert('차단 해제에 성공하였습니다.');
+    } catch (error) {
+      console.error('차단 해제 중 오류 발생:', error);
+      alert('차단 해제에 실패하였습니다.');
+    }
+  };
+
+  const loadMoreData = async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+
+    try {
+      const data = await getBlacklist(channelId);
+      if (Array.isArray(data)) {
+        if (data.length > 0) {
+          setBlacklistData(prevData => [...prevData, ...data]);
+        } else {
+          setHasMore(false);
+        }
+      } else {
+        console.error("블랙리스트 데이터 형식이 잘못되었습니다.");
+        setError('더 많은 블랙리스트를 가져오는 중 오류 발생');
+        setHasMore(false);
       }
+    } catch (error) {
+      console.error("더 많은 블랙리스트 데이터를 가져오는 중 오류 발생:", error);
+      setError('더 많은 블랙리스트를 가져오는 중 오류 발생');
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   return (
@@ -76,42 +169,49 @@ export function BlackListContainer() {
         <Text fz="xl" fw={700} mb="md">
           블랙리스트
         </Text>
-        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-          <Card withBorder padding="xl" radius="md" className={classes.card} style={{ width: 300, marginRight: '1rem' }}>
-            <Card.Section h={140} style={{ backgroundImage: '' }} />
-            <Avatar
-              src={userData.avatarUrl}
-              size={130}
-              radius={80}
-              mx="auto"
-              mt={-68}
-              mb={50}
-              className={classes.avatar}
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        <Card withBorder padding="xl" radius="md" className={classes.card} style={{ width: 1300, marginRight: '1rem' }}>
+        <Card.Section h={140} style={{ backgroundImage: '' }} />
+          <div style={{ flexGrow: 1 }}>
+            <TextInput
+              value={channelId}
+              onChange={(e) => setChannelId(e.target.value)}
+              placeholder="채널 ID 입력"
+              style={{ marginBottom: '1rem' }}
             />
-            <Text ta="center" fz="lg" fw={500} mt="sm">
-              {userData.name}
-            </Text>
-          </Card>
-          <Stack justify="space-between" style={{ flexGrow: 1 }}>
             <TextInput
               value={blacklistTarget}
               onChange={(e) => setBlacklistTarget(e.target.value)}
               placeholder="블랙리스트에 추가할 ID 입력"
               style={{ marginBottom: '1rem' }}
             />
-            <div>
-              {blacklistData.map((item, index) => (
-                <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <Text>{item.id}</Text>
-                  <Button onClick={() => handleRemoveBlacklist(item.id)} color="red">제거</Button>
-                </div>
-              ))}
-            </div>
-            <Group justify="right">
+            <Group justify="right" style={{ marginBottom: '1rem' }}>
               <Button onClick={handleAddBlacklist} color="green">블랙리스트 추가</Button>
-              <Button onClick={() => handleRemoveBlacklist(blacklistTarget)} color="red">블랙리스트 제거</Button>
             </Group>
-          </Stack>
+            {loading && <Loader />}
+            {error && <Notification color="red" title="Error">{error}</Notification>}
+            <ScrollArea
+              style={{ height: 300, overflowY: 'auto' }}
+              onScroll={(event) => {
+                const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+                if (scrollHeight - scrollTop <= clientHeight + 1) {
+                  loadMoreData();
+                }
+              }}
+            >
+              <div style={{ padding: '1rem' }}>
+                {blacklistData.length === 0 && !loading && <Text>블랙리스트가 없습니다.</Text>}
+                {blacklistData.map((item, index) => (
+                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <Text>{item.memberId || 'ID 없음'}</Text>
+                    <Button onClick={() => handleRemoveBlacklist(item.memberId)} color="red">제거</Button>
+                  </div>
+                ))}
+                {loadingMore && <Text>Loading more...</Text>}
+              </div>
+            </ScrollArea>
+          </div>
+          </Card>
         </div>
       </Paper>
     </div>
