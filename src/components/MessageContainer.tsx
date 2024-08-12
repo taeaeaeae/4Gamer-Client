@@ -8,7 +8,8 @@ import {
     Textarea, 
     Input, 
     Paper, 
-    Group 
+    Group, 
+    Pagination 
 } from '@mantine/core';
 import { 
     useEffect, 
@@ -27,6 +28,8 @@ export function MessageContainer () {
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(3);
     const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -71,12 +74,14 @@ export function MessageContainer () {
     const fetchMessages = async () => {
         try {
             const allMessages = await getMessage();
-            console.log("Fetched messages:", allMessages); // Debugging line
+            console.log("Fetched messages:", allMessages);
 
             if (user?.id) {
-                // Filter messages where the targetId matches the user's ID
-                const userMessages = allMessages.filter((msg: any) => msg.targetId === user.id);
-                console.log("User messages:", userMessages); // Debugging line
+                const userMessages = allMessages
+                    .filter((msg: any) => msg.targetId === user.id)
+                    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+                console.log("Sorted user messages:", userMessages);
                 setMessages(userMessages);
             } else {
                 setMessages([]);
@@ -89,23 +94,33 @@ export function MessageContainer () {
         }
     };
 
+    const currentMessages = messages.slice((page - 1) * pageSize, page * pageSize);
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
+
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
             <Paper shadow="md" radius="lg" style={{ width: 600, maxWidth: '100%', padding: '1rem' }}>
-                <Text fz="lg" fw={700} mt="md">
-                    받은 쪽지
-                </Text>
+                <Text fz="lg" fw={700} mt="md">받은 쪽지</Text>
                 <br/>
-                {messages.length === 0 ? (
-                    <Text>아직 쪽지가 없습니다.</Text>
+                {currentMessages.length === 0 ? (
+                    <Text>쪽지가 존재하지 않습니다.</Text>
                 ) : (
-                    messages.map((msg) => (
+                    currentMessages.map((msg) => (
                         <Card key={msg.id} padding="md" shadow="sm" style={{ marginBottom: '1rem' }}>
-                            <Text fw={500}>보낸 사람: {msg.subjectId}</Text>
-                            <Text>내용: {msg.message}</Text>
+                            <Text fw={500}> <strong>보낸 사람: </strong> {msg.subjectId}</Text>
+                            <Text> <strong>내용: </strong> {msg.message}</Text>
                         </Card>
                     ))
                 )}
+                <Pagination 
+                    total={Math.ceil(messages.length / pageSize)}
+                    value={page} 
+                    onChange={handlePageChange}
+                    style={{ marginTop: '1rem', textAlign: 'center' }}
+                />
                 <br/>
                 <Card withBorder padding="xl" radius="md" className={classes.card} style={{ minHeight: '300px' }}>
                     <form onSubmit={handleSubmit}>

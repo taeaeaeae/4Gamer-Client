@@ -61,10 +61,10 @@ export const addMessage = async (targetId: string, message: string) => {
 };
 
 
-export const getMessage = async() => {
-  const response = await client.get(`/api/v1/member/messages`)
-
-  return response.data
+export const getMessage = async () => {
+  const { data } = await client.get('/api/v1/member/messages');
+  
+  return data;
 }
 
 export const logoutUser = () => {
