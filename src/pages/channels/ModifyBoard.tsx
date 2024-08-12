@@ -6,7 +6,7 @@ import { getBoard, updateBoards } from '../../api/boardApi';
 import { useIsRobot } from '../../api/captchaApi';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 
-const ModifyChannel = () => {
+const ModifyBoard = () => {
     const [title, setTitle] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [alias, setAlias] = useState('');
@@ -95,4 +95,4 @@ const ModifyChannel = () => {
     );
 };
 
-export default ModifyChannel;
+export default ModifyBoard;

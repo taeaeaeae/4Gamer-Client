@@ -13,6 +13,7 @@ import ChannerCreate from "./pages/channels/CreateChannel"
 import ChannelModify from "./pages/channels/ModifyChannel"
 import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
 import BoardCreate from "./pages/channels/CreateBoard"
+import BoardModify from "./pages/channels/ModifyBoard"
 import { GoogleLogin } from './pages/GoogleLogin.page';
 
 const router = createBrowserRouter([
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: ':channelId/boards/new',
         element: <BoardCreate />,
+      },
+      {
+        path: ':channelId/boards/:boardId/edit',
+        element: <BoardModify />,
       },
     ],
   },

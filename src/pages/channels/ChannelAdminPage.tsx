@@ -106,7 +106,7 @@ export function ChannelAdminPage() {
 
     const handleCreateClick = () => navigate(`/channels/${channelId}/boards/new`);
 
-    const handleUpdateteClick = (id: string) => () => navigate(`/boards/${id}`);
+    const handleUpdateteClick = (boardId: string) => () => navigate(`/channels/${channelId}/boards/${boardId}/edit`);
 
     const handleUpdateteChannelClick = (id: any) => () => navigate(`/channels/${id}/edit`);
 
