@@ -12,8 +12,10 @@ export const getMemberInfo = async (accessToken: string) => {
 };
 
 export const getMemberDetails = async (memberId: string) => {
-    const { data } = await client.get<MemberDetailsResponse>(`/api/v1/members/${memberId}`);
-    return {...data };
+    const { data } = await client.get(`/api/v1/members/${memberId}`);
+
+    const { id, nickname} = data;
+    return { id, nickname };
 };
 
 export const updateNickname = async (nickname: string) => {
@@ -44,24 +46,32 @@ export const getPostList = async () => {
     return response.data;
 };
 
-export const addMessage = async(targetId: string, message: string) => {
-    const response = await client.post(`/api/v1/member/message?target-id=${targetId}`,{
-        message,
-      }
-    )
-    return response.data
+export const addMessage = async (targetId: string, message: string) => {
+  const response = await client.post(
+    `/api/v1/member/message?target-id=${targetId}`,
+    message,
+    {
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    }
+  );
+
+  return response.data;
 };
+
+
+export const getMessage = async() => {
+  const response = await client.get(`/api/v1/member/messages`)
+
+  return response.data
+}
 
 export const logoutUser = () => {
     localStorage.removeItem("accessToken");
 };
 
 export interface MemberInfo {
-  id: string;
-  nickname: string;
-}
-
-interface MemberDetailsResponse {
   id: string;
   nickname: string;
 }

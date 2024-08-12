@@ -38,7 +38,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/post',
+    path: '/posts',
     element: <PostPage />,
   },
 
@@ -86,11 +86,6 @@ const router = createBrowserRouter([
   {
     path: '/game-reviews',
     element: <GameReviewList />,
-  },
-  
-  {
-    path: '/user/:memberId',
-    element: <UserProfile />,
   },
 ]);
 

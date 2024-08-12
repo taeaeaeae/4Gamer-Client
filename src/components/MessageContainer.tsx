@@ -1,6 +1,4 @@
 import classes from '../components/css/Member.module.css';
-import SockJS from 'sockjs-client';
-import { Client } from '@stomp/stompjs';
 import { User } from '@/api/types';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -10,13 +8,17 @@ import {
     Textarea, 
     Input, 
     Paper, 
-    Group } from '@mantine/core';
+    Group 
+} from '@mantine/core';
 import { 
     useEffect, 
-    useState } from 'react';
+    useState 
+} from 'react';
 import { 
     addMessage, 
-    getMemberInfo } from '../api/member';
+    getMemberInfo,
+    getMessage
+} from '../api/member';
 
 export function MessageContainer () {
     const [targetId, setTargetId] = useState<string>('');
@@ -24,7 +26,6 @@ export function MessageContainer () {
     const [response, setResponse] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
-    const [client, setClient] = useState<Client | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const navigate = useNavigate();
 
@@ -34,73 +35,63 @@ export function MessageContainer () {
             const result = await addMessage(targetId, message);
             setResponse(result);
             setError(null);
+            if (user?.id) {
+                fetchMessages();
+            }
         } catch (err) {
             setError('Failed to add message');
             setResponse(null);
         }
     };
 
-    const preventClose = (e: { preventDefault: () => void }) => {
-        e.preventDefault();
-    };
-
     const token = localStorage.getItem("accessToken");
-
-    const webSocketConnection = (userId: string) => {
-        const stompClient = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
-            connectHeaders: {
-                token: localStorage.getItem("accessToken") || "", 
-            },
-            debug: (msg) => console.log(msg),
-            reconnectDelay: 500000,
-            onConnect: () => {
-                console.log("Connected");
-                stompClient.subscribe(
-                    `/sub/notification/${userId}`,
-                    (notification) => {
-                        const parsedMessage = JSON.parse(notification.body);
-                        const newMessage = {
-                            subjectId: parsedMessage.subjectId,
-                            targetId: parsedMessage.targetId,
-                            message: JSON.parse(parsedMessage.message).message,
-                        };
-                        setMessages((prevMessages) => [...prevMessages, newMessage]);
-                    }
-                );
-            },
-        });
-        stompClient.activate();
-        setClient(stompClient);
-        window.addEventListener("beforeunload", preventClose);
-    };
 
     useEffect(() => {
         if (!token) return navigate("/main");
-        const initialize = async () => {
-            const userInfo = await getMemberInfo(token);
-            webSocketConnection(userInfo.id);
-            navigate("/message");
-        };
-        initialize();
-        
-        const getUser = async () => {
+
+        const fetchUserData = async () => {
             try {
-                const data: User = await getMemberInfo(token);
-                console.log("data :>> ", data);
-                setUser(data);
+                const userInfo = await getMemberInfo(token);
+                setUser(userInfo);
             } catch (error) {
-                console.error("Failed to fetch user data:", error);
+                console.error("Failed to fetch user info:", error);
             }
         };
 
-        getUser();
+        fetchUserData();
+
     }, [token]);
+
+    useEffect(() => {
+        if (user?.id) {
+            fetchMessages();
+        }
+    }, [user]);
+
+    const fetchMessages = async () => {
+        try {
+            const allMessages = await getMessage();
+            console.log("Fetched messages:", allMessages);
+
+            if (user?.id) {
+                const userMessages = allMessages.filter((msg: any) => msg.targetId === user.id);
+                console.log("User messages:", userMessages);
+                setMessages(userMessages);
+            } else {
+                setMessages([]);
+            }
+
+            setError(null);
+        } catch (error) {
+            console.error("Failed to fetch messages:", error);
+            setError('Failed to fetch messages');
+        }
+    };
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
             <Paper shadow="md" radius="lg" style={{ width: 600, maxWidth: '100%', padding: '1rem' }}>
-            <Text fz="lg" fw={700} mt="md">
+                <Text fz="lg" fw={700} mt="md">
                     받은 쪽지
                 </Text>
                 <br/>
@@ -108,33 +99,33 @@ export function MessageContainer () {
                     <Text>아직 쪽지가 없습니다.</Text>
                 ) : (
                     messages.map((msg) => (
-                        <Card key={msg.subjectId} padding="md" shadow="sm" style={{ marginBottom: '1rem' }}>
-                            <Text fw={500}>보낸 사람: {msg.targetId}</Text>
+                        <Card key={msg.id} padding="md" shadow="sm" style={{ marginBottom: '1rem' }}>
+                            <Text fw={500}>보낸 사람: {msg.subjectId}</Text>
                             <Text>내용: {msg.message}</Text>
                         </Card>
                     ))
                 )}
                 <br/>
-                <Card withBorder padding="xl" radius="md" className={classes.card} style={{minHeight: '300px'}}>
+                <Card withBorder padding="xl" radius="md" className={classes.card} style={{ minHeight: '300px' }}>
                     <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <Input
-                            placeholder="Enter Target ID"
-                            value={targetId}
-                            onChange={(e) => setTargetId(e.target.value)}
-                            required
-                            style={{ width: '100%' }}
-                        />
-                    </div>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <Textarea 
-                            placeholder="Enter your message"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            required
-                            rows={6}
-                        />
-                    </div>
+                        <div style={{ marginBottom: '1rem' }}>
+                            <Input
+                                placeholder="Enter Target ID"
+                                value={targetId}
+                                onChange={(e) => setTargetId(e.target.value)}
+                                required
+                                style={{ width: '100%' }}
+                            />
+                        </div>
+                        <div style={{ marginBottom: '1rem' }}>
+                            <Textarea 
+                                placeholder="Enter your message"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                required
+                                rows={6}
+                            />
+                        </div>
                         <Group justify="right">
                             <Button type="submit">전송</Button>
                         </Group>
@@ -153,4 +144,4 @@ export function MessageContainer () {
             </Paper>
         </div>
     );
-};
+}
