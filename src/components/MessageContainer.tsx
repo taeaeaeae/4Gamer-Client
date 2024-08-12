@@ -112,6 +112,10 @@ export function MessageContainer () {
                         <Card key={msg.id} padding="md" shadow="sm" style={{ marginBottom: '1rem' }}>
                             <Text fw={500}> <strong>보낸 사람: </strong> {msg.subjectId}</Text>
                             <Text> <strong>내용: </strong> {msg.message}</Text>
+                            <Text fz="sm" color="gray" mt="sm">
+                                <strong>보낸 날짜: </strong>
+                                {new Date(msg.createdAt).toLocaleString()}
+                            </Text>
                         </Card>
                     ))
                 )}
