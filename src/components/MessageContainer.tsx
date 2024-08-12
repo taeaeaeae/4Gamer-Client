@@ -103,29 +103,6 @@ export function MessageContainer () {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
             <Paper shadow="md" radius="lg" style={{ width: 600, maxWidth: '100%', padding: '1rem' }}>
-                <Text fz="lg" fw={700} mt="md">받은 쪽지</Text>
-                <br/>
-                {currentMessages.length === 0 ? (
-                    <Text>쪽지가 존재하지 않습니다.</Text>
-                ) : (
-                    currentMessages.map((msg) => (
-                        <Card key={msg.id} padding="md" shadow="sm" style={{ marginBottom: '1rem' }}>
-                            <Text fw={500}> <strong>보낸 사람: </strong> {msg.subjectId}</Text>
-                            <Text> <strong>내용: </strong> {msg.message}</Text>
-                            <Text fz="sm" color="gray" mt="sm">
-                                <strong>보낸 날짜: </strong>
-                                {new Date(msg.createdAt).toLocaleString()}
-                            </Text>
-                        </Card>
-                    ))
-                )}
-                <Pagination 
-                    total={Math.ceil(messages.length / pageSize)}
-                    value={page} 
-                    onChange={handlePageChange}
-                    style={{ marginTop: '1rem', textAlign: 'center' }}
-                />
-                <br/>
                 <Card withBorder padding="xl" radius="md" className={classes.card} style={{ minHeight: '300px' }}>
                     <form onSubmit={handleSubmit}>
                         <div style={{ marginBottom: '1rem' }}>
@@ -150,16 +127,38 @@ export function MessageContainer () {
                             <Button type="submit">전송</Button>
                         </Group>
                     </form>
+                    {response && (
+                        <Text mt="md" color="green">
+                            성공적으로 메세지가 전송되었습니다.
+                        </Text>
+                    )}
+                    {error && (
+                        <Text mt="md" color="red">
+                            {error}
+                        </Text>
+                    )}
                 </Card>
-                {response && (
-                    <Text mt="md" color="green">
-                        성공적으로 메세지가 전송되었습니다.
-                    </Text>
-                )}
-                {error && (
-                    <Text mt="md" color="red">
-                        {error}
-                    </Text>
+                <Pagination 
+                    total={Math.ceil(messages.length / pageSize)}
+                    value={page} 
+                    onChange={handlePageChange}
+                    style={{ marginTop: '1rem', textAlign: 'center' }}
+                />
+                <Text fz="lg" fw={700} mt="md">받은 쪽지</Text>
+                <br/>
+                {currentMessages.length === 0 ? (
+                    <Text>쪽지가 존재하지 않습니다.</Text>
+                ) : (
+                    currentMessages.map((msg) => (
+                        <Card key={msg.id} padding="md" shadow="sm" style={{ marginBottom: '1rem' }}>
+                            <Text fw={500}> <strong>보낸 사람: </strong> {msg.subjectId}</Text>
+                            <Text> <strong>내용: </strong> {msg.message}</Text>
+                            <Text fz="sm" color="gray" mt="sm">
+                                <strong>보낸 날짜: </strong>
+                                {new Date(msg.createdAt).toLocaleDateString()}
+                            </Text>
+                        </Card>
+                    ))
                 )}
             </Paper>
         </div>
