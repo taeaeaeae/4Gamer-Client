@@ -1,15 +1,6 @@
-import {
-  Autocomplete,
-  Button,
-  Group,
-  Paper,
-  Select,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core';
+import { Autocomplete, Button, Group, Paper, Select, Textarea } from '@mantine/core';
 import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createGameReview, updateGameReview } from '../../api/gameReviewApi';
 import { searchGameTitle } from '../../api/IgdbApi';
 
@@ -19,6 +10,7 @@ const GameReviewInput = (item: GameReviewInput) => {
   const [gameTitleSearchResult, setGameTitleSearchResult] = useState<string[]>(
     item.gameTitle === undefined ? [] : [item.gameTitle]
   );
+  const gameTitleRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -26,7 +18,7 @@ const GameReviewInput = (item: GameReviewInput) => {
     try {
       if (item.id.length === 0) {
         await createGameReview({
-          gameTitle: gameTitleSearchResult[0],
+          gameTitle: gameTitleRef.current!.value,
           point,
           description,
         });
@@ -66,8 +58,8 @@ const GameReviewInput = (item: GameReviewInput) => {
             w="100%"
             onChange={(e) => checkGameTitle(e)}
             data={gameTitleSearchResult}
-            defaultValue={gameTitleSearchResult[0]}
-            placeholder="제목 일부를 입력 후 검색 시 등록 가능한 제목을 확인할 수 있습니다."
+            placeholder="게임이름을 입력해주세요."
+            ref={gameTitleRef}
           />
         ) : (
           <h2>{gameTitleSearchResult}</h2>
