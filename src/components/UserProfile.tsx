@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { HoverCard, Text, Button, Group } from '@mantine/core';
-import styles from './css/UserProfile.module.css'; 
-import { getMemberDetails } from '@/api/member';
+import styles from './css/UserProfile.module.css';
+import { getMemberDetails, getMemberInfo } from '@/api/member';
+import { isConnectedMember } from '@/api/chat';
+import Chat from './chat/Chat';
 
 interface UserProfileProps {
   memberId: string;
@@ -15,6 +17,29 @@ interface UserData {
 const UserProfile: React.FC<UserProfileProps> = ({ memberId }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [openChatWindow, setOpenChatWindow] = useState(false);
+  const [readyToChat, setReadyToChat] = useState(true);
+  const [subjectId, setSubjectId] = useState('');
+  const roomId = crypto.randomUUID();
+
+  const handleChatWindow = (value: boolean) => {
+    setOpenChatWindow(value);
+  };
+
+  const checkConnection = async () => {
+    const isOk = await isConnectedMember(memberId);
+
+    if (isOk) {
+      const token = localStorage.getItem('accessToken');
+
+      if (token) {
+        const data = await getMemberInfo(token);
+        setSubjectId(data.id);
+      }
+    }
+
+    setReadyToChat(isOk);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -31,12 +56,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ memberId }) => {
           name: userInfo.nickname!,
         });
       } catch (error) {
-        console.error("데이터를 가져오는 중 오류 발생:", error);
+        console.error('데이터를 가져오는 중 오류 발생:', error);
         setError('데이터를 가져오는 중 오류 발생');
       }
     };
 
     fetchUserData();
+    checkConnection();
   }, [memberId]);
 
   if (error) {
@@ -55,15 +81,32 @@ const UserProfile: React.FC<UserProfileProps> = ({ memberId }) => {
         </HoverCard.Target>
         <HoverCard.Dropdown>
           <div className={styles['profile-info']} style={{ padding: '1rem' }}>
-            <Text><strong>id:</strong> {userData.id}</Text>
-            <Text><strong>닉네임:</strong> {userData.name}</Text>
-            <button onClick={() => alert('채팅하기')} style={{ marginTop: '1rem' , marginLeft: 'auto', display: 'block'}}>
+            <Text>
+              <strong>id:</strong> {userData.id}
+            </Text>
+            <Text>
+              <strong>닉네임:</strong> {userData.name}
+            </Text>
+            <button
+              type="button"
+              onClick={() => setOpenChatWindow(true)}
+              style={{ marginTop: '1rem', marginLeft: 'auto', display: 'block' }}
+            >
               채팅하기
             </button>
-            {/* 채팅과 연결되도록 추후 수정해야 함 */}
           </div>
         </HoverCard.Dropdown>
       </HoverCard>
+      {readyToChat && openChatWindow && (
+        <Group pos="absolute" top={100}>
+          <Chat
+            subjectId={subjectId}
+            targetId={memberId}
+            roomId={roomId}
+            handler={handleChatWindow}
+          />
+        </Group>
+      )}
     </Group>
   );
 };
