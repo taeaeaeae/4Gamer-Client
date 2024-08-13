@@ -25,6 +25,7 @@ export function MemberContainer() {
   const [newPassword, setNewPassword] = useState<string>('');
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [currentPasswordForNickname, setCurrentPasswordForNickname] = useState<string>('');
   const [modalOpen, setModalOpen] = useState<{ nickname: boolean, password: boolean }>({
     nickname: false,
     password: false
@@ -85,14 +86,26 @@ export function MemberContainer() {
   };
 
   const handleNicknameChange = async () => {
+    if (!currentPasswordForNickname) {
+      alert('현재 비밀번호를 입력해 주세요.');
+      return;
+    }
+
     setLoading(true);
     try {
-      await updateNickname(nickname);
-      alert('닉네임이 변경되었습니다.');
-      setModalOpen(prev => ({ ...prev, nickname: false }));
+      const passwordCheckResponse = await updatePasswordCheck(currentPasswordForNickname);
+      
+      if (passwordCheckResponse && Object.keys(passwordCheckResponse).length === 0) {
+        await updateNickname(nickname);
+        alert('닉네임이 변경되었습니다.');
+        setModalOpen(prev => ({ ...prev, nickname: false }));
+        window.location.reload();
+      } else {
+        alert('현재 비밀번호가 일치하지 않습니다.');
+      }
     } catch (error) {
       console.error('닉네임 변경 중 오류 발생:', error);
-      alert('닉네임이 변경이 실패하였습니다.');
+      alert('닉네임 변경이 실패하였습니다.');
     } finally {
       setLoading(false);
     }
@@ -111,6 +124,7 @@ export function MemberContainer() {
         await updatePassword(newPassword);
         alert('비밀번호가 변경되었습니다.');
         setModalOpen(prev => ({ ...prev, password: false }));
+        window.location.reload();
       } else {
         alert('현재 비밀번호가 일치하지 않습니다.');
       }
@@ -176,6 +190,12 @@ export function MemberContainer() {
         size="lg"
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <TextInput 
+            label="현재 비밀번호" 
+            type="password" 
+            value={currentPasswordForNickname} 
+            onChange={(e) => setCurrentPasswordForNickname(e.target.value)} 
+          />
           <TextInput 
             label="변경할 닉네임" 
             value={nickname} 

@@ -15,7 +15,6 @@ import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
 import BoardCreate from "./pages/channels/CreateBoard"
 import BoardModify from "./pages/channels/ModifyBoard"
 import { GoogleLogin } from './pages/GoogleLogin.page';
-import UserProfile from './components/UserProfile';
 
 const router = createBrowserRouter([
   {
@@ -39,7 +38,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/post',
+    path: '/posts',
     element: <PostPage />,
   },
 

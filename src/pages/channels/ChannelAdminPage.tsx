@@ -17,6 +17,7 @@ import { getBoards, removeBoards } from '../../api/boardApi';
 import { useIsRobot } from '../../api/captchaApi';
 import { deleteChannel } from '../../api/channelApi';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
+import { TopPost } from '../../components/channels/topPost'
 
 interface ThProps {
     children: React.ReactNode;
@@ -219,7 +220,7 @@ export function ChannelAdminPage() {
                 </Container>
 
 
-            } navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}>
+            } navbarContent={undefined} asideContent={TopPost(channelId)} headerContent={undefined} footerContent={undefined}>
 
             </PageFrame>
         </>
