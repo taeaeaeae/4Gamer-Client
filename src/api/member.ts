@@ -7,7 +7,7 @@ export const getMemberInfo = async (accessToken: string) => {
     },
   });
 
-  const { id, email, nickname, role} = data;
+  const { id, email, nickname, role } = data;
   return { success: true, id, email, nickname, role };
 };
 
@@ -19,31 +19,31 @@ export const getMemberDetails = async (memberId: string) => {
 };
 
 export const updateNickname = async (nickname: string) => {
-  const { data } = await client.put(`/api/v1/members/profile`, 
-    { nickname }, 
+  const { data } = await client.put(`/api/v1/members/profile`,
+    { nickname },
     { headers: { 'Content-Type': 'application/json' } }
   );
   return data;
 };
 
 export const updatePassword = async (password: string) => {
-  const { data } = await client.put(`/api/v1/members/password`, 
-    { password }, 
+  const { data } = await client.put(`/api/v1/members/password`,
+    { password },
     { headers: { 'Content-Type': 'application/json' } }
   );
   return data;
 };
 
 export const updatePasswordCheck = async (password: string) => {
-  const { data } = await client.post(`/api/v1/members/password-check`, 
+  const { data } = await client.post(`/api/v1/members/password-check`,
     { password },
   );
   return data;
 };
 
 export const getPostList = async () => {
-    const response = await client.get(`/api/v1/member/posts`);
-    return response.data;
+  const response = await client.get(`/api/v1/member/posts`);
+  return response.data;
 };
 
 export const addMessage = async (targetId: string, message: string) => {
@@ -68,7 +68,7 @@ export const getMessage = async () => {
 }
 
 export const logoutUser = () => {
-    localStorage.removeItem("accessToken");
+  localStorage.removeItem("accessToken");
 };
 
 export interface MemberInfo {
