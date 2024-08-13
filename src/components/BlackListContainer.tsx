@@ -1,26 +1,27 @@
 import classes from '../components/css/Member.module.css';
-import { 
-  Paper, 
-  Text, 
-  Button, 
-  Group, 
-  TextInput, 
-  ScrollArea, 
-  Loader, 
-  Notification, 
+import {
+  Paper,
+  Text,
+  Button,
+  Group,
+  TextInput,
+  ScrollArea,
+  Loader,
+  Notification,
   Card
 } from '@mantine/core';
-import { 
-  useState, 
-  useEffect 
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  useState,
+  useEffect
 } from 'react';
-import { 
-  getMemberInfo 
+import {
+  getMemberInfo
 } from '../api/member';
-import { 
-  addBlackList, 
-  removeBlackList, 
-  getBlacklist 
+import {
+  addBlackList,
+  removeBlackList,
+  getBlacklist
 } from '../api/channelApi';
 
 interface User {
@@ -39,11 +40,12 @@ export function BlackListContainer() {
   const [blacklistData, setBlacklistData] = useState<BlacklistItem[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
   const [blacklistTarget, setBlacklistTarget] = useState<string>('');
-  const [channelId, setChannelId] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { channelId } = useParams<{ channelId: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -143,9 +145,11 @@ export function BlackListContainer() {
 
     try {
       const data = await getBlacklist(channelId);
+
       if (Array.isArray(data)) {
         if (data.length > 0) {
           setBlacklistData(prevData => [...prevData, ...data]);
+
         } else {
           setHasMore(false);
         }
@@ -163,54 +167,53 @@ export function BlackListContainer() {
     }
   };
 
+  const handleClick = () => navigate(`/channels/${channelId}/admin`);
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
       <Paper shadow="md" radius="lg" style={{ width: 1100, maxWidth: '100%', padding: '1rem' }}>
-        <Text fz="xl" fw={700} mb="md">
-          블랙리스트
-        </Text>
+        <Group justify='space-between' m={10}>
+          <Text fz="xl" fw={700} mb="md">
+            블랙리스트
+          </Text>
+          <Button onClick={handleClick} m={10}>채널관리</Button>
+        </Group>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '1rem' }}>
-        <Card withBorder padding="xl" radius="md" className={classes.card} style={{ width: 1300, marginRight: '1rem' }}>
-        <Card.Section h={140} style={{ backgroundImage: '' }} />
-          <div style={{ flexGrow: 1 }}>
-            <TextInput
-              value={channelId}
-              onChange={(e) => setChannelId(e.target.value)}
-              placeholder="채널 ID 입력"
-              style={{ marginBottom: '1rem' }}
-            />
-            <TextInput
-              value={blacklistTarget}
-              onChange={(e) => setBlacklistTarget(e.target.value)}
-              placeholder="블랙리스트에 추가할 ID 입력"
-              style={{ marginBottom: '1rem' }}
-            />
-            <Group justify="right" style={{ marginBottom: '1rem' }}>
-              <Button onClick={handleAddBlacklist} color="green">블랙리스트 추가</Button>
-            </Group>
-            {loading && <Loader />}
-            {error && <Notification color="red" title="Error">{error}</Notification>}
-            <ScrollArea
-              style={{ height: 300, overflowY: 'auto' }}
-              onScroll={(event) => {
-                const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
-                if (scrollHeight - scrollTop <= clientHeight + 1) {
-                  loadMoreData();
-                }
-              }}
-            >
-              <div style={{ padding: '1rem' }}>
-                {blacklistData.length === 0 && !loading && <Text>블랙리스트가 없습니다.</Text>}
-                {blacklistData.map((item, index) => (
-                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <Text>{item.memberId || 'ID 없음'}</Text>
-                    <Button onClick={() => handleRemoveBlacklist(item.memberId)} color="red">제거</Button>
-                  </div>
-                ))}
-                {loadingMore && <Text>Loading more...</Text>}
-              </div>
-            </ScrollArea>
-          </div>
+          <Card withBorder padding="xl" radius="md" className={classes.card} style={{ width: 1300, marginRight: '1rem' }}>
+            <Card.Section h={140} style={{ backgroundImage: '' }} />
+            <div style={{ flexGrow: 1 }}>
+              <TextInput
+                value={blacklistTarget}
+                onChange={(e) => setBlacklistTarget(e.target.value)}
+                placeholder="블랙리스트에 추가할 ID 입력"
+                style={{ marginBottom: '1rem' }}
+              />
+              <Group justify="right" style={{ marginBottom: '1rem' }}>
+                <Button onClick={handleAddBlacklist} color="green">블랙리스트 추가</Button>
+              </Group>
+              {loading && <Loader />}
+              {error && <Notification color="red" title="Error">{error}</Notification>}
+              <ScrollArea
+                style={{ height: 300, overflowY: 'auto' }}
+                onScroll={(event) => {
+                  const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+                  if (scrollHeight - scrollTop <= clientHeight + 1) {
+                    loadMoreData();
+                  }
+                }}
+              >
+                <div style={{ padding: '1rem' }}>
+                  {blacklistData.length === 0 && !loading && <Text>블랙리스트가 없습니다.</Text>}
+                  {blacklistData.map((item, index) => (
+                    <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <Text>{item.memberId || 'ID 없음'}</Text>
+                      <Button onClick={() => handleRemoveBlacklist(item.memberId)} color="red">제거</Button>
+                    </div>
+                  ))}
+                  {loadingMore && <Text>Loading more...</Text>}
+                </div>
+              </ScrollArea>
+            </div>
           </Card>
         </div>
       </Paper>
