@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Button, Group, Paper, Text, Textarea } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Button, Group, Paper, Text } from '@mantine/core';
 import {
   IconThumbUp,
   IconThumbUpFilled,
@@ -120,7 +120,9 @@ function GameReviewItem(item: GameReviewItem) {
           )}
           <GameReviewScore score={Number(point)} />
         </Group>
-        <Textarea defaultValue={description} readOnly autosize mt={20} mb={20} />
+        <Paper className="game-review-item-content" style={{ whiteSpace: 'pre-wrap' }}>
+          {description}
+        </Paper>
         <Group justify="flex-end" mb={20}>
           <Group
             align="center"
