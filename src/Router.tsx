@@ -15,6 +15,7 @@ import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
 import BoardCreate from "./pages/channels/CreateBoard"
 import BoardModify from "./pages/channels/ModifyBoard"
 import { GoogleLogin } from './pages/GoogleLogin.page';
+import TopGamePage from './pages/TopGame.page';
 
 const router = createBrowserRouter([
   {
@@ -93,9 +94,9 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/user/:memberId',
-    element: <UserProfile />,
-  },
+    path: '/top-game',
+    element: <TopGamePage />
+  }
 ]);
 
 export function Router() {
