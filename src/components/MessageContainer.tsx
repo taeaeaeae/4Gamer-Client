@@ -112,6 +112,7 @@ export function MessageContainer () {
                     onClose={() => setModalOpen(false)}
                     title="쪽지 입력"
                     size="lg"
+                    centered
                 >
                     <form onSubmit={handleSubmit}>
                         <div style={{ marginBottom: '1rem' }}>
