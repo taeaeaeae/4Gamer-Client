@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Table } from '@mantine/core';
-import { Game, getGameTop10 } from "../api/IgdbApi"
+import { Table, Divider, Text } from '@mantine/core';
+import { Game, GameC, getGameTop10, getFollowGameTop10 } from "../api/IgdbApi";
 
 export function TopGameContainer() {
   const [games, setGames] = useState<{ rank: number; name: string; total_rating: number }[]>([]);
+  const [gamesC, setGamesC] = useState<{ rank: number; name: string; hypes: number }[]>([]);
   const tableStyles = {
     th: {
       fontSize: '10px',
@@ -29,24 +30,68 @@ export function TopGameContainer() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getFollowGameTop10();
+        const data: GameC[] = JSON.parse(response.body);
+        const top10RecentGames = data.map((gameC, index) => ({
+          rank: index + 1,
+          name: gameC.name,
+          hypes: gameC.hypes,
+        }));
+        setGamesC(top10RecentGames);
+      } catch (error) {
+        console.error('Error fetching game data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th style={tableStyles.th}>Rank</th>
-          <th style={tableStyles.th}>Name</th>
-          <th style={tableStyles.th}>평점</th>
-        </tr>
-      </thead>
-      <tbody>
-        {games.map((game) => (
-          <tr key={game.rank}>
-            <td>{game.rank}</td>
-            <td>{game.name}</td>
-            <td>{game.total_rating.toFixed(2)}</td>
+    <div>
+      <Text size="md" style={{ fontWeight: 700, marginBottom: '8px' }}>인기 게임 Top10</Text>
+      <Table>
+        <thead>
+          <tr>
+            <th style={tableStyles.th}>Rank</th>
+            <th style={tableStyles.th}>Name</th>
+            <th style={tableStyles.th}>Rating</th>
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {games.map((game) => (
+            <tr key={game.rank}>
+              <td>{game.rank}</td>
+              <td>{game.name}</td>
+              <td>{game.total_rating.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+      <Divider my="lg" />
+
+      <Text size="md" style={{ fontWeight: 700, marginBottom: '8px' }}>최다 팔로우 게임 Top10</Text>
+      <Table>
+        <thead>
+          <tr>
+            <th style={tableStyles.th}>Rank</th>
+            <th style={tableStyles.th}>Name</th>
+            <th style={tableStyles.th}>Follower</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gamesC.map((gameC) => (
+            <tr key={gameC.rank}>
+              <td>{gameC.rank}</td>
+              <td>{gameC.name}</td>
+              <td>{gameC.hypes.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
   );
-};
+}
