@@ -20,7 +20,6 @@ function GameReviewItem(item: GameReviewItem) {
   const [downvoteCount, setDownvoteCount] = useState(item.downvotes);
   const [isRenderingComplete, setIsRenderingComplete] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [gameTitle, setGameTitle] = useState(item.gameTitle);
   const [point, setPoint] = useState(item.point);
   const [description, setDescription] = useState(item.description);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -86,7 +85,6 @@ function GameReviewItem(item: GameReviewItem) {
 
   const handleIsEditing = (isEditingState: boolean, info: GameReviewItem) => {
     setIsEditing(isEditingState);
-    setGameTitle(info.gameTitle);
     setPoint(~~info.point);
     setDescription(info.description);
   };
@@ -99,12 +97,12 @@ function GameReviewItem(item: GameReviewItem) {
 
   useEffect(() => {
     setTextAreaHeight(textAreaRef.current?.scrollHeight);
-  }, [isEditing, gameTitle, point, description]);
+  }, [isEditing, point, description]);
 
   if (!isEditing) {
     return (
       <div className="game-review-item-container">
-        <h2>{gameTitle}</h2>
+        <h2>{item.gameTitle}</h2>
         <div className="top-info">
           <div>
             <span>{dateFormat(item.createdAt)}</span>
@@ -165,7 +163,7 @@ function GameReviewItem(item: GameReviewItem) {
   return (
     <GameReviewInput
       id={String(item.id)}
-      gameTitle={gameTitle}
+      gameTitle={item.gameTitle}
       point={String(point)}
       description={description}
       handleFunction={handleIsEditing}
