@@ -1,3 +1,14 @@
+import {
+  Button,
+  Card,
+  Group,
+  Input,
+  Paper,
+  ScrollArea,
+  Text,
+  Textarea,
+  TextInput,
+} from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { IconX } from '@tabler/icons-react';
 import './Chat.css';
@@ -5,10 +16,8 @@ import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { dateFormat } from '../../util/dateUtil';
 
-const Chat = ({ handler }: Chat) => {
-  const targetMemberName = '바둑이님과의 채팅'; // TODO: 실제 수신 유저의 닉네임으로 변경
-  const subjectId = 'b3a77697-c0f6-4163-94e4-3a985c551989'; // TODO: 실제 발신자 아이디로 변경
-  const targetId = '0821b8d9-5141-42a4-8ec6-55d8c034662c'; // TODO: 실제 수신자 아이디로 변경
+const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
+  const targetMemberName = `${targetId}님과의 채팅`;
   const token = localStorage.getItem('accessToken') || '';
   const [client, setClient] = useState<Client | null>(null);
   const senderTemplate = (message: string, createdAt: string) => (
@@ -35,7 +44,6 @@ const Chat = ({ handler }: Chat) => {
   );
   const inputRef = useRef<HTMLInputElement>(null);
   const subscriptionRef = useRef<StompSubscription>();
-  const roomIdRef = useRef(crypto.randomUUID());
 
   const addChatHistory = (
     subjectId: string,
@@ -60,30 +68,28 @@ const Chat = ({ handler }: Chat) => {
       connectHeaders: {
         token,
         targetId,
-        roomId: roomIdRef.current,
+        roomId,
       },
       // debug: (msg) => console.log(msg),
       reconnectDelay: 50000,
       onConnect: () => {
         console.log('Connected');
 
-        subscriptionRef.current = stompClient.subscribe(
-          `/sub/chat/${roomIdRef.current}`,
-          (chat) => {
-            const response = JSON.parse(chat.body);
+        subscriptionRef.current = stompClient.subscribe(`/sub/chat/${roomId}`, (chat) => {
+          console.log('chat: ', chat);
+          const response = JSON.parse(chat.body);
 
-            addChatHistory(
-              response.subjectId,
-              response.targetId,
-              response.message,
-              response.createdAt
-            );
+          addChatHistory(
+            response.subjectId,
+            response.targetId,
+            response.message,
+            response.createdAt
+          );
 
-            if (response.subjectId !== subjectId) {
-              setContent((prev) => [...prev, senderTemplate(response.message, response.createdAt)]);
-            }
+          if (response.subjectId !== subjectId) {
+            setContent((prev) => [...prev, senderTemplate(response.message, response.createdAt)]);
           }
-        );
+        });
       },
     });
 
@@ -98,7 +104,7 @@ const Chat = ({ handler }: Chat) => {
       destination: '/pub/chat',
       body: JSON.stringify({
         type: 'EXIT',
-        roomId: roomIdRef.current,
+        roomId,
         subjectId,
         targetId,
         message: `${subjectId}님이 채팅을 종료했습니다.`,
@@ -121,7 +127,7 @@ const Chat = ({ handler }: Chat) => {
         destination: '/pub/chat',
         body: JSON.stringify({
           type: 'CHAT',
-          roomId: roomIdRef.current,
+          roomId,
           subjectId,
           targetId,
           message,
@@ -136,24 +142,29 @@ const Chat = ({ handler }: Chat) => {
   }, []);
 
   return (
-    <div className="chat-container">
-      <div className="chat-header">
+    <Card w={500} bd="1px solid" shadow="xl">
+      <Group justify="space-between">
         <span>{targetMemberName}</span>
         <IconX stroke={2} onClick={() => webSocketDisConnection()} />
-      </div>
-      <div className="content">
-        {content?.map((value, index) => (
-          <div
-            className={value.props.children[1].props.className === 'receiver' ? 'right' : 'left'}
-            key={index}
-          >
-            {value}
-          </div>
-        ))}
-      </div>
-      <div className="bottom">
-        <input type="text" name="message" ref={inputRef} />
-        <button
+      </Group>
+      <ScrollArea h={500} pt={20} pr={20} pb={20} scrollbars="y">
+        {prevChatHistory.map((value, index) =>
+          value.subjectId === subjectId ? (
+            <Group key={index} justify="flex-end" mt={10} mb={10}>
+              <Text ms={20}>{dateFormat(value.createdAt).slice(-5)}</Text>
+              <Textarea autosize>{value.message}</Textarea>
+            </Group>
+          ) : (
+            <Group key={index} justify="flex-start" mt={10} mb={10}>
+              <Textarea autosize>{value.message}</Textarea>
+              <Text>{dateFormat(value.createdAt).slice(-5)}</Text>
+            </Group>
+          )
+        )}
+      </ScrollArea>
+      <Group justify="space-between">
+        <TextInput ref={inputRef} w={380} />
+        <Button
           type="button"
           onClick={(e) => {
             sendMessage(e, inputRef.current!.value);
@@ -161,15 +172,18 @@ const Chat = ({ handler }: Chat) => {
           }}
         >
           전송
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Group>
+    </Card>
   );
 };
 
 export default Chat;
 
 interface Chat {
+  subjectId: string;
+  targetId: string;
+  roomId: string;
   handler: (value: boolean) => void;
 }
 
