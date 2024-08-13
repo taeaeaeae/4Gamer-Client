@@ -2,8 +2,6 @@ import {
   Button,
   Card,
   Group,
-  Input,
-  Paper,
   ScrollArea,
   Text,
   Textarea,
