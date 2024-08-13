@@ -27,7 +27,7 @@ export function LoginContainer() {
   const [type, toggle] = useToggle(['login', 'signup']);
 
   const handleClick = async () => {
-    window.location.href = `https://4-gamer.store/oauth2/authorization/google`;
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`;
   };
 
   useEffect(() => {
