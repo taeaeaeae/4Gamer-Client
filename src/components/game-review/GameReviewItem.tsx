@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Button, Group, Paper, Text, Textarea } from '@mantine/core';
 import {
   IconThumbUp,
   IconThumbUpFilled,
@@ -7,7 +8,6 @@ import {
 } from '@tabler/icons-react';
 import GameReviewScore from './GameReviewScore';
 import { dateFormat } from '../../util/dateUtil';
-import './GameReviewItem.css';
 import { deleteGameReview } from '../../api/gameReviewApi';
 import { deleteGameReviewReaction, updateGameReviewReaction } from '../../api/VoteApi';
 import GameReviewInput from './GameReviewInput';
@@ -22,8 +22,6 @@ function GameReviewItem(item: GameReviewItem) {
   const [isEditing, setIsEditing] = useState(false);
   const [point, setPoint] = useState(item.point);
   const [description, setDescription] = useState(item.description);
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-  const [textAreaHeight, setTextAreaHeight] = useState(textAreaRef.current?.scrollHeight);
 
   const toggleHandler = (value: string) => {
     setIsRenderingComplete(true);
@@ -95,68 +93,57 @@ function GameReviewItem(item: GameReviewItem) {
     }
   }, [upvoteCount, downvoteCount]);
 
-  useEffect(() => {
-    setTextAreaHeight(textAreaRef.current?.scrollHeight);
-  }, [isEditing, point, description]);
-
   if (!isEditing) {
     return (
-      <div className="game-review-item-container">
+      <Paper bd="1px solid dark.9" mt={20} pl={20} pr={20}>
         <h2>{item.gameTitle}</h2>
-        <div className="top-info">
-          <div>
-            <span>{dateFormat(item.createdAt)}</span>
-            {item.memberId === memberId && (
-              <div className="button-menu">
-                <button type="button" onClick={() => setIsEditing(true)}>
-                  수정
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (window.confirm('정말 삭제하시겠습니까?')) {
-                      deleteGameReview(String(item.id));
-                      window.location.reload();
-                    }
-                  }}
-                >
-                  삭제
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="width-125px">
-            <GameReviewScore score={Number(point)} />
-          </div>
-        </div>
-        <textarea
-          className="description"
-          ref={textAreaRef}
-          style={{ height: textAreaHeight }}
-          defaultValue={description}
-          readOnly
-        />
-        <div className="votes">
-          <div
+        <Group justify="space-between">
+          {item.memberId === memberId && (
+            <Group>
+              <span>{dateFormat(item.createdAt)}</span>
+              <Button type="button" onClick={() => setIsEditing(true)} size="compact-xs">
+                수정
+              </Button>
+              <Button
+                type="button"
+                size="compact-xs"
+                onClick={() => {
+                  if (window.confirm('정말 삭제하시겠습니까?')) {
+                    deleteGameReview(String(item.id));
+                    window.location.reload();
+                  }
+                }}
+              >
+                삭제
+              </Button>
+            </Group>
+          )}
+          <GameReviewScore score={Number(point)} />
+        </Group>
+        <Textarea defaultValue={description} readOnly autosize mt={20} mb={20} />
+        <Group justify="flex-end" mb={20}>
+          <Group
+            align="center"
             role="button"
             onClick={() => toggleHandler('thumbsUp')}
             onKeyDown={() => toggleHandler('thumbsUp')}
             tabIndex={0}
           >
             {isThumbsUpOn ? <IconThumbUpFilled /> : <IconThumbUp />}
-            <span>{upvoteCount}</span>
-          </div>
-          <div
+            <Text>{upvoteCount}</Text>
+          </Group>
+          <Group
+            align="center"
             role="button"
             onClick={() => toggleHandler('thumbsDown')}
             onKeyDown={() => toggleHandler('thumbsDown')}
             tabIndex={0}
           >
             {isThumbsDownOn ? <IconThumbDownFilled /> : <IconThumbDown />}
-            <span>{downvoteCount}</span>
-          </div>
-        </div>
-      </div>
+            <Text>{downvoteCount}</Text>
+          </Group>
+        </Group>
+      </Paper>
     );
   }
 

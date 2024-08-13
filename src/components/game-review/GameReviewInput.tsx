@@ -1,4 +1,13 @@
-import { Autocomplete, Button, Group, Paper, Select, Textarea, TextInput } from '@mantine/core';
+import {
+  Autocomplete,
+  Button,
+  Group,
+  Paper,
+  Select,
+  Text,
+  Textarea,
+  TextInput,
+} from '@mantine/core';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { createGameReview, updateGameReview } from '../../api/gameReviewApi';
@@ -45,8 +54,7 @@ const GameReviewInput = (item: GameReviewInput) => {
     setGameTitleSearchResult(newGameTitleList);
   };
 
-  useEffect(() => {
-  }, [point, description, gameTitleSearchResult]);
+  useEffect(() => {}, [point, description, gameTitleSearchResult]);
 
   return (
     <Paper bd="1px solid dark.9" p={20} mt={20}>
@@ -62,11 +70,12 @@ const GameReviewInput = (item: GameReviewInput) => {
             placeholder="제목 일부를 입력 후 검색 시 등록 가능한 제목을 확인할 수 있습니다."
           />
         ) : (
-          <TextInput readOnly value={gameTitleSearchResult} />
+          <h2>{gameTitleSearchResult}</h2>
         )}
 
         <Textarea
           label="내용"
+          withAsterisk
           onChange={(e) => setDescription(e.target.value)}
           value={description}
           placeholder="최소 10자에서 최대 1024자까지 입력 가능합니다"
@@ -76,6 +85,7 @@ const GameReviewInput = (item: GameReviewInput) => {
         />
         <Select
           label="평점"
+          withAsterisk
           data={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
           onChange={(_value, option) => setPoint(option.value)}
           value={point}
