@@ -1,14 +1,16 @@
+import { Autocomplete, Button, Group, Paper, Select, Textarea } from '@mantine/core';
 import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createGameReview, updateGameReview } from '../../api/gameReviewApi';
-import './GameReviewInput.css';
 import { searchGameTitle } from '../../api/IgdbApi';
 
 const GameReviewInput = (item: GameReviewInput) => {
-  const [gameTitle, setGameTitle] = useState(item.gameTitle === undefined ? '' : item.gameTitle);
   const [point, setPoint] = useState(item.point === '' ? '1' : item.point);
   const [description, setDescription] = useState(item.description);
-  const [gameTitleSearchResult, setGameTitleSearchResult] = useState<string[]>([]);
+  const [gameTitleSearchResult, setGameTitleSearchResult] = useState<string[]>(
+    item.gameTitle === undefined ? [] : [item.gameTitle]
+  );
+  const gameTitleRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -16,7 +18,7 @@ const GameReviewInput = (item: GameReviewInput) => {
     try {
       if (item.id.length === 0) {
         await createGameReview({
-          gameTitle,
+          gameTitle: gameTitleRef.current!.value,
           point,
           description,
         });
@@ -24,12 +26,11 @@ const GameReviewInput = (item: GameReviewInput) => {
         window.location.reload();
       } else {
         await updateGameReview(String(item.id), {
-          gameTitle,
           point,
           description,
         });
 
-        item.handleFunction(false, { gameTitle, point, description });
+        item.handleFunction(false, { point, description });
       }
     } catch (e) {
       if (e instanceof AxiosError) {
@@ -38,102 +39,54 @@ const GameReviewInput = (item: GameReviewInput) => {
     }
   };
 
-  const checkGameTitle = async () => {
-    const data = await searchGameTitle(gameTitle);
+  const checkGameTitle = async (word: string) => {
+    const data = await searchGameTitle(word);
     const newGameTitleList: [] = JSON.parse(data.body).map((it: SearchGameTitle) => it.name);
 
-    if (newGameTitleList.length === 0) {
-      setGameTitleSearchResult(['일치하는 게임 제목이 없습니다.']);
-    } else {
-      setGameTitleSearchResult(newGameTitleList);
-    }
+    setGameTitleSearchResult(newGameTitleList);
   };
 
-  useEffect(() => {
-    const handleClickOutSide = (event) => {
-      if (event.target.className !== 'game-title-search-result-item') {
-        setGameTitleSearchResult([]);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutSide);
-  }, [gameTitle, point, description]);
+  useEffect(() => {}, [point, description, gameTitleSearchResult]);
 
   return (
-    <div className="game-review-input-container">
+    <Paper bd="1px solid dark.9" p={20} mt={20}>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label className="game-title-search-bar">
-            제목:
-            <input
-              className="game-title"
-              type="text"
-              name="title"
-              onChange={(e) => setGameTitle(e.target.value)}
-              value={gameTitle}
-              placeholder="제목 일부를 입력 후 검색 시 등록 가능한 제목을 확인할 수 있습니다."
-            />
-            {gameTitleSearchResult.length !== 0 && (
-              <div
-                className="game-title-search-result"
-                role="button"
-                onClick={(e) => {
-                  setGameTitle(e.target.innerText);
-                  setGameTitleSearchResult([]);
-                }}
-                onKeyDown={() => {}}
-                tabIndex={0}
-              >
-                {gameTitleSearchResult.map((value, index) => (
-                  <button type="button" key={index} className="game-title-search-result-item">
-                    {value}
-                  </button>
-                ))}
-              </div>
-            )}
-          </label>
-          <button type="button" onClick={() => checkGameTitle()}>
-            검색
-          </button>
-          <label>
-            평점:
-            <select
-              className="point"
-              name="point"
-              onChange={(e) => setPoint(e.target.value)}
-              value={~~point === 0 ? 1 : ~~point}
-            >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-          </label>
-        </div>
-        <div className="direction-column">
-          <label htmlFor="description" id="description">
-            내용:
-          </label>
-          <textarea
-            className="description"
-            name="description"
-            id="description"
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
-            placeholder="최소 10자에서 최대 1024자까지 입력 가능합니다"
-            minLength={10}
-            maxLength={1024}
+        {item.id.length === 0 ? (
+          <Autocomplete
+            label="제목"
+            withAsterisk
+            w="100%"
+            onChange={(e) => checkGameTitle(e)}
+            data={gameTitleSearchResult}
+            placeholder="게임이름을 입력해주세요."
+            ref={gameTitleRef}
           />
-        </div>
-        <button type="submit">{item.id.length === 0 ? '등록' : '수정'}</button>
+        ) : (
+          <h2>{gameTitleSearchResult}</h2>
+        )}
+
+        <Textarea
+          label="내용"
+          withAsterisk
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
+          placeholder="최소 10자에서 최대 1024자까지 입력 가능합니다"
+          minLength={10}
+          maxLength={1024}
+          rows={10}
+        />
+        <Select
+          label="평점"
+          withAsterisk
+          data={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+          onChange={(_value, option) => setPoint(option.value)}
+          value={point}
+        />
+        <Group justify="flex-end" mt={20}>
+          <Button type="submit">{item.id.length === 0 ? '등록' : '수정'}</Button>
+        </Group>
       </form>
-    </div>
+    </Paper>
   );
 };
 

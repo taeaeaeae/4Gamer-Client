@@ -1,9 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import { Button, Group, Paper, Text } from '@mantine/core';
+import {
+  IconThumbUp,
+  IconThumbUpFilled,
+  IconThumbDown,
+  IconThumbDownFilled,
+} from '@tabler/icons-react';
 import GameReviewScore from './GameReviewScore';
 import { dateFormat } from '../../util/dateUtil';
-import { thumbsUpFill, thumbsUpBlank, thumbsDownFill, thumbsDownBlank } from '../../assets/index';
-import './GameReviewItem.css';
 import { deleteGameReview } from '../../api/gameReviewApi';
 import { deleteGameReviewReaction, updateGameReviewReaction } from '../../api/VoteApi';
 import GameReviewInput from './GameReviewInput';
@@ -16,11 +20,8 @@ function GameReviewItem(item: GameReviewItem) {
   const [downvoteCount, setDownvoteCount] = useState(item.downvotes);
   const [isRenderingComplete, setIsRenderingComplete] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [gameTitle, setGameTitle] = useState(item.gameTitle);
   const [point, setPoint] = useState(item.point);
   const [description, setDescription] = useState(item.description);
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-  const [textAreaHeight, setTextAreaHeight] = useState(textAreaRef.current?.scrollHeight);
 
   const toggleHandler = (value: string) => {
     setIsRenderingComplete(true);
@@ -82,7 +83,6 @@ function GameReviewItem(item: GameReviewItem) {
 
   const handleIsEditing = (isEditingState: boolean, info: GameReviewItem) => {
     setIsEditing(isEditingState);
-    setGameTitle(info.gameTitle);
     setPoint(~~info.point);
     setDescription(info.description);
   };
@@ -93,83 +93,66 @@ function GameReviewItem(item: GameReviewItem) {
     }
   }, [upvoteCount, downvoteCount]);
 
-  useEffect(() => {
-    setTextAreaHeight(textAreaRef.current?.scrollHeight);
-  }, [isEditing, gameTitle, point, description]);
-
   if (!isEditing) {
     return (
-      <div className="game-review-item-container">
-        <h2>{gameTitle}</h2>
-        <div className="top-info">
-          <div>
-            <span>{dateFormat(item.createdAt)}</span>
-            {item.memberId === memberId && (
-              <div className="button-menu">
-                <button type="button" onClick={() => setIsEditing(true)}>
-                  수정
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (window.confirm('정말 삭제하시겠습니까?')) {
-                      deleteGameReview(String(item.id));
-                      window.location.reload();
-                    }
-                  }}
-                >
-                  삭제
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="width-125px">
-            <GameReviewScore score={Number(point)} />
-          </div>
-        </div>
-        <textarea
-          className="description"
-          ref={textAreaRef}
-          style={{ height: textAreaHeight }}
-          defaultValue={description}
-          readOnly
-        />
-        <div className="votes">
-          <div
+      <Paper bd="1px solid dark.9" mt={20} pl={20} pr={20}>
+        <h2>{item.gameTitle}</h2>
+        <Group justify="space-between">
+          {item.memberId === memberId && (
+            <Group>
+              <span>{dateFormat(item.createdAt)}</span>
+              <Button type="button" onClick={() => setIsEditing(true)} size="compact-xs">
+                수정
+              </Button>
+              <Button
+                type="button"
+                size="compact-xs"
+                onClick={() => {
+                  if (window.confirm('정말 삭제하시겠습니까?')) {
+                    deleteGameReview(String(item.id));
+                    window.location.reload();
+                  }
+                }}
+              >
+                삭제
+              </Button>
+            </Group>
+          )}
+          <GameReviewScore score={Number(point)} />
+        </Group>
+        <Paper className="game-review-item-content" style={{ whiteSpace: 'pre-wrap' }}>
+          {description}
+        </Paper>
+        <Group justify="flex-end" mb={20}>
+          <Group
+            align="center"
             role="button"
             onClick={() => toggleHandler('thumbsUp')}
             onKeyDown={() => toggleHandler('thumbsUp')}
             tabIndex={0}
           >
-            <img
-              className="thumbs-icon"
-              src={isThumbsUpOn ? thumbsUpFill : thumbsUpBlank}
-              alt="추천"
-            />
-            <span>{upvoteCount}</span>
-          </div>
-          <div
+            {isThumbsUpOn ? <IconThumbUpFilled /> : <IconThumbUp />}
+            <Text>{upvoteCount}</Text>
+          </Group>
+          <Group
+            align="center"
             role="button"
             onClick={() => toggleHandler('thumbsDown')}
             onKeyDown={() => toggleHandler('thumbsDown')}
             tabIndex={0}
           >
-            <img
-              className="thumbs-icon"
-              src={isThumbsDownOn ? thumbsDownFill : thumbsDownBlank}
-              alt="비추천"
-            />
-            <span>{downvoteCount}</span>
-          </div>
-        </div>
-      </div>
+            {isThumbsDownOn ? <IconThumbDownFilled /> : <IconThumbDown />}
+            <Text>{downvoteCount}</Text>
+          </Group>
+        </Group>
+      </Paper>
     );
   }
 
   return (
     <GameReviewInput
       id={String(item.id)}
-      gameTitle={gameTitle}
+      gameTitle={item.gameTitle}
       point={String(point)}
       description={description}
       handleFunction={handleIsEditing}
