@@ -1,72 +1,104 @@
-import { Link } from 'react-router-dom';
-import { AppShell, Burger, Group, Title, Button, UnstyledButton } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Header from './components/layout/WebsocketConnection';
+import { HomePage } from './pages/Home.page';
+import LoginPage from './pages/Login.page';
+import MemberPage from './pages/Member.page';
+import BlackListPage from './pages/BlackList.page';
+import MessagePage from './pages/Message.page';
+import PostPage from './pages/Post.page';
+import GameReviewList from './pages/game-review/GameReviewList.page';
+import ChannelsPage from './pages/channels/ChannelsPage';
+import ChannelDetailPage from './pages/channels/ChannelDetailPage';
+import ChannerCreate from "./pages/channels/CreateChannel"
+import ChannelModify from "./pages/channels/ModifyChannel"
+import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
+import BoardCreate from "./pages/channels/CreateBoard"
+import BoardModify from "./pages/channels/ModifyBoard"
+import { GoogleLogin } from './pages/GoogleLogin.page';
+import TopGamePage from './pages/TopGame.page';
 
-import { ColorSchemeToggleButton } from '../ColorSchemeToggleButton/ColorSchemeToggleButton';
-import WebsocketConnection from '../../layout/WebsocketConnection';
+const router = createBrowserRouter([
+  {
+    path: '',
+    element: <Header />,
+  },
 
-interface Page {
-  bodyContent: any;
-  navbarContent: any;
-  asideContent: any;
-  headerContent: any;
-  footerContent: any;
-}
+  {
+    path: '/main',
+    element: <HomePage />,
+  },
 
-export function PageFrame(
-  { bodyContent, navbarContent, asideContent, headerContent, footerContent }: Page
-) {
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
 
-  const [mobileAsideOpened, { toggle: toggleMobileAside }] = useDisclosure();
-  const [desktopAsideOpened, { toggle: toggleDesktopAside }] = useDisclosure(true);
+  {
+    path: '/member',
+    element: <MemberPage />,
+  },
 
-  return (
-    <AppShell
-      header={{ height: 60 }}
-      footer={{ height: 60 }}
-      navbar={{
-        width: 300,
-        breakpoint: 'sm',
-        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-      }}
-      aside={{ width: 300, breakpoint: 'md', collapsed: { mobile: !mobileAsideOpened, desktop: !desktopAsideOpened } }}
-      padding="xl"
-    >
-      <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Group>
-            <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
-            <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <UnstyledButton component={Link} to="/">
-              <Title order={1}>4Gamer</Title>
-            </UnstyledButton>
-          </Group>
-          <WebsocketConnection />
-          <Group>
-            <Button variant="filled">Button</Button>
-            <Button variant="filled">Button</Button>
-            <ColorSchemeToggleButton />
-            <Burger opened={mobileAsideOpened} onClick={toggleMobileAside} hiddenFrom="sm" size="sm" />
-            <Burger opened={desktopAsideOpened} onClick={toggleDesktopAside} visibleFrom="sm" size="sm" />
-          </Group>
-        </Group>
-      </AppShell.Header>
+  {
+    path: '/posts',
+    element: <PostPage />,
+  },
 
-      <AppShell.Navbar p="md">
-        {navbarContent}
-      </AppShell.Navbar>
-      <AppShell.Aside p="md">
-        {asideContent}
-      </AppShell.Aside>
-      <AppShell.Footer p="md">
-        {footerContent}
-      </AppShell.Footer>
+  {
+    path: '/blacklist/:channelId',
+    element: <BlackListPage />,
+  },
+  {
+    path: "/login/google",
+    element: <GoogleLogin />,
+  },
 
-      <AppShell.Main>
-        {bodyContent}
-      </AppShell.Main>
-    </AppShell>
-  );
+  {
+    path: '/message',
+    element: <MessagePage />,
+  }, {
+    path: '/channels',
+    children: [
+      {
+        path: '',
+        element: <ChannelsPage />,
+      },
+      {
+        path: ':channelId',
+        element: <ChannelDetailPage />
+      },
+      {
+        path: ':channelId/edit',
+        element: <ChannelModify />
+      },
+      {
+        path: 'new',
+        element: <ChannerCreate />,
+      },
+      {
+        path: ':channelId/admin',
+        element: <ChannelAdminPage />,
+      },
+      {
+        path: ':channelId/boards/new',
+        element: <BoardCreate />,
+      },
+      {
+        path: ':channelId/boards/:boardId/edit',
+        element: <BoardModify />,
+      },
+    ],
+  },
+  {
+    path: '/game-reviews',
+    element: <GameReviewList />,
+  },
+
+  {
+    path: '/top-game',
+    element: <TopGamePage />
+  }
+]);
+
+export function Router() {
+  return <RouterProvider router={router} />;
 }
