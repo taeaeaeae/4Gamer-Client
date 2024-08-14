@@ -5,16 +5,8 @@ import { useDisclosure } from '@mantine/hooks';
 import { ColorSchemeToggleButton } from '../ColorSchemeToggleButton/ColorSchemeToggleButton';
 import WebsocketConnection from '../../layout/WebsocketConnection';
 
-interface Page {
-  bodyContent: any;
-   navbarContent: any;
-   asideContent: any;
-   headerContent: any;
-   footerContent: any;
-}
-
 export function PageFrame(
-  { bodyContent, navbarContent, asideContent, headerContent, footerContent } : Page
+  { bodyContent, navbarContent, asideContent, headerContent, footerContent }
 ) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
@@ -30,7 +22,7 @@ export function PageFrame(
         width: 300,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-      }}
+        }}
       aside={{ width: 300, breakpoint: 'md', collapsed: { mobile: !mobileAsideOpened, desktop: !desktopAsideOpened } }}
       padding="xl"
     >
@@ -43,8 +35,8 @@ export function PageFrame(
               <Title order={1}>4Gamer</Title>
             </UnstyledButton>
           </Group>
-          <WebsocketConnection />
           <Group>
+          <WebsocketConnection />
             <Button variant="filled">Button</Button>
             <Button variant="filled">Button</Button>
             <ColorSchemeToggleButton />
