@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { Box, Button, Flex, Text } from '@mantine/core';
 import { getGameReviewList } from '../../api/gameReviewApi';
 import { getGameReviewReactionList } from '../../api/VoteApi';
 import GameReviewItem from '../../components/game-review/GameReviewItem';
 import GameReviewInput from '../../components/game-review/GameReviewInput';
-import './GameReviewList.page.css';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 import { getMemberInfo } from '../../api/member';
 
@@ -69,16 +69,16 @@ const GameReviewList = () => {
 
   const bodyContent = (
     <>
-      <div className="game-review-list-container">
+      <Box>
         {hasAccessToken ? (
           <GameReviewInput id="" gameTitle="" point="" description="" handleFunction={() => {}} />
         ) : (
-          <div className="login">
-            <p>로그인 후 리뷰 작성이 가능합니다.</p>
-            <button type="button" onClick={() => navigate('/login')}>
+          <Flex direction="column" align="center" gap={20} mb={50}>
+            <Text>로그인 후 리뷰 작성이 가능합니다.</Text>
+            <Button type="button" w="100%" size="md" onClick={() => navigate('/login')}>
               로그인
-            </button>
-          </div>
+            </Button>
+          </Flex>
         )}
 
         {gameReviewList?.map((value: GameReviewList) => (
@@ -96,7 +96,7 @@ const GameReviewList = () => {
             isUpvoting={voteList?.filter((v) => v.id === value.id)[0]?.isUpvoting}
           />
         ))}
-      </div>
+      </Box>
       <div ref={ref}></div>
     </>
   );

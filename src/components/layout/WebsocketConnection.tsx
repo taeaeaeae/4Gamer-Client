@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconBell, IconBellFilled } from '@tabler/icons-react';
-import { Box, Card, Divider, Indicator, Notification, Paper, Text } from '@mantine/core';
+import {
+  Box,
+  Card,
+  Divider,
+  Indicator,
+  Notification,
+  Popover,
+  ScrollArea,
+  Text,
+} from '@mantine/core';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { getMemberInfo } from '../../api/member';
@@ -13,12 +23,18 @@ const WebsocketConnection = () => {
   const subjectId = useRef<string>('');
   const [targetId, setTargetId] = useState<string>('');
   const [roomId, setRoomId] = useState<string>('');
-  const [notificationList, setNotificationList] = useState<Notification[]>([]);
-  const [isClicked, setIsClicked] = useState(false);
+  const [notificationList, setNotificationList] = useState<Notification[]>(
+    JSON.parse(localStorage.getItem('notificationList') || '[]')
+  );
   const [openChatWindow, setOpenChatWindow] = useState(false);
+  const navigate = useNavigate();
 
   const handleChatWindow = (value: boolean) => {
     setOpenChatWindow(value);
+  };
+
+  const notificationListLocalSave = () => {
+    localStorage.setItem('notificationList', JSON.stringify(notificationList));
   };
 
   const webSocketConnection = (userId: string) => {
@@ -30,7 +46,7 @@ const WebsocketConnection = () => {
       // debug: (msg) => console.log(msg),
       reconnectDelay: 50000,
       onConnect: () => {
-        console.log('Connected');
+        // console.log('Connected');
 
         subscriptionRef.current = stompClient.subscribe(
           `/sub/notification/${userId}`,
@@ -87,38 +103,65 @@ const WebsocketConnection = () => {
     };
   }, [tokenRef]);
 
-  useEffect(() => {}, [notificationList]);
+  useEffect(() => {
+    notificationListLocalSave();
+  }, [notificationList]);
 
   useEffect(() => {
-    setNotificationList([]);
-    setIsClicked(false);
+    if (openChatWindow) {
+      clientRef.current?.publish({
+        destination: '/pub/chat',
+        body: JSON.stringify({
+          type: 'ENTER',
+          roomId,
+          subjectId: subjectId.current,
+          targetId: subjectId.current,
+          message: `${subjectId}님께서 입장하셨습니다.`,
+          createdAt: new Date(),
+        }),
+      });
+    }
   }, [openChatWindow]);
 
   return (
-    <div>
+    <Popover width={300} trapFocus position="bottom" withArrow shadow="md">
       <Box pos="relative">
         {(tokenRef.current && notificationList.length !== 0 && (
-          <Indicator inline processing color="red" size={10} onClick={() => setIsClicked(true)}>
-            <IconBellFilled />
+          <Indicator inline processing color="red" size={10}>
+            <Popover.Target>
+              <IconBellFilled />
+            </Popover.Target>
           </Indicator>
-        )) || <IconBell />}
-        {isClicked && (
-          <Paper pos="absolute" right={0} w={380} bg="white" bd="1px solid dark.9">
-            {notificationList.map((value, index) => (
-              <Card
-                key={index}
-                onClick={() => {
-                  value.roomId ? setOpenChatWindow(true) : (window.location.href = '/message');
-                }}
-              >
-                {index !== 0 && <Divider my="md" mt={0} mb={30} />}
-                {value.roomId === null && <Text>{value.subjectId}님이 쪽지를 보냈습니다.</Text>}
-                <br />
-                <Text>{value.message}</Text>
-              </Card>
-            ))}
-          </Paper>
+        )) || (
+          <Popover.Target>
+            <IconBell />
+          </Popover.Target>
         )}
+        <Popover.Dropdown>
+          <ScrollArea h={300}>
+            {notificationList.length === 0 ? (
+              <Text mt={50} ml={50}>
+                새로운 알림이 없습니다.
+              </Text>
+            ) : (
+              notificationList.map((value, index) => (
+                <Card
+                  key={index}
+                  onClick={() => {
+                    const newNotificationList = notificationList.filter((_, i) => i !== index);
+                    setNotificationList(newNotificationList);
+                    value.roomId ? setOpenChatWindow(true) : navigate('/message');
+                  }}
+                >
+                  {index !== 0 && <Divider my="md" mt={0} mb={30} />}
+                  {value.roomId === null && <Text>{value.subjectId}님이 쪽지를 보냈습니다.</Text>}
+                  <br />
+                  <Text>{value.message}</Text>
+                </Card>
+              ))
+            )}
+          </ScrollArea>
+        </Popover.Dropdown>
       </Box>
       <Box pos="absolute" top={100} right={100}>
         {openChatWindow && (
@@ -130,7 +173,7 @@ const WebsocketConnection = () => {
           />
         )}
       </Box>
-    </div>
+    </Popover>
   );
 };
 

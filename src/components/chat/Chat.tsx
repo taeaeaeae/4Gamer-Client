@@ -12,6 +12,7 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
   const [client, setClient] = useState<Client | null>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const [isTargetExited, setIsTargetExited] = useState(false);
+  const [isTargetEntered, setIsTargetEntered] = useState(false);
 
   const scrollToBottom = () =>
     viewport.current!.scrollTo({ top: viewport.current!.scrollHeight, behavior: 'smooth' });
@@ -51,7 +52,7 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
       // debug: (msg) => console.log(msg),
       reconnectDelay: 50000,
       onConnect: () => {
-        console.log('Connected');
+        // console.log('Connected');
 
         subscriptionRef.current = stompClient.subscribe(`/sub/chat/${roomId}`, (chat) => {
           try {
@@ -66,8 +67,13 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
               );
             }
           } catch (e) {
-            // console.log(chat.body);
-            setIsTargetExited(true);
+            if (chat.body.includes('입장')) {
+              setIsTargetEntered(true);
+            }
+
+            if (chat.body.includes('종료')) {
+              setIsTargetExited(true);
+            }
           }
         });
       },
@@ -97,9 +103,7 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
     handler(false);
   };
 
-  const sendMessage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, message: string) => {
-    e.preventDefault();
-
+  const sendMessage = (message: string) => {
     if (message) {
       addChatHistory(subjectId, targetId, message, dateFormat(new Date().toISOString()));
 
@@ -117,6 +121,13 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
     }
   };
 
+  const handleSubmit = async (event: any, message: string) => {
+    event.preventDefault();
+
+    sendMessage(message);
+    inputRef.current!.value = '';
+  };
+
   useEffect(() => {
     webSocketConnection();
   }, []);
@@ -125,12 +136,27 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
     scrollToBottom();
   }, [prevChatHistory, isTargetExited]);
 
+  useEffect(() => {
+    if (isTargetEntered) {
+      setTimeout(() => {
+        setIsTargetEntered(false);
+      }, 3000);
+    }
+
+    if (isTargetExited) {
+      setTimeout(() => {
+        setIsTargetExited(false);
+      }, 3000);
+    }
+  }, [isTargetEntered, isTargetExited]);
+
   return (
     <Card w={500} bd="1px solid" shadow="xl">
       <Group justify="space-between">
         <span>{targetMemberName}</span>
         <IconX stroke={2} onClick={() => webSocketDisConnection()} />
       </Group>
+      {isTargetEntered && `${targetId}님이 입장했습니다.`}
       <ScrollArea h={500} mt={20} pr={20} mb={20} scrollbars="y" viewportRef={viewport}>
         {prevChatHistory.map((value, index) =>
           value.subjectId === subjectId ? (
@@ -147,20 +173,14 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
             </Group>
           )
         )}
-        {isTargetExited && `${targetId}님께서 채팅을 종료했습니다.`}
+        {isTargetExited && `${targetId}님이 채팅을 종료했습니다.`}
       </ScrollArea>
-      <Group justify="space-between">
-        <TextInput ref={inputRef} w={380} />
-        <Button
-          type="button"
-          onClick={(e) => {
-            sendMessage(e, inputRef.current!.value);
-            inputRef.current!.value = '';
-          }}
-        >
-          전송
-        </Button>
-      </Group>
+      <form onSubmit={(e) => handleSubmit(e, inputRef.current!.value)}>
+        <Group justify="space-between">
+          <TextInput ref={inputRef} w={380} />
+          <Button type="submit">전송</Button>
+        </Group>
+      </form>
     </Card>
   );
 };
