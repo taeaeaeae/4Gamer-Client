@@ -12,7 +12,6 @@ export const getBoard = async (channelId: any, boardId: any) => {
     return response.data;
 };
 
-
 export const createboard = async (channelId: any, request: request) => {
     const response = await client.post(`/api/v1/channel-admin/channels/${channelId}/boards`, request);
 
@@ -26,7 +25,7 @@ export const removeBoards = async (channelId: any, id: any) => {
 };
 
 export const updateBoards = async (channelId: any, boardId: any, request: request) => {
-    const response = await client.put(`/api/v1/channel-admin/channels/${channelId}/boards/${boardId}`);
+    const response = await client.put(`/api/v1/channel-admin/channels/${channelId}/boards/${boardId}`, request);
 
     return response.data;
 };

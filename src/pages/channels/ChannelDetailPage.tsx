@@ -5,18 +5,18 @@ import { getChannelItem } from '../../api/channelApi'; // 채널 데이터를 �
 import { Channel } from '../../components/channels/channelitem';
 
 const ChannelDetailPage = () => {
-    const { id } = useParams<{ id: string }>();
+    const { channelId } = useParams<{ channelId: string }>();
     const [channel, setChannel] = useState<Channel | null>(null);
 
     useEffect(() => {
         const fetchChannel = async () => {
-            if (id) {
-                const data = await getChannelItem(parseInt(id));
+            if (channelId) {
+                const data = await getChannelItem(parseInt(channelId, 10));
                 setChannel(data);
             }
         };
         fetchChannel();
-    }, [id]);
+    }, [channelId]);
 
     if (!channel) {
         return <div>Loading...</div>;

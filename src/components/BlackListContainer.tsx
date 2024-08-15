@@ -1,28 +1,9 @@
-import classes from '../components/css/Member.module.css';
-import {
-  Paper,
-  Text,
-  Button,
-  Group,
-  TextInput,
-  ScrollArea,
-  Loader,
-  Notification,
-  Card
-} from '@mantine/core';
+import { Paper, Text, Button, Group, TextInput, ScrollArea, Loader, Notification, Card } from '@mantine/core';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  useState,
-  useEffect
-} from 'react';
-import {
-  getMemberInfo
-} from '../api/member';
-import {
-  addBlackList,
-  removeBlackList,
-  getBlacklist
-} from '../api/channelApi';
+import { useState, useEffect } from 'react';
+import { getMemberInfo } from '../api/member';
+import { addBlackList, removeBlackList, getBlacklist } from '../api/channelApi';
+import classes from './css/Member.module.css';
 
 interface User {
   id: string;
@@ -50,10 +31,10 @@ export function BlackListContainer() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken");
+        const accessToken = localStorage.getItem('accessToken');
 
         if (!accessToken) {
-          console.error("로컬 스토리지에서 토큰을 찾을 수 없습니다.");
+          console.error('로컬 스토리지에서 토큰을 찾을 수 없습니다.');
           return;
         }
 
@@ -63,11 +44,10 @@ export function BlackListContainer() {
           email: userInfo.email,
           nickname: userInfo.nickname,
           avatarUrl: '',
-          role: userInfo.role
+          role: userInfo.role,
         });
-
-      } catch (error) {
-        console.error("데이터를 가져오는 중 오류 발생:", error);
+      } catch (e) {
+        console.error('데이터를 가져오는 중 오류 발생:', e);
         setError('사용자 정보를 가져오는 중 오류 발생');
       }
     };
@@ -86,11 +66,11 @@ export function BlackListContainer() {
           setBlacklistData(data);
           setHasMore(data.length > 0);
         } else {
-          console.error("블랙리스트 데이터 형식이 잘못되었습니다.");
+          console.error('블랙리스트 데이터 형식이 잘못되었습니다.');
           setError('블랙리스트 데이터를 가져오는 중 오류 발생');
         }
-      } catch (error) {
-        console.error("블랙리스트 데이터를 가져오는 중 오류 발생:", error);
+      } catch (e) {
+        console.error('블랙리스트 데이터를 가져오는 중 오류 발생:', e);
         setError('블랙리스트를 가져오는 중 오류 발생');
       } finally {
         setLoading(false);
@@ -117,8 +97,8 @@ export function BlackListContainer() {
       setBlacklistData(prev => [...prev, { memberId: blacklistTarget }]);
       setBlacklistTarget('');
       alert('차단에 성공하였습니다.');
-    } catch (error) {
-      console.error('차단 추가 중 오류 발생:', error);
+    } catch (e) {
+      console.error('차단 추가 중 오류 발생:', e);
       alert('차단에 실패하였습니다.');
     }
   };
@@ -133,7 +113,7 @@ export function BlackListContainer() {
       await removeBlackList(channelId, targetId);
       setBlacklistData(prev => prev.filter(item => item.memberId !== targetId));
       alert('차단 해제에 성공하였습니다.');
-    } catch (error) {
+    } catch (e) {
       console.error('차단 해제 중 오류 발생:', error);
       alert('차단 해제에 실패하였습니다.');
     }
@@ -144,22 +124,23 @@ export function BlackListContainer() {
     setLoadingMore(true);
 
     try {
+      if (!channelId) return;
+
       const data = await getBlacklist(channelId);
 
       if (Array.isArray(data)) {
         if (data.length > 0) {
           setBlacklistData(prevData => [...prevData, ...data]);
-
         } else {
           setHasMore(false);
         }
       } else {
-        console.error("블랙리스트 데이터 형식이 잘못되었습니다.");
+        console.error('블랙리스트 데이터 형식이 잘못되었습니다.');
         setError('더 많은 블랙리스트를 가져오는 중 오류 발생');
         setHasMore(false);
       }
-    } catch (error) {
-      console.error("더 많은 블랙리스트 데이터를 가져오는 중 오류 발생:", error);
+    } catch (e) {
+      console.error('더 많은 블랙리스트 데이터를 가져오는 중 오류 발생:', e);
       setError('더 많은 블랙리스트를 가져오는 중 오류 발생');
       setHasMore(false);
     } finally {
@@ -172,7 +153,7 @@ export function BlackListContainer() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
       <Paper shadow="md" radius="lg" style={{ width: 1100, maxWidth: '100%', padding: '1rem' }}>
-        <Group justify='space-between' m={10}>
+        <Group justify="space-between" m={10}>
           <Text fz="xl" fw={700} mb="md">
             블랙리스트
           </Text>

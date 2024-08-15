@@ -9,53 +9,71 @@ import PostPage from './pages/Post.page';
 import GameReviewList from './pages/game-review/GameReviewList.page';
 import ChannelsPage from './pages/channels/ChannelsPage';
 import ChannelDetailPage from './pages/channels/ChannelDetailPage';
-import ChannerCreate from "./pages/channels/CreateChannel"
-import ChannelModify from "./pages/channels/ModifyChannel"
-import ChannelAdminPage from "./pages/channels/ChannelAdminPage"
-import BoardCreate from "./pages/channels/CreateBoard"
-import BoardModify from "./pages/channels/ModifyBoard"
+import ChannerCreate from './pages/channels/CreateChannel';
+import ChannelModify from './pages/channels/ModifyChannel';
+import { ChannelAdminPage } from './pages/channels/ChannelAdminPage';
+import BoardCreate from './pages/channels/CreateBoard';
+import BoardModify from './pages/channels/ModifyBoard';
 import { GoogleLogin } from './pages/GoogleLogin.page';
 import TopGamePage from './pages/TopGame.page';
 
+import { PostEditPage } from './pages/post/PostEdit.page';
+import { PostListPage } from './pages/post/PostList.page';
+import { PostDetailPage } from './pages/post/PostDetail.page';
+import { NewPostPage } from './pages/post/NewPost.page';
+
 const router = createBrowserRouter([
+  // {
+  //   path: '',
+  //   element: <Header />,
+  // },
+
+  // {
+  //   path: '/main',
+  //   element: <HomePage />,
+  // },
+
   {
     path: '',
-    element: <Header />,
+    element: <HomePage />
   },
-
-  {
-    path: '/main',
-    element: <HomePage />,
-  },
-
   {
     path: '/login',
-    element: <LoginPage />,
+    children: [
+      {
+        path: '',
+        element: <LoginPage />,
+      },
+      {
+        path: 'google',
+        element: <GoogleLogin />,
+      },
+    ],
   },
 
   {
     path: '/member',
-    element: <MemberPage />,
+    children: [
+      {
+        path: '',
+        element: <MemberPage />,
+      },
+      {
+        path: 'message',
+        element: <MessagePage />,
+      },
+      {
+        path: 'posts',
+        element: <PostPage />,
+      },
+    ],
   },
 
+  // {
+  //   path: '/blacklist/:channelId',
+  //   element: <BlackListPage />,
+  // },
   {
-    path: '/posts',
-    element: <PostPage />,
-  },
-
-  {
-    path: '/blacklist/:channelId',
-    element: <BlackListPage />,
-  },
-  {
-    path: "/login/google",
-    element: <GoogleLogin />,
-  },
-
-  {
-    path: '/message',
-    element: <MessagePage />,
-  }, {
     path: '/channels',
     children: [
       {
@@ -63,28 +81,78 @@ const router = createBrowserRouter([
         element: <ChannelsPage />,
       },
       {
-        path: ':channelId',
-        element: <ChannelDetailPage />
-      },
-      {
-        path: ':channelId/edit',
-        element: <ChannelModify />
-      },
-      {
         path: 'new',
         element: <ChannerCreate />,
       },
       {
-        path: ':channelId/admin',
-        element: <ChannelAdminPage />,
-      },
-      {
-        path: ':channelId/boards/new',
-        element: <BoardCreate />,
-      },
-      {
-        path: ':channelId/boards/:boardId/edit',
-        element: <BoardModify />,
+        path: ':channelId',
+        children: [
+          {
+            path: '',
+            element: <ChannelDetailPage />,
+          },
+          {
+            path: 'edit',
+            element: <ChannelModify />,
+          },
+          {
+            path: 'admin',
+            children: [
+              {
+                path: '',
+                element: <ChannelAdminPage />,
+              },
+              {
+                path: 'blacklist',
+                element: <BlackListPage />,
+              },
+            ],
+          },
+          {
+            path: 'boards',
+            children: [
+              {
+                path: 'new',
+                element: <BoardCreate />,
+              },
+              {
+                path: ':boardId',
+                children: [
+                  {
+                    path: 'edit',
+                    element: <BoardModify />,
+                  },
+                  {
+                    path: 'posts',
+                    children: [
+                      {
+                        path: '',
+                        element: <PostListPage />,
+                      },
+                      {
+                        path: 'new',
+                        element: <NewPostPage />,
+                      },
+                      {
+                        path: ':postId',
+                        children: [
+                          {
+                            path: '',
+                            element: <PostDetailPage />,
+                          },
+                          {
+                            path: 'edit',
+                            element: <PostEditPage />,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -92,11 +160,10 @@ const router = createBrowserRouter([
     path: '/game-reviews',
     element: <GameReviewList />,
   },
-
   {
     path: '/top-game',
-    element: <TopGamePage />
-  }
+    element: <TopGamePage />,
+  },
 ]);
 
 export function Router() {

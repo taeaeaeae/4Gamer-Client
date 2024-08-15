@@ -1,1 +1,1 @@
-export const REDIRECT_URI = window.location.origin + "/redirect";
+export const REDIRECT_URI = `${window.location.origin}/redirect`;
