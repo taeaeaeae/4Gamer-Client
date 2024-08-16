@@ -38,7 +38,7 @@ export function PageFrame(
           <Group>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <Image src='4gamerLogo.png' h={50}></Image>
+            <Image src='/src/4gamerLogo.png' h={50}></Image>
             <UnstyledButton component={Link} to="/">
               <Title order={1}>4Gamer</Title>
             </UnstyledButton>
