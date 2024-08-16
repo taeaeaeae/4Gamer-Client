@@ -2,7 +2,7 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-hook";
 import { client } from "./client";
 
 export const useIsRobot = () => {
-    const { executeGoogleReCaptcha } = useGoogleReCaptcha("6Ld-kxUqAAAAAPLYxnzZgI9Ox0swMKCQz8GkzpHA", { hide: true });
+    const { executeGoogleReCaptcha } = useGoogleReCaptcha("6Ld-kxUqAAAAAPLYxnzZgI9Ox0swMKCQz8GkzpHA");
 
     const checkIsRobot = async () => {
         if (!executeGoogleReCaptcha) {
