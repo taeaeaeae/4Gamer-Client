@@ -150,7 +150,7 @@ const WebsocketConnection = () => {
                   onClick={() => {
                     const newNotificationList = notificationList.filter((_, i) => i !== index);
                     setNotificationList(newNotificationList);
-                    value.roomId ? setOpenChatWindow(true) : navigate('/message');
+                    value.roomId ? setOpenChatWindow(true) : navigate('/member/message');
                   }}
                 >
                   {index !== 0 && <Divider my="md" mt={0} mb={30} />}
