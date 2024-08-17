@@ -42,13 +42,8 @@ const ChannelContainer = () => {
 
     return (
         <div>
-            {/* <ChannelInput addChannel /> */}
             <ChannelList
                 fetchChannels={fetchChannels}
-                channels={channels}
-                removeChannel={removeChannel}
-            //   updateChannel={updateChannel} // 사용되지 않는 부분 주석 처리
-            // getChannelDetail={getChannelDetail} // 사용되지 않는 부분 주석 처리
             />
         </div>
     );
