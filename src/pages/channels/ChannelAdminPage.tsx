@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
+    AppShell,
+    NavLink,
     Table,
     ScrollArea,
     UnstyledButton,
@@ -240,7 +242,13 @@ export function ChannelAdminPage() {
                 </Container>
 
 
-            } navbarContent={undefined} asideContent={<TopPost channelId={channelId} />} headerContent={undefined} footerContent={undefined}>
+            } navbarContent={
+                <>
+                  <AppShell.Section>
+                    <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+                  </AppShell.Section>
+                </>
+              } asideContent={<TopPost channelId={channelId} />} headerContent={undefined} footerContent={undefined}>
 
             </PageFrame>
         </>

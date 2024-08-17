@@ -1,11 +1,9 @@
-import ChannelContainer from "../../components/channels/ChannelContaner";
+import ChannelContainer from '../../components/channels/ChannelContaner';
 
-const ChannelPage = () => {
-    return (
-        <div>
-            < ChannelContainer />
-        </div>
-    );
-};
+const ChannelPage = () => (
+  <div>
+    <ChannelContainer />
+  </div>
+);
 
 export default ChannelPage;

@@ -54,7 +54,7 @@ export function MessageContainer () {
     const token = localStorage.getItem("accessToken");
 
     useEffect(() => {
-        if (!token) return navigate("/main");
+        if (!token) return navigate("/");
 
         const fetchUserData = async () => {
             try {

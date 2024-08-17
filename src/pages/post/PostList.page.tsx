@@ -1,10 +1,10 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AppShell, Button, ScrollArea, NavLink, Stack, Title } from '@mantine/core';
+import { AppShell, Button, ScrollArea, NavLink, Space, Stack, Title } from '@mantine/core';
 
 import { getBoard, getBoards } from '@api/boardApi';
-import { getBlacklist, getChannelItem } from '@api/channelApi';
+import { checkBlack, getChannelItem } from '@api/channelApi';
 import { getPosts } from '@api/posts';
 import { getPostReactionList } from '@api/reaction';
 
@@ -12,7 +12,7 @@ import { PageFrame } from '@components/Common/PageFrame/PageFrame';
 import { PostSummary } from '@components/Post/PostList/PostSummary';
 import { TopPost } from '@components/channels/topPost';
 
-import { ChannelBlacklistResponse, PostSimplifiedResponse, ReactionResponse, BoardResponse } from '@/responseTypes';
+import { PostSimplifiedResponse, ReactionResponse, BoardResponse } from '@/responseTypes';
 
 export function PostListPage() {
   const NULL = 0;
@@ -21,7 +21,6 @@ export function PostListPage() {
 
   const navigate = useNavigate();
   const { channelId, boardId } = (useParams() as unknown) as { channelId: bigint, boardId: bigint };
-  const memberId = localStorage.getItem('4gamer_member_id');
   const [posts, setPosts] = useState<Array<PostSimplifiedResponse & { isUpvoting: number }>>([]);
   const [boards, setBoards] = useState<Array<BoardResponse>>([]);
   const { ref, inView } = useInView();
@@ -73,10 +72,9 @@ export function PostListPage() {
     }
   };
   const checkBlacklists = async () => {
-    const data = await getBlacklist(`${channelId}`);
-    if (data.some((each: ChannelBlacklistResponse) => each.memberId === memberId)) {
-      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
+    if (await checkBlack(channelId)) {
       navigate('/');
+      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
     }
   };
 
@@ -110,11 +108,16 @@ export function PostListPage() {
 
   const postListNavbar = (
     <>
+      <AppShell.Section>
+        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+      </AppShell.Section>
+      <Space h="md" />
       <AppShell.Section>게시판 목록</AppShell.Section>
       <AppShell.Section grow my="md" component={ScrollArea}>
         {
           boards.map((each, index) => (
-            <NavLink component={Link} to={`../../${each.id}/posts`} relative="path" key={index} label={each.title} />
+            // <NavLink component={Link} to={`../../${each.id}/posts`} relative="path" key={index} label={each.title} />
+            <NavLink component="a" href={`/channels/${channelId}/boards/${each.id}/posts`} key={index} label={each.title} />
           ))
         }
       </AppShell.Section>

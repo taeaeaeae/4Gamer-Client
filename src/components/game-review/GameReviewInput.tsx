@@ -42,7 +42,10 @@ const GameReviewInput = (item: GameReviewInput) => {
   const checkGameTitle = async (word: string) => {
     const data = await searchGameTitle(word);
     const newGameTitleList: [] = JSON.parse(data.body).map((it: SearchGameTitle) => it.name);
+    // const newGameTitleList: Array<string> = [...new Set(JSON.parse(data.body).map((it: SearchGameTitle) => it.name))];
+    // const newGameTitleList: [] = JSON.parse(data.body).map((it: SearchGameTitle) => ({ value: it.name, label: it.name}));
 
+    // setGameTitleSearchResult([...new Set(newGameTitleList)]);
     setGameTitleSearchResult(newGameTitleList);
   };
 

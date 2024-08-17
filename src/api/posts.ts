@@ -31,7 +31,7 @@ export const getTagsInPost = async (channelId: bigint, boardId: bigint, postId: 
 };
 
 export const getComments = async (channelId: bigint, boardId: bigint, postId: bigint, page: bigint, size: bigint) => {
-    const response = await client.get(`/api/v1/channels/${channelId}/boards/${boardId}/posts/${postId}/comments?page=${page}&size=${size}`);
+    const response = await client.get(`/api/v1/channels/${channelId}/boards/${boardId}/posts/${postId}/comments?page=${page}&size=${size}&sort=createdAt,ASC`);
     return response.data;
 };
 

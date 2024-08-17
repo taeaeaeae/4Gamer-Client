@@ -1,47 +1,35 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AppShell, NavLink, ScrollArea, Title } from '@mantine/core';
+import { AppShell, NavLink, ScrollArea, Space, Title } from '@mantine/core';
 
 import { getBoard, getBoards } from '@api/boardApi';
-import { getBlacklist, getChannelItem } from '@api/channelApi';
-import { getMemberInfo } from '@api/member';
-import { getPost, getTagsInPost, getComments } from '@api/posts';
+import { checkBlack, getChannelItem } from '@api/channelApi';
+import { getPost } from '@api/posts';
 // import { getPostReactionList, getCommentReactionList } from '@api/reaction';
-import { BoardResponse, ChannelBlacklistResponse, CommentResponse, PostResponse, PostTagResponse, ReactionResponse } from '@/responseTypes';
+import { TopPost } from '@components/channels/topPost';
+import { BoardResponse, PostResponse } from '@/responseTypes';
 
 import { PageFrame } from '@/components/Common/PageFrame/PageFrame';
 import { PostDetail } from '@/components/Post/PostDetail/PostDetail';
-import { TopPost } from '@components/channels/topPost';
 
 export function PostDetailPage() {
   const { channelId, boardId, postId } = (
     useParams() as unknown
   ) as { channelId: bigint, boardId: bigint, postId: bigint };
   const navigate = useNavigate();
-  const memberId = localStorage.getItem('4gamer_member_id');
   const [boards, setBoards] = useState<BoardResponse[]>([]);
   const [post, setPost] = useState<PostResponse | null>(null);
   // const [comments, setComments] = useState<Array<CommentResponse & { isUpvoting: boolean }>>([]);
   // const [tags, setTags] = useState<Array<PostTagResponse>>([]);
   // const [postReactionList, setPostReactionList] = useState<Array<ReactionResponse>>([]);
   // const [commentReactionList, setCommentReactionList] = useState<Array<ReactionResponse>>([]);
-  const accessToken = localStorage.getItem('accessToken');
   const [boardTitle, setBoardTitle] = useState<string>('');
   const [channelTitle, setChannelTitle] = useState<string>('');
 
   const checkBlacklists = async () => {
-    await getMemberId();
-    const data = await getBlacklist(`${channelId}`);
-    if (data.some((each: ChannelBlacklistResponse) => each.memberId === memberId)) {
-      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
+    if (await checkBlack(channelId)) {
       navigate('/');
-    }
-  };
-
-  const getMemberId = async () => {
-    if (accessToken !== null) {
-      const data = await getMemberInfo(accessToken);
-      localStorage.setItem('4gamer_member_id', data.id);
+      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
     }
   };
 
@@ -103,6 +91,10 @@ export function PostDetailPage() {
 
   const postDetailNavbar = (
     <>
+      <AppShell.Section>
+        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+      </AppShell.Section>
+      <Space h="md" />
       <AppShell.Section>게시판 목록</AppShell.Section>
       <AppShell.Section grow my="md" component={ScrollArea}>
         {

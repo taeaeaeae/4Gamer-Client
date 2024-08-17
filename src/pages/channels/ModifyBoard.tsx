@@ -1,4 +1,4 @@
-import { Button, Container, Group, TextInput, Textarea, Autocomplete, Loader } from '@mantine/core';
+import { AppShell, Button, Container, Group, NavLink, TextInput, Textarea, Autocomplete, Loader } from '@mantine/core';
 import { useState, useEffect, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBoard, updateBoards } from '../../api/boardApi';
@@ -61,35 +61,43 @@ const ModifyBoard = () => {
     }
 
     return (<>
-        <PageFrame bodyContent={
-
-            <Container size={'lg'}>
-                <form onSubmit={handleSubmit}>
-                    <TextInput
-                        label="Title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <Textarea
-                        label="Introduction"
-                        value={introduction}
-                        onChange={(e) => setIntroduction(e.target.value)}
-                    />
-                    <TextInput
-                        label="Alias"
-                        value={alias}
-                        readOnly
-                    />
-                    <br />
-                    <Group justify='flex-end'>
-                        <Button mr={30} type="submit">Submit</Button>
-                    </Group>
-                </form>
-            </Container>
-        } navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}>
-
-        </PageFrame>
-
+        <PageFrame
+            bodyContent={
+                <Container size={'lg'}>
+                    <form onSubmit={handleSubmit}>
+                        <TextInput
+                            label="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <Textarea
+                            label="Introduction"
+                            value={introduction}
+                            onChange={(e) => setIntroduction(e.target.value)}
+                        />
+                        <TextInput
+                            label="Alias"
+                            value={alias}
+                            readOnly
+                        />
+                        <br />
+                        <Group justify='flex-end'>
+                            <Button mr={30} type="submit">Submit</Button>
+                        </Group>
+                    </form>
+                </Container>
+            }
+            navbarContent={
+                <>
+                  <AppShell.Section>
+                    <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+                  </AppShell.Section>
+                </>
+              }
+            asideContent={undefined}
+            headerContent={undefined}
+            footerContent={undefined}
+        />
     </>
     );
 };

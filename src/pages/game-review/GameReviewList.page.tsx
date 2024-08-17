@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { Box, Button, Flex, Text } from '@mantine/core';
+import { AppShell, Box, Button, Flex, NavLink, Text } from '@mantine/core';
 import { getGameReviewList } from '../../api/gameReviewApi';
 import { getGameReviewReactionList } from '../../api/VoteApi';
 import GameReviewItem from '../../components/game-review/GameReviewItem';
@@ -105,7 +105,13 @@ const GameReviewList = () => {
     <PageFrame
       headerContent={undefined}
       bodyContent={bodyContent}
-      navbarContent={undefined}
+      navbarContent={
+        <>
+          <AppShell.Section>
+            <NavLink component="a" href="/" label="메인 페이지" />
+          </AppShell.Section>
+        </>
+      }
       asideContent={undefined}
       footerContent={undefined}
     />

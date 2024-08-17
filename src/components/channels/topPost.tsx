@@ -27,7 +27,8 @@ export function TopPost({ channelId }: { channelId: any }) {
       <Table.Tr key={row.id}>
         <Table.Td>
           {/* <Anchor component="button" fz="sm" onClick={handleClick(row.board.id, row.id)}> */}
-          <Anchor fz="sm" component={Link} to={`/channels/${channelId}/boards/${row.board.id}/posts/${row.id}`}>
+          {/* <Anchor fz="sm" component={Link} to={`/channels/${channelId}/boards/${row.board.id}/posts/${row.id}`}> */}
+          <Anchor fz="sm" component="a" href={`/channels/${channelId}/boards/${row.board.id}/posts/${row.id}`}>
             {row.title}
           </Anchor>
         </Table.Td>

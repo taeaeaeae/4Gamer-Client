@@ -1,4 +1,4 @@
-import { Button, Container, Group, TextInput, Textarea } from '@mantine/core';
+import { AppShell, Button, Container, Group, NavLink, TextInput, Textarea } from '@mantine/core';
 import { useState, FormEvent, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createboard, request } from '../../api/boardApi';
@@ -46,28 +46,38 @@ const BoardCreate = () => {
 
     return (
         <>
-            <PageFrame bodyContent={
+            <PageFrame
+                bodyContent={
+                    <Container size={'lg'}>
+                        <form onSubmit={handleSubmit}>
+                            <TextInput
+                                label="Title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                            <Textarea
+                                label="Introduction"
+                                value={introduction}
+                                onChange={(e) => setIntroduction(e.target.value)}
+                            />
+                            <br />
+                            <Group justify='flex-end' >
+                                <Button mr={30} type="submit">Submit</Button>
+                            </Group>
+                        </form>
 
-                <Container size={'lg'}>
-                    <form onSubmit={handleSubmit}>
-                        <TextInput
-                            label="Title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                        <Textarea
-                            label="Introduction"
-                            value={introduction}
-                            onChange={(e) => setIntroduction(e.target.value)}
-                        />
-                        <br />
-                        <Group justify='flex-end' >
-                            <Button mr={30} type="submit">Submit</Button>
-                        </Group>
-                    </form>
-
-                </Container>
-            } navbarContent={undefined} asideContent={undefined} headerContent={undefined} footerContent={undefined}>
+                    </Container>
+                }
+                navbarContent={
+                    <>
+                      <AppShell.Section>
+                        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+                      </AppShell.Section>
+                    </>
+                  }
+                asideContent={undefined}
+                headerContent={undefined}
+                footerContent={undefined}>
 
             </PageFrame>
         </>

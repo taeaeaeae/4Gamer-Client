@@ -73,6 +73,11 @@ export const getBlacklist = async (channelId: string) => {
     return response.data;
 };
 
+export const checkBlack = async (channelId: bigint) => {
+    const response = await client.get(`/api/v1/channel-admin/channels/${channelId}`);
+    return response.data;
+};
+
 export interface request {
     title: String;
     gameTitle: String;

@@ -3,7 +3,7 @@ import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import { v7 as uuid } from 'uuid';
 
-import { AppShell, ScrollArea, NavLink, TextInput, Text, Button, Fieldset, Stack, TagsInput, Title } from '@mantine/core';
+import { AppShell, ScrollArea, NavLink, TextInput, Text, Button, Fieldset, Space, Stack, TagsInput, Title } from '@mantine/core';
 import { useValidatedState } from '@mantine/hooks';
 import { Editor } from '@tiptap/react';
 import { Link } from '@mantine/tiptap';
@@ -16,7 +16,7 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 
 import { getBoard, getBoards } from '@api/boardApi';
-import { getBlacklist, getChannelItem } from '@api/channelApi';
+import { checkBlack, getChannelItem } from '@api/channelApi';
 import { createPost } from '@api/posts';
 import { getPresignedUrl } from '@api/fileUpload';
 
@@ -24,7 +24,7 @@ import { TextEditor } from '@components/TextEditor/TextEditor';
 import { PageFrame } from '@components/Common/PageFrame/PageFrame';
 import { TopPost } from '@components/channels/topPost';
 
-import { BoardResponse, ChannelBlacklistResponse } from '@/responseTypes';
+import { BoardResponse } from '@/responseTypes';
 
 async function uploadToS3(url: string, file: File, contentType: string) {
   return axios.put(
@@ -56,7 +56,6 @@ function findAllImageTags(json: any) {
 
 export function NewPostPage() {
   const { channelId, boardId } = (useParams() as unknown) as { channelId: bigint, boardId: bigint };
-  const memberId = localStorage.getItem('4gamer_member_id');
   const accessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
   const [boards, setBoards] = useState<BoardResponse[]>([]);
@@ -133,10 +132,9 @@ export function NewPostPage() {
   };
 
   const checkBlacklists = async () => {
-    const data = await getBlacklist(`${channelId}`);
-    if (data.some((each: ChannelBlacklistResponse) => each.memberId === memberId)) {
-      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
+    if (await checkBlack(channelId)) {
       navigate('/');
+      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
     }
   };
 
@@ -196,6 +194,10 @@ export function NewPostPage() {
 
   const newPostNavbar = (
     <>
+      <AppShell.Section>
+        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+      </AppShell.Section>
+      <Space h="md" />
       <AppShell.Section>게시판 목록</AppShell.Section>
       <AppShell.Section grow my="md" component={ScrollArea}>
         {
@@ -212,8 +214,8 @@ export function NewPostPage() {
   );
 
   if (accessToken === null) {
-    alert('회원만 게시글을 작성할 수 있습니다. 로그인을 먼저 진행해 주세요.');
     navigate('/login');
+    alert('회원만 게시글을 작성할 수 있습니다. 로그인을 먼저 진행해 주세요.');
   }
   return (
     <>

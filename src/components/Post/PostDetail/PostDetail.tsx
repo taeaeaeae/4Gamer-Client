@@ -122,7 +122,20 @@ export function PostDetail({ channelId, boardId, postId }:
       } else {
         setIsCommentsAllLoaded(true);
       }
-      await setComments(data.content.map((each: CommentResponse) => (
+      // await setComments(data.content.map((each: CommentResponse) => (
+      //   {
+      //     ...each,
+      //     isUpvoting: (
+      //       commentReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
+      //       ? (commentReactions.find((reaction: ReactionResponse) => (
+      //             reaction.id === each.id
+      //           )).isUpvoting ? TRUE : FALSE
+      //         )
+      //       : NULL
+      //     ),
+      //   }
+      // )).concat(comments));
+      await setComments(comments.concat(data.content.map((each: CommentResponse) => (
         {
           ...each,
           isUpvoting: (
@@ -134,7 +147,7 @@ export function PostDetail({ channelId, boardId, postId }:
             : NULL
           ),
         }
-      )).concat(comments));
+      ))));
     }
   };
 
