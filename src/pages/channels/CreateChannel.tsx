@@ -18,12 +18,10 @@ const ChannelCreate = () => {
     const { checkIsRobot } = useIsRobot();
     const navigate = useNavigate();
 
-    // 검증됐을 때 할 행동
     const handleSubmit = async (e: FormEvent) => {
 
         e.preventDefault();
         try {
-            // 로봇여부체크
             const result = await checkIsRobot();
             if (result.score < 0.8) {
                 throw new Error('사람이 아님')
@@ -31,7 +29,6 @@ const ChannelCreate = () => {
 
 
             try {
-                // API를 통해 데이터를 포스트
                 const newChannel: request = {
                     title,
                     gameTitle,
@@ -41,7 +38,6 @@ const ChannelCreate = () => {
 
                 await createChannel(newChannel);
 
-                // 성공적으로 포스트된 후 채널 목록 화면으로 이동
                 navigate('/channels');
             } catch (error) {
                 // 에러 처리
@@ -72,10 +68,8 @@ const ChannelCreate = () => {
             try {
                 const response = await searchGameTitle(val);
 
-                // 데이터 타입 단언
                 const datas: SearchGameTitle[] = JSON.parse(response.body);
 
-                // 검색 결과에서 중복된 항목 제거
                 const newGameTitleList = datas.map((it: SearchGameTitle) => it.name);
                 const uniqueGameTitleList = Array.from(new Set(newGameTitleList));
 

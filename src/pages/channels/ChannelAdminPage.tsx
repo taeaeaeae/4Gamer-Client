@@ -15,9 +15,10 @@ import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@table
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBoards, removeBoards } from '../../api/boardApi';
 import { useIsRobot } from '../../api/captchaApi';
-import { deleteChannel } from '../../api/channelApi';
+import { deleteChannel, getChannelItem } from '../../api/channelApi';
 import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
-import { TopPost } from '../../components/channels/topPost';
+import { TopPost } from '../../components/channels/topPost'
+import { getMemberInfo } from '../../api/member';
 
 interface ThProps {
     children: React.ReactNode;
@@ -25,6 +26,7 @@ interface ThProps {
     sorted: boolean;
     onSort(): void;
 }
+
 
 function Th({ children, reversed, sorted, onSort }: ThProps) {
     const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
@@ -87,12 +89,30 @@ export function ChannelAdminPage() {
     const [sortBy, setSortBy] = useState<keyof Board | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
+
+
     useEffect(() => {
         (async () => {
+            const accessToken = localStorage.getItem("accessToken");
+
+            if (accessToken) {
+                const channel = await getChannelItem(channelId)
+                const member = await getMemberInfo(accessToken);
+                if (member.id != channel.admin) {
+                    navigate('/channels')
+                    alert("접근 권한이 없습니다.")
+                    return;
+                }
+            } else {
+                navigate('/channels')
+                alert("접근 권한이 없습니다.")
+                return;
+            }
             const data = await getBoards(channelId);
             setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search }));
         })();
     }, [channelId, sortBy, reverseSortDirection, search]);
+
 
     const setSorting = (field: keyof Board) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -107,7 +127,7 @@ export function ChannelAdminPage() {
 
     const handleCreateClick = () => navigate(`/channels/${channelId}/boards/new`);
 
-    const handleblackClick = () => navigate(`/blacklist/${channelId}`);
+    const handleblackClick = () => navigate(`/channels/${channelId}/admin/blacklist`);
 
     const handleUpdateteClick = (boardId: string) => () => navigate(`/channels/${channelId}/boards/${boardId}/edit`);
 

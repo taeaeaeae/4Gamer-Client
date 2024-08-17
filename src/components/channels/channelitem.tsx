@@ -1,15 +1,20 @@
-import { Card, Text, Badge, Button, Group, Grid, Container, Space, Flex, TextInput } from '@mantine/core';
+import { Card, Text, Badge, Button, Group, Container, Space, Flex, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { getChannels } from '../../api/channelApi';
 import { useIsRobot } from '../../api/captchaApi';
 import { PageFrame } from '../Common/PageFrame/PageFrame';
+import { getMemberInfo } from '../../api/member';
 
-function ChannelItem(item: Channel) {
+function ChannelItem({ item, memberId }: { item: Channel; memberId: string }) {
     const navigate = useNavigate();
 
     const handleDetailClick = () => {
         navigate(`/channels/${item.id}`);
+    };
+
+    const handleAdminClick = () => {
+        navigate(`/channels/${item.id}/admin`);
     };
 
     return (
@@ -21,6 +26,9 @@ function ChannelItem(item: Channel) {
             <Text size="sm" c="dimmed" h={120}>
                 {item.introduction}
             </Text>
+            {item.admin === memberId &&
+                <Button color="green" h={30} fullWidth mt="md" radius="md" onClick={handleAdminClick}>내 채널 관리</Button>
+            }
             <Button color="blue" h={30} fullWidth mt="md" radius="md" onClick={handleDetailClick}>
                 {item.title}
             </Button>
@@ -30,6 +38,7 @@ function ChannelItem(item: Channel) {
 
 const ChannelList = ({ fetchChannels }: ChannelListProps) => {
     const [channelList, setChannelList] = useState<Channel[]>([]);
+    const [memberId, setMemberId] = useState<string>('');
     const [search, setSearch] = useState('');
     const ref = useRef<HTMLDivElement | null>(null);
     const { checkIsRobot } = useIsRobot();
@@ -37,21 +46,25 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
 
     const handleCreateClick = async () => {
         try {
-            // 로봇 여부 체크
             const result = await checkIsRobot();
             if (result.score < 0.8) {
                 throw new Error('사람이 아님');
             }
-            // 검증됐을 때 할 행동
-            navigate("/channels/new")
+            navigate("/channels/new");
         } catch (error) {
             console.error("Failed to check robot status:", error);
         }
     };
 
+    const accessToken = localStorage.getItem("accessToken");
+
     const fetchChannelList = async () => {
         const data = await getChannels();
         setChannelList(data.content);
+        if (accessToken) {
+            const member = await getMemberInfo(accessToken);
+            setMemberId(member.id);
+        }
     };
 
     useEffect(() => {
@@ -65,47 +78,36 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
     );
 
     return (
-        <>
-            <PageFrame
-                bodyContent={
-
-                    <Container fluid bg="var(--mantine-color-blue-light)">
-                        <Group justify='space-between' m={10}>
-                            <Text>채널목록</Text>
-                            <Button onClick={handleCreateClick}>CREATE</Button>
-                        </Group>
-                        <TextInput
-                            placeholder="찾고싶은 채널을 입력하세요"
-                            mb="md"
-                            value={search}
-                            onChange={(event) => setSearch(event.currentTarget.value)}
-                        />
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
-                            {filteredChannelList.map((value) => (
-                                <Grid key={value.id} display={Flex}>
-                                    <ChannelItem
-                                        id={value.id}
-                                        title={value.title}
-                                        gameTitle={value.gameTitle}
-                                        introduction={value.introduction}
-                                        alias={value.alias}
-                                        createdAt={value.createdAt}
-                                        updatedAt={value.updatedAt}
-                                    />
-                                </Grid>
-                            ))}
-                            <div ref={ref}></div>
-                        </div>
-                    </Container>
-                }
-                navbarContent={undefined}
-                asideContent={undefined}
-                headerContent={undefined}
-                footerContent={undefined}>
-
-
-            </PageFrame>
-        </>
+        <PageFrame
+            bodyContent={
+                <Container fluid bg="var(--mantine-color-blue-light)">
+                    <Group justify="space-between" m={10}>
+                        <Text>채널 목록</Text>
+                        <Button onClick={handleCreateClick}>CREATE</Button>
+                    </Group>
+                    <TextInput
+                        placeholder="찾고 싶은 채널을 입력하세요"
+                        mb="md"
+                        value={search}
+                        onChange={(event) => setSearch(event.currentTarget.value)}
+                    />
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+                        {filteredChannelList.map((value) => (
+                            <ChannelItem
+                                key={value.id}
+                                item={value}
+                                memberId={memberId}
+                            />
+                        ))}
+                        <div ref={ref}></div>
+                    </div>
+                </Container>
+            }
+            navbarContent={undefined}
+            asideContent={undefined}
+            headerContent={undefined}
+            footerContent={undefined}
+        />
     );
 };
 
@@ -116,13 +118,12 @@ export interface Channel {
     title: string;
     gameTitle: string;
     introduction: string;
+    admin: string;
     alias: string;
     createdAt: string;
     updatedAt: string;
 }
 
 interface ChannelListProps {
-    channels: Channel[];
-    removeChannel: (id: number) => Promise<void>;
     fetchChannels: () => Promise<void>;
 }
