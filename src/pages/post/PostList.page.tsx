@@ -62,11 +62,11 @@ export function PostListPage() {
           ...each,
           isUpvoting: (
             postReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
-            ? (postReactions.find((reaction: ReactionResponse) => (
-                  reaction.id === each.id
-                )).isUpvoting ? TRUE : FALSE
+              ? (postReactions.find((reaction: ReactionResponse) => (
+                reaction.id === each.id
+              )).isUpvoting ? TRUE : FALSE
               )
-            : NULL
+              : NULL
           ),
         }
       )).concat(posts));
