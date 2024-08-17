@@ -83,7 +83,9 @@ const ChannelList = ({ fetchChannels }: ChannelListProps) => {
                 <Container fluid bg="var(--mantine-color-blue-light)">
                     <Group justify="space-between" m={10}>
                         <Text>채널 목록</Text>
-                        <Button onClick={handleCreateClick}>CREATE</Button>
+                        {accessToken &&
+                            <Button onClick={handleCreateClick}>CREATE</Button>
+                        }
                     </Group>
                     <TextInput
                         placeholder="찾고 싶은 채널을 입력하세요"

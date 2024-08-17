@@ -6,7 +6,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { ColorSchemeToggleButton } from '../ColorSchemeToggleButton/ColorSchemeToggleButton';
 import WebsocketConnection from '../../layout/WebsocketConnection';
 
-
 export function PageFrame(
   { bodyContent, navbarContent, asideContent, headerContent, footerContent }: {
     bodyContent: ReactNode,
