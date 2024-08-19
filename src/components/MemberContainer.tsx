@@ -178,7 +178,7 @@ export function MemberContainer() {
               <Button onClick={!(userData.name.includes('google')) ? () => setModalOpen(prev => ({ ...prev, nickname: true }))} color="blue" style={{ flex: 1 } :  googleCheck }>
                 닉네임 변경
               </Button>
-              <Button onClick={userData.name.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, password: true }))} color="blue" style={{ flex: 1 }}>
+              <Button onClick={!(userData.name.includes('google')) ? () => setModalOpen(prev => ({ ...prev, password: true }))} color="blue" style={{ flex: 1 } :  googleCheck }>
                 비밀번호 변경
               </Button>
               <Button onClick={handleLogout} color="red" style={{ flex: 1 }}>
