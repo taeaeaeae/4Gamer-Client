@@ -66,6 +66,7 @@ export function PostEditPage() {
   const memberId = localStorage.getItem('4gamer_member_id');
   const navigate = useNavigate();
   const [tags, setTags] = useState<string[]>([]);
+  const [black, setblack] = useState<boolean>();
   const [boards, setBoards] = useState<BoardResponse[]>([]);
   const [post, setPost] = useState<PostResponse>();
   const [{
@@ -97,11 +98,8 @@ export function PostEditPage() {
     if (accessToken != null) {
       const data = await getMemberInfo(accessToken);
       localStorage.setItem('4gamer_member_id', data.id);
-    }
-    if (await checkBlack(channelId)) {
-      navigate('/');
-      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
-    }
+    } console.log(checkBlack(channelId))
+    setblack(await checkBlack(channelId))
   };
 
   async function uploadImagesFrom(images: Array<any>, attachmentPrefix: string) {
@@ -116,7 +114,7 @@ export function PostEditPage() {
     // console.log(previousImages);
     const previousImagesSet = new Set(previousImages.map((each: string) => each.split(`${attachmentPrefix}/`)[1]));
     // console.log(previousImagesSet);
-    const lastIndex = BigInt(previousImages[previousImages.length - 1].split('/')[1].split('.')[0]);
+    const lastIndex = previousImages.length > 0 ? BigInt(previousImages[previousImages.length - 1].split('/')[1].split('.')[0]) : 0n;
     // console.log(lastIndex);
 
     let index = lastIndex + 1n;
@@ -149,6 +147,11 @@ export function PostEditPage() {
   }
 
   const uploadPost = async (event: MouseEvent) => {
+    if (black) {
+      navigate('/');
+      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
+      return;
+    }
     if (editorRef) {
       if (!isPostTitleValid) {
         alert('제목은 1자 이상 128자 이하로 정해 주세요.');
@@ -168,7 +171,7 @@ export function PostEditPage() {
         attachment: attachmentUuid,
       });
       // navigate(`../${response.id}`, { relative: 'path' });
-      navigate(`/channels/1/boards/1/posts/${response.id}`);
+      navigate(`/channels/${channelId}/boards/${boardId}/posts/${postId}`);
     }
   };
 

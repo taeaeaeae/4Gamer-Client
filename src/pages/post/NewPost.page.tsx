@@ -19,6 +19,7 @@ import { getBoard, getBoards } from '@api/boardApi';
 import { checkBlack, getChannelItem } from '@api/channelApi';
 import { createPost } from '@api/posts';
 import { getPresignedUrl } from '@api/fileUpload';
+import { useIsRobot } from '../../api/captchaApi';
 
 import { TextEditor } from '@components/TextEditor/TextEditor';
 import { PageFrame } from '@components/Common/PageFrame/PageFrame';
@@ -71,6 +72,8 @@ export function NewPostPage() {
   );
   const [boardTitle, setBoardTitle] = useState<string>('');
   const [channelTitle, setChannelTitle] = useState<string>('');
+  const [black, setblack] = useState<boolean>();
+  const { checkIsRobot } = useIsRobot();
 
   const editorExtensions = [
     StarterKit,
@@ -108,34 +111,45 @@ export function NewPostPage() {
   }
 
   const uploadPost = async (event: MouseEvent) => {
-    if (editorRef) {
-      if (!isPostTitleValid) {
-        alert('제목은 1자 이상 128자 이하로 정해 주세요.');
+    try {
+      const result = await checkIsRobot();
+      console.log(result.score)
+      if (result.score < 0.8) {
+        throw new Error('사람이 아님');
+      }
+      if (black) {
+        navigate('/');
+        alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
         return;
       }
-      event.preventDefault();
+      if (editorRef) {
+        if (!isPostTitleValid) {
+          alert('제목은 1자 이상 128자 이하로 정해 주세요.');
+          return;
+        }
+        event.preventDefault();
 
-      const json = editorRef.current!.getJSON();
-      const images = findAllImageTags(json);
-      const attachmentUuid = uuid();
-      await uploadImagesFrom(images, attachmentUuid);
+        const json = editorRef.current!.getJSON();
+        const images = findAllImageTags(json);
+        const attachmentUuid = uuid();
+        await uploadImagesFrom(images, attachmentUuid);
 
-      const response = await createPost(BigInt(channelId), BigInt(boardId), {
-        title: postTitle,
-        body: JSON.stringify(json),
-        tags,
-        attachment: attachmentUuid,
-      });
-      console.log(response);
-      navigate(`../${response.id}`, { relative: 'path' });
+        const response = await createPost(BigInt(channelId), BigInt(boardId), {
+          title: postTitle,
+          body: JSON.stringify(json),
+          tags,
+          attachment: attachmentUuid,
+        });
+        console.log(response);
+        navigate(`../${response.id}`, { relative: 'path' });
+      }
+    } catch (error) {
+      console.error('error:', error);
     }
   };
 
   const checkBlacklists = async () => {
-    if (await checkBlack(channelId)) {
-      navigate('/');
-      alert('해당 채널로의 접근이 차단되었습니다. 관리자에게 문의하세요.');
-    }
+    setblack(await checkBlack(channelId))
   };
 
   const fetchChannel = async () => {
