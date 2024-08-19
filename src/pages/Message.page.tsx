@@ -17,7 +17,7 @@ const MessagePage = () => (
           <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
           <NavLink
             component={Link}
-            to="../"
+            to=".."
             relative="path"
             label="내 정보"
           />
