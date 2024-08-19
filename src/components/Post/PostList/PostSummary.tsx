@@ -35,24 +35,24 @@ export function PostSummary({ channelId, boardId, postId, post }:
     if (newIsUpvoting === NULL) {
       await deletePostReaction(channelId, boardId, postId);
       if (isUpvoting === TRUE) {
-        setUpvotes(upvotes - 1n);
+        setUpvotes(BigInt(upvotes) - 1n);
       } else {
-        setDownvotes(downvotes - 1n);
+        setDownvotes(BigInt(downvotes) - 1n);
       }
       setIsUpvoting(NULL);
     } else {
       await updatePostReaction(channelId, boardId, postId, (newIsUpvoting === TRUE));
       if (isUpvoting !== NULL) {
         if (newIsUpvoting === TRUE) {
-          setDownvotes(downvotes - 1n);
+          setDownvotes(BigInt(downvotes) - 1n);
         } else {
-          setUpvotes(upvotes - 1n);
+          setUpvotes(BigInt(upvotes) - 1n);
         }
       }
       if (newIsUpvoting === TRUE) {
-        setUpvotes(upvotes + 1n);
+        setUpvotes(BigInt(upvotes) + 1n);
       } else {
-        setDownvotes(downvotes + 1n);
+        setDownvotes(BigInt(downvotes) + 1n);
       }
       setIsUpvoting(newIsUpvoting);
     }
