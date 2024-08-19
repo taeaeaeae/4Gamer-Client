@@ -17,6 +17,10 @@ const BoardCreate = () => {
 
         e.preventDefault();
         try {
+            if (introduction.length < 10) {
+                alert('Introduction을 10글자 이상 입력하세요.');
+                throw new Error('설명을 10글자 이상 작성해야합니다');
+            }
             const result = await checkIsRobot();
             if (result.score < 0.8) {
                 throw new Error('사람이 아님')
@@ -70,11 +74,11 @@ const BoardCreate = () => {
                 }
                 navbarContent={
                     <>
-                      <AppShell.Section>
-                        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
-                      </AppShell.Section>
+                        <AppShell.Section>
+                            <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+                        </AppShell.Section>
                     </>
-                  }
+                }
                 asideContent={undefined}
                 headerContent={undefined}
                 footerContent={undefined}>

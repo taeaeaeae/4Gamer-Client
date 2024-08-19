@@ -18,31 +18,36 @@ const ChannelCreate = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
-      e.preventDefault();
-      try {
-        const result = await checkIsRobot();
-        if (result.score < 0.8) {
-            throw new Error('사람이 아님');
-        }
 
-        try {
-            const newChannel: request = {
-                title,
-                gameTitle,
-                introduction,
-                alias,
-            };
-
-            await createChannel(newChannel);
-
-            navigate('/channels');
-        } catch (error) {
-            // 에러 처리
-            alert('Error creating channel');
-        }
-      } catch (error) {
-        console.error('Failed to check robot status:', error);
+    e.preventDefault();
+    try {
+      if (introduction.length < 10) {
+        alert('Introduction을 10글자 이상 입력하세요.');
+        throw new Error('설명을 10글자 이상 작성해야합니다');
       }
+      const result = await checkIsRobot();
+      if (result.score < 0.8) {
+        throw new Error('사람이 아님');
+      }
+
+      try {
+        const newChannel: request = {
+          title,
+          gameTitle,
+          introduction,
+          alias,
+        };
+
+        await createChannel(newChannel);
+
+        navigate('/channels');
+      } catch (error) {
+        // 에러 처리
+        alert('이미 존재하는 채널인지 확인해주세요');
+      }
+    } catch (error) {
+      console.error('Failed to check robot status:', error);
+    }
   };
 
   const handleChange = async (val: string) => {
@@ -71,7 +76,7 @@ const ChannelCreate = () => {
         console.error('Error fetching game titles:', error);
         setGameTitleSearchResult([]);
       } finally {
-          setLoading(false);
+        setLoading(false);
       }
     }, 300); // 디바운싱을 위해 300ms 대기
   };
@@ -100,9 +105,10 @@ const ChannelCreate = () => {
                 label="Introduction"
                 value={introduction}
                 onChange={(e) => setIntroduction(e.target.value)}
+                placeholder="10글자 이상 작성하세요"
               />
               <TextInput
-                label="Alias"
+                label="별명"
                 value={alias}
                 onChange={(e) => setAlias(e.target.value)}
               />

@@ -8,7 +8,6 @@ import { PageFrame } from '../../components/Common/PageFrame/PageFrame';
 const ModifyBoard = () => {
     const [title, setTitle] = useState('');
     const [introduction, setIntroduction] = useState('');
-    const [alias, setAlias] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
     const { checkIsRobot } = useIsRobot();
@@ -23,7 +22,6 @@ const ModifyBoard = () => {
                 const board = await getBoard(channelId, boardId);
                 setTitle(board.title);
                 setIntroduction(board.introduction);
-                setAlias(board.alias);
             } catch (error) {
                 console.error('Error fetching board data:', error);
                 alert('Failed to load board data');
@@ -38,6 +36,10 @@ const ModifyBoard = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
+            if (introduction.length < 10) {
+                alert('Introduction을 10글자 이상 입력하세요.');
+                throw new Error('설명을 10글자 이상 작성해야합니다');
+            }
             const result = await checkIsRobot();
             if (result.score < 0.8) {
                 throw new Error('사람이 아님');
@@ -48,7 +50,7 @@ const ModifyBoard = () => {
                 await updateBoards(channelId, boardId, updateBoard);
                 navigate(`/channels/${channelId}/admin`);
             } catch (error) {
-                alert('Error updating board');
+                alert(`Error updating board:${error}`);
             }
         } catch (error) {
             console.error('Failed to check robot status:', error);
@@ -75,11 +77,6 @@ const ModifyBoard = () => {
                             value={introduction}
                             onChange={(e) => setIntroduction(e.target.value)}
                         />
-                        <TextInput
-                            label="Alias"
-                            value={alias}
-                            readOnly
-                        />
                         <br />
                         <Group justify='flex-end'>
                             <Button mr={30} type="submit">Submit</Button>
@@ -89,11 +86,11 @@ const ModifyBoard = () => {
             }
             navbarContent={
                 <>
-                  <AppShell.Section>
-                    <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
-                  </AppShell.Section>
+                    <AppShell.Section>
+                        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
+                    </AppShell.Section>
                 </>
-              }
+            }
             asideContent={undefined}
             headerContent={undefined}
             footerContent={undefined}

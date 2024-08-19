@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-    AppShell,
     Table,
     ScrollArea,
     UnstyledButton,
@@ -11,8 +10,7 @@ import {
     rem,
     Container,
     Button,
-    Title,
-    NavLink
+    Title
 } from '@mantine/core';
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -116,7 +114,7 @@ const ChannelDetailPage = () => {
     const handleUboardClick = (boardId: string) => () => navigate(`/channels/${channelId}/boards/${boardId}/posts`);
 
     const rows = sortedData.map((row) => (
-        <Table.Tr key={row.id} onClick={handleUboardClick(row.id)}>
+        <Table.Tr key={row.id} onClick={handleUboardClick(row.id)} style={{ cursor: 'pointer' }}>
             <Table.Td>{row.title}</Table.Td>
         </Table.Tr>
     ));
@@ -172,19 +170,8 @@ const ChannelDetailPage = () => {
 
                 }
 
-                asideContent={<TopGameContainer />}
-                navbarContent={
-                    <>
-                      <AppShell.Section>
-                        <NavLink component="a" href="/game-reviews" label="게임 리뷰 페이지" />
-                      </AppShell.Section>
-                      <AppShell.Section>
-                        <TopPost channelId={channelId} />
-                      </AppShell.Section>
-                    </>
-                  }
-                // navbarContent={
-                //     <TopPost channelId={channelId} />}
+                asideContent={<TopGameContainer></TopGameContainer>}
+                navbarContent={<TopPost channelId={channelId} />}
                 headerContent={undefined}
                 footerContent={undefined}
             >

@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Card, 
-  Avatar, 
-  Paper, 
-  Text, 
-  Button, 
-  TextInput, 
+import {
+  Card,
+  Avatar,
+  Paper,
+  Text,
+  Button,
+  TextInput,
   PasswordInput,
   Loader,
   Modal
 } from '@mantine/core';
-import { 
-  getMemberInfo, 
-  updateNickname, 
-  updatePassword, 
-  updatePasswordCheck 
+import {
+  getMemberInfo,
+  updateNickname,
+  updatePassword,
+  updatePasswordCheck
 } from '../api/member';
 import classes from '../components/css/Member.module.css';
 
@@ -32,10 +32,10 @@ export function MemberContainer() {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const client = { 
+  const client = {
     deactivate: () => console.log("WebSocket client deactivated")
   };
-
+  console.log(nickname.includes('google'))
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -75,7 +75,7 @@ export function MemberContainer() {
 
   const webSocketDisconnection = () => {
     console.log("Disconnected");
-    client.deactivate(); 
+    client.deactivate();
     window.removeEventListener("beforeunload", preventClose);
   };
 
@@ -95,7 +95,7 @@ export function MemberContainer() {
     setLoading(true);
     try {
       const passwordCheckResponse = await updatePasswordCheck(currentPasswordForNickname);
-      
+
       if (passwordCheckResponse && Object.keys(passwordCheckResponse).length === 0) {
         await updateNickname(nickname);
         alert('닉네임이 변경되었습니다.');
@@ -120,7 +120,7 @@ export function MemberContainer() {
     setLoading(true);
     try {
       const passwordCheckResponse = await updatePasswordCheck(currentPassword);
-      
+
       if (passwordCheckResponse && Object.keys(passwordCheckResponse).length === 0) {
         await updatePassword(newPassword);
         alert('비밀번호가 변경되었습니다.');
@@ -136,7 +136,12 @@ export function MemberContainer() {
       setLoading(false);
     }
   };
-  
+  const googleCheck = async () => {
+    alert('구글 로그인은 비밀번호 및 닉네임 변경이 불가능합니다.');
+    return;
+  }
+
+
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
@@ -170,10 +175,10 @@ export function MemberContainer() {
             <Text><strong>닉네임 : </strong> {userData.name}</Text>
             <br />
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <Button onClick={() => setModalOpen(prev => ({ ...prev, nickname: true }))} color="blue" style={{ flex: 1 }}>
+              <Button onClick={userData.name.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, nickname: true }))} color="blue" style={{ flex: 1 }}>
                 닉네임 변경
               </Button>
-              <Button onClick={() => setModalOpen(prev => ({ ...prev, password: true }))} color="blue" style={{ flex: 1 }}>
+              <Button onClick={userData.name.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, password: true }))} color="blue" style={{ flex: 1 }}>
                 비밀번호 변경
               </Button>
               <Button onClick={handleLogout} color="red" style={{ flex: 1 }}>
@@ -192,16 +197,16 @@ export function MemberContainer() {
         centered
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <TextInput 
-            label="현재 비밀번호" 
-            type="password" 
-            value={currentPasswordForNickname} 
-            onChange={(e) => setCurrentPasswordForNickname(e.target.value)} 
+          <TextInput
+            label="현재 비밀번호"
+            type="password"
+            value={currentPasswordForNickname}
+            onChange={(e) => setCurrentPasswordForNickname(e.target.value)}
           />
-          <TextInput 
-            label="변경할 닉네임" 
-            value={nickname} 
-            onChange={(e) => setNickname(e.target.value)} 
+          <TextInput
+            label="변경할 닉네임"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
           />
           <Button onClick={handleNicknameChange} disabled={loading} size="lg" style={{ height: '40px' }}>
             {loading ? <Loader size="xs" /> : '닉네임 변경'}
@@ -217,21 +222,21 @@ export function MemberContainer() {
         centered
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <TextInput 
-            label="현재 비밀번호" 
-            type="password" 
-            value={currentPassword} 
-            onChange={(e) => setCurrentPassword(e.target.value)} 
+          <TextInput
+            label="현재 비밀번호"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
           />
-          <PasswordInput 
-            label="새 비밀번호" 
-            value={newPassword} 
-            onChange={(e) => setNewPassword(e.target.value)} 
+          <PasswordInput
+            label="새 비밀번호"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
           />
-          <PasswordInput 
-            label="비밀번호 확인" 
-            value={confirmPassword} 
-            onChange={(e) => setConfirmPassword(e.target.value)} 
+          <PasswordInput
+            label="비밀번호 확인"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <Button onClick={handlePasswordChange} color="blue" disabled={loading} size="lg" style={{ height: '40px' }}>
             {loading ? <Loader size="xs" /> : '비밀번호 변경'}
