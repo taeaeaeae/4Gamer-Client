@@ -1,7 +1,7 @@
 import { Button, Card, Group, ScrollArea, Text, Textarea, TextInput } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { IconX } from '@tabler/icons-react';
-import './Chat.css';
+// import './Chat.css';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { dateFormat } from '../../util/dateUtil';
@@ -157,7 +157,7 @@ const Chat = ({ subjectId, targetId, roomId, handler }: Chat) => {
         <IconX stroke={2} onClick={() => webSocketDisConnection()} />
       </Group>
       {isTargetEntered && `${targetId}님이 입장했습니다.`}
-      <ScrollArea h={500} mt={20} pr={20} mb={20} scrollbars="y" viewportRef={viewport}>
+      <ScrollArea h={400} mt={20} pr={20} mb={20} scrollbars="y" viewportRef={viewport}>
         {prevChatHistory.map((value, index) =>
           value.subjectId === subjectId ? (
             <Group key={index} align="end" justify="flex-end" mt={10} mb={10}>

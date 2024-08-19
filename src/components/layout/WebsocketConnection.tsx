@@ -163,7 +163,7 @@ const WebsocketConnection = () => {
           </ScrollArea>
         </Popover.Dropdown>
       </Box>
-      <Box pos="absolute" top={100} right={100}>
+      <Box pos="absolute" top={100} left={520}>
         {openChatWindow && (
           <Chat
             subjectId={subjectId.current}

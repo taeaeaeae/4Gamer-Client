@@ -20,7 +20,6 @@ const UserProfile: React.FC<UserProfileProps> = (props) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [openChatWindow, setOpenChatWindow] = useState(false);
-  const [readyToChat, setReadyToChat] = useState(true);
   const [subjectId, setSubjectId] = useState('');
   const roomId = uuid();
 
@@ -37,10 +36,12 @@ const UserProfile: React.FC<UserProfileProps> = (props) => {
       if (token) {
         const data = await getMemberInfo(token);
         setSubjectId(data.id);
-      }
-    }
 
-    setReadyToChat(isOk);
+        setOpenChatWindow(true);
+      }
+    } else {
+      alert(`${props.memberId}님은 현재 미접속 중으로 채팅할 수 없습니다.`);
+    }
   };
 
   useEffect(() => {
@@ -64,7 +65,6 @@ const UserProfile: React.FC<UserProfileProps> = (props) => {
     };
 
     fetchUserData();
-    checkConnection();
   }, [props.memberId]);
 
   if (error) {
@@ -91,23 +91,22 @@ const UserProfile: React.FC<UserProfileProps> = (props) => {
             <Text>
               <strong>닉네임:</strong> {userData.name}
             </Text>
-            {subjectId !== props.memberId
-              ? (
-                <Button
-                  type="button"
-                  onClick={() => setOpenChatWindow(true)}
-                  style={{ marginTop: '1rem', marginLeft: 'auto', display: 'block' }}
-                >
-                  채팅하기
-                </Button>
-              )
-              : <></>
-            }
+            {subjectId !== props.memberId ? (
+              <Button
+                type="button"
+                onClick={() => checkConnection()}
+                style={{ marginTop: '1rem', marginLeft: 'auto', display: 'block' }}
+              >
+                채팅하기
+              </Button>
+            ) : (
+              <></>
+            )}
           </Stack>
           {/* </div> */}
         </HoverCard.Dropdown>
       </HoverCard>
-      {readyToChat && openChatWindow && (
+      {openChatWindow && (
         <Group pos="absolute" top={100}>
           <Chat
             subjectId={subjectId}
