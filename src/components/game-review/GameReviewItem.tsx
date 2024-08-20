@@ -24,6 +24,8 @@ function GameReviewItem(item: GameReviewItem) {
   const [description, setDescription] = useState(item.description);
 
   const toggleHandler = (value: string) => {
+    if (memberId === null) return;
+
     setIsRenderingComplete(true);
 
     switch (value) {
