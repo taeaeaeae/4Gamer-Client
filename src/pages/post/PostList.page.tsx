@@ -20,6 +20,7 @@ export function PostListPage() {
   const TRUE = 2;
 
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem('accessToken');
   const { channelId, boardId } = (useParams() as unknown) as { channelId: bigint, boardId: bigint };
   const [posts, setPosts] = useState<Array<PostSimplifiedResponse & { isUpvoting: number }>>([]);
   const [boards, setBoards] = useState<Array<BoardResponse>>([]);
@@ -47,7 +48,7 @@ export function PostListPage() {
 
   const fetchPosts = async () => {
     if (inView && !isPostsAllLoaded) {
-      const postReactions = await getPostReactionList();
+      const postReactions = accessToken ? await getPostReactionList() : undefined;
       const data = await getPosts(channelId, boardId, postsPage, postsSize);
       console.log(data);
       if (!data.last) {
@@ -60,13 +61,13 @@ export function PostListPage() {
         {
           ...each,
           isUpvoting: (
-            postReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
+            postReactions ? postReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
               ? (postReactions.find((reaction: ReactionResponse) => (
                 reaction.id === each.id
               )).isUpvoting ? TRUE : FALSE
               )
               : NULL
-          ),
+              : undefined),
         }
       )).concat(posts));
     }

@@ -87,7 +87,7 @@ export function PostDetail({ channelId, boardId, postId }:
   };
 
   const fetchPost = async () => {
-    const postReactions = await getPostReactionList();
+    const postReactions = accessToken ? await getPostReactionList() : undefined;
 
     const data = await getPost(channelId, boardId, postId);
     setPost(data);
@@ -103,17 +103,17 @@ export function PostDetail({ channelId, boardId, postId }:
 
     setIsUpvoting(
       postReactions.some((reaction: ReactionResponse) => (reaction.id === data.id))
-      ? (postReactions.find((reaction: ReactionResponse) => (
-            reaction.id === data.id
-          )).isUpvoting ? TRUE : FALSE
+        ? (postReactions.find((reaction: ReactionResponse) => (
+          reaction.id === data.id
+        )).isUpvoting ? TRUE : FALSE
         )
-      : NULL
+        : NULL
     );
   };
 
   const fetchComments = async () => {
     if (inView && !isCommentsAllLoaded) {
-      const commentReactions = await getCommentReactionList();
+      const commentReactions = accessToken ? await getCommentReactionList() : undefined;
       const data = await getComments(channelId, boardId, postId, commentsPage, commentsSize);
       setTotalComments(data.totalElements);
       if (!data.last) {
@@ -122,29 +122,31 @@ export function PostDetail({ channelId, boardId, postId }:
       } else {
         setIsCommentsAllLoaded(true);
       }
-      // await setComments(data.content.map((each: CommentResponse) => (
-      //   {
-      //     ...each,
-      //     isUpvoting: (
-      //       commentReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
-      //       ? (commentReactions.find((reaction: ReactionResponse) => (
-      //             reaction.id === each.id
-      //           )).isUpvoting ? TRUE : FALSE
-      //         )
-      //       : NULL
-      //     ),
-      //   }
-      // )).concat(comments));
+      await setComments(data.content.map((each: CommentResponse) => (
+
+        {
+          ...each,
+          isUpvoting: (
+            (commentReactions != undefined) ? commentReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
+              ? (commentReactions.find((reaction: ReactionResponse) => (
+                reaction.id === each.id
+              )).isUpvoting ? TRUE : FALSE
+              )
+              : NULL
+              : NULL),
+        }
+      )).concat(comments));
       await setComments(comments.concat(data.content.map((each: CommentResponse) => (
+
         {
           ...each,
           isUpvoting: (
             commentReactions.some((reaction: ReactionResponse) => (reaction.id === each.id))
-            ? (commentReactions.find((reaction: ReactionResponse) => (
-                  reaction.id === each.id
-                )).isUpvoting ? TRUE : FALSE
+              ? (commentReactions.find((reaction: ReactionResponse) => (
+                reaction.id === each.id
+              )).isUpvoting ? TRUE : FALSE
               )
-            : NULL
+              : NULL
           ),
         }
       ))));
@@ -217,35 +219,35 @@ export function PostDetail({ channelId, boardId, postId }:
               <Title order={1} lineClamp={1}>{post.title}</Title>
               {
                 (post.memberId === memberId) ?
-                (
-                  <Menu>
-                    <Menu.Target>
-                      <ActionIcon variant="transparent" color="gray">
-                        <IconDots stroke={1.5} />
-                      </ActionIcon>
-                    </Menu.Target>
+                  (
+                    <Menu>
+                      <Menu.Target>
+                        <ActionIcon variant="transparent" color="gray">
+                          <IconDots stroke={1.5} />
+                        </ActionIcon>
+                      </Menu.Target>
 
-                    <Menu.Dropdown>
-                      {/* <Menu.Item leftSection={<IconFlag stroke={1.5} />}>
+                      <Menu.Dropdown>
+                        {/* <Menu.Item leftSection={<IconFlag stroke={1.5} />}>
                         신고하기
                       </Menu.Item> */}
-                      <Menu.Item
-                        leftSection={<IconPencil stroke={1.5} />}
-                        component={RouterLink}
-                        to="./edit"
-                        relative="path"
-                      >
-                        수정
-                      </Menu.Item>
-                      <Menu.Item
-                        leftSection={<IconTrash stroke={1.5} />}
-                        onClick={() => deletePostInternal()}
-                      >
-                        삭제
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                ) : <></>
+                        <Menu.Item
+                          leftSection={<IconPencil stroke={1.5} />}
+                          component={RouterLink}
+                          to="./edit"
+                          relative="path"
+                        >
+                          수정
+                        </Menu.Item>
+                        <Menu.Item
+                          leftSection={<IconTrash stroke={1.5} />}
+                          onClick={() => deletePostInternal()}
+                        >
+                          삭제
+                        </Menu.Item>
+                      </Menu.Dropdown>
+                    </Menu>
+                  ) : <></>
               }
             </Group>
             <Space h="xs" />
@@ -258,13 +260,13 @@ export function PostDetail({ channelId, boardId, postId }:
             <Space h="xl" />
             <Group justify="space-between">
               <Group>
-              {
-                tags?.map((value, index) =>
-                  <Badge key={index} color="blue">
-                    #{value.name}
-                  </Badge>
-                )
-              }
+                {
+                  tags?.map((value, index) =>
+                    <Badge key={index} color="blue">
+                      #{value.name}
+                    </Badge>
+                  )
+                }
               </Group>
               <Group>
                 <ActionIcon
@@ -272,14 +274,14 @@ export function PostDetail({ channelId, boardId, postId }:
                   color="gray"
                   onClick={() => setPostReaction(
                     (isUpvoting === TRUE)
-                    ? NULL
-                    : TRUE
+                      ? NULL
+                      : TRUE
                   )}
                 >
                   {
                     (isUpvoting === TRUE)
-                    ? <IconThumbUpFilled stroke={1.5} />
-                    : <IconThumbUp stroke={1.5} />
+                      ? <IconThumbUpFilled stroke={1.5} />
+                      : <IconThumbUp stroke={1.5} />
                   }
                 </ActionIcon>
                 <Text>{metricNumber(post.upvotes)}</Text>
@@ -288,14 +290,14 @@ export function PostDetail({ channelId, boardId, postId }:
                   color="gray"
                   onClick={() => setPostReaction(
                     (isUpvoting === FALSE)
-                    ? NULL
-                    : FALSE
+                      ? NULL
+                      : FALSE
                   )}
                 >
                   {
                     (isUpvoting === FALSE)
-                    ? <IconThumbDownFilled stroke={1.5} />
-                    : <IconThumbDown stroke={1.5} />
+                      ? <IconThumbDownFilled stroke={1.5} />
+                      : <IconThumbDown stroke={1.5} />
                   }
                 </ActionIcon>
                 <Text>{metricNumber(post.downvotes)}</Text>
@@ -315,13 +317,13 @@ export function PostDetail({ channelId, boardId, postId }:
             {
               comments?.map(
                 (eachComment: CommentResponse & { isUpvoting: number }, index: number) =>
-                <Comment
-                  key={index}
-                  channelId={channelId}
-                  boardId={boardId}
-                  postId={postId}
-                  commentId={eachComment.id}
-                  comment={eachComment}
+                  <Comment
+                    key={index}
+                    channelId={channelId}
+                    boardId={boardId}
+                    postId={postId}
+                    commentId={eachComment.id}
+                    comment={eachComment}
                   // isCommentUpvoting={
                   //   commentReactionList.some((reaction) => (reaction.id === eachComment.id))
                   //   ? (commentReactionList.find((reaction) => (
@@ -330,7 +332,7 @@ export function PostDetail({ channelId, boardId, postId }:
                   //     )
                   //   : NULL
                   // }
-                />
+                  />
               )
             }
             <div ref={ref}></div>
