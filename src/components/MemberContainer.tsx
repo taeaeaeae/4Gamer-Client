@@ -81,7 +81,8 @@ export function MemberContainer() {
 
   const handleLogout = async () => {
     webSocketDisconnection();
-    localStorage.clear();
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem('notificationList');
     navigate("/");
   };
 
@@ -174,10 +175,10 @@ export function MemberContainer() {
             <Text><strong>닉네임 : </strong> {userData.name}</Text>
             <br />
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <Button onClick={userData.name.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, nickname: true }))} color="blue" style={{ flex: 1 }}>
+              <Button onClick={nickname.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, nickname: true }))} color="blue" style={{ flex: 1 }}>
                 닉네임 변경
               </Button>
-              <Button onClick={userData.name.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, password: true }))} color="blue" style={{ flex: 1 }}>
+              <Button onClick={nickname.includes('google') ? googleCheck : () => setModalOpen(prev => ({ ...prev, password: true }))} color="blue" style={{ flex: 1 }}>
                 비밀번호 변경
               </Button>
               <Button onClick={handleLogout} color="red" style={{ flex: 1 }}>
