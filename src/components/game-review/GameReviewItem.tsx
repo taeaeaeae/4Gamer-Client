@@ -100,29 +100,36 @@ function GameReviewItem(item: GameReviewItem) {
       <Paper bd="1px solid dark.9" mt={20} pl={20} pr={20}>
         <h2>{item.gameTitle}</h2>
         <Group justify="space-between">
-          {item.memberId === memberId && (
-            <Group>
-              <span>{dateFormat(item.createdAt)}</span>
-              <Button type="button" onClick={() => setIsEditing(true)} size="compact-xs">
-                수정
-              </Button>
-              <Button
-                type="button"
-                size="compact-xs"
-                onClick={() => {
-                  if (window.confirm('정말 삭제하시겠습니까?')) {
-                    deleteGameReview(String(item.id));
-                    window.location.reload();
-                  }
-                }}
-              >
-                삭제
-              </Button>
-            </Group>
-          )}
+          <Group>
+            <span>{dateFormat(item.createdAt)}</span>
+            {item.memberId === memberId && (
+              <Group>
+                <Button type="button" onClick={() => setIsEditing(true)} size="compact-xs">
+                  수정
+                </Button>
+                <Button
+                  type="button"
+                  size="compact-xs"
+                  onClick={() => {
+                    if (window.confirm('정말 삭제하시겠습니까?')) {
+                      deleteGameReview(String(item.id));
+                      window.location.reload();
+                    }
+                  }}
+                >
+                  삭제
+                </Button>
+              </Group>
+            )}
+          </Group>
           <GameReviewScore score={Number(point)} />
         </Group>
-        <Paper className="game-review-item-content" style={{ whiteSpace: 'pre-wrap' }}>
+        <Paper
+          className="game-review-item-content"
+          style={{ whiteSpace: 'pre-wrap' }}
+          mt={20}
+          mb={20}
+        >
           {description}
         </Paper>
         <Group justify="flex-end" mb={20}>
